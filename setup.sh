@@ -1,62 +1,48 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# UtahMosphere Production Environment Provisioning Script
-# Operating Target: Debian / Ubuntu LTS Minimal (x86_64 or ARM64)
-# Protocol: Akashic-Zero Manual Intervention
+# UtahMosphere Auto-Genesis Provisioning Engine (v25.0)
+# Target: Sovereign Edge Hardware (Pi, M5Stack, SBC, x86 Mini PC)
+# Final State: Zero-Manual-Management Cloud Node
+# Protocol: Pure Privilege Zero Layer Infrastructure Setup
 # ==============================================================================
 
 set -euo pipefail
 
-# --- Root Privileges Enforcement ---
 if [[ $EUID -ne 0 ]]; then
-   echo "CRITICAL: This initialization architecture must be executed as root." 1>&2
+   echo "CRITICAL error: This environment configuration tool requires root access parameters." 1>&2
    exit 1
 fi
 
-echo "[UtahMosphere] Beginning Core Provisioning Pipeline..."
+echo "[Omega-Genesis] Wiping Legacy World-A Residue..."
+# Stop and remove legacy container engines and proxies (if they exist)
+systemctl stop docker || true
+systemctl stop nginx || true
+apt-get purge -y docker.io docker-compose nginx || true
+apt-get autoremove -y || true
 
-# --- System Dependencies Installation ---
-echo "[Setup] Synchronizing package registries and installing runtime layers..."
+echo "[Omega-Genesis] Installing Sovereign Infrastructure Dependencies..."
 apt-get update -y
-apt-get install -y \
-    python3 \
-    python3-pip \
-    nginx \
-    docker.io \
-    docker-compose \
-    git \
-    curl \
-    alsa-utils \
-    portaudio19-dev
+apt-get install -y python3 python3-pip python3-tk libasound2-dev portaudio19-dev curl git
 
-# --- Directory Architecture Synthesis ---
-echo "[Setup] Structuring absolute paths for virtual isolation..."
-UTAH_CONFIG_DIR="/etc/utahmosphere"
-UTAH_APPS_DIR="/var/lib/utahmosphere/apps"
-PROXY_CONF_DIR="/etc/nginx/sites-enabled"
+# Install Python requirements
+pip3 install numpy librosa SpeechRecognition pyaudio
 
-mkdir -p "${UTAH_CONFIG_DIR}"
-mkdir -p "${UTAH_APPS_DIR}"
-mkdir -p "${PROXY_CONF_DIR}"
+echo "[Omega-Genesis] Synthesizing baseline data paths natively..."
+mkdir -p "/var/lib/utahmosphere/containers"
+mkdir -p "/etc/utahmosphere/utahx_mesh"
+mkdir -p "/var/lib/utahmosphere/apps"
 
-# --- Network Proxy Neutralization ---
-# Remove standard default server rules to prevent traffic collision
-if [ -f /etc/nginx/sites-enabled/default ]; then
-    rm /etc/nginx/sites-enabled/default
-fi
-
-# --- Systemd Service Manifestation ---
-echo "[Setup] Injecting System Daemon configurations into systemd boundary..."
+# Inject the platform daemon engine unit service parameters
 cat << 'EOF' > /etc/systemd/system/utahmosphere.service
 [Unit]
-Description=UtahMosphere Core Automation Platform Engine
-After=network.target docker.service
+Description=UtahMosphere Omega-Genesis Core
+After=network.target
 
 [Service]
 Type=simple
 User=root
 WorkingDirectory=/var/lib/utahmosphere
-ExecStart=/usr/bin/python3 /usr/local/bin/utahmosphere_os.py
+ExecStart=/usr/bin/python3 /usr/local/bin/utah-genesis
 Restart=always
 RestartSec=5
 StandardOutput=syslog
@@ -67,10 +53,17 @@ SyslogIdentifier=utahmosphere
 WantedBy=multi-user.target
 EOF
 
-# --- Daemon Execution Integration ---
-echo "[Setup] Reloading system service registers and activating engines..."
-systemctl daemon-reload
-systemctl enable docker
-systemctl restart docker
+# Move scripts to local bin
+cp ./utahmosphere_os.py /usr/local/bin/
+cp ./utah_tycoon.py /usr/local/bin/
+cp ./utah_swarm_protocol.py /usr/local/bin/
+cp ./quantum_ledger.py /usr/local/bin/
+cp ./flux_gui.py /usr/local/bin/
+cp ./genesis_deploy.py /usr/local/bin/utah-genesis
+chmod +x /usr/local/bin/utah-genesis
 
-echo "[UtahMosphere] Provisioning Pipeline Complete. Core service ready for binary placement."
+systemctl daemon-reload
+systemctl enable utahmosphere.service
+systemctl start utahmosphere.service
+
+echo "[Omega-Genesis] COMPLETE. Hardware is now a Sovereign Cloud Node."

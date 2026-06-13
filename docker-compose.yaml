@@ -1,28 +1,31 @@
 version: '3.8'
 
 services:
-  utahmosphere-core:
+  utahmosphere-sovereign-core:
     image: python:3.11-slim
-    container_name: utahmosphere-core-engine
+    container_name: utahmosphere-sovereign-engine
     restart: always
     network_mode: "host"
+    privileged: true
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/utahmosphere:/etc/utahmosphere
       - /var/lib/utahmosphere:/var/lib/utahmosphere
-      - /etc/nginx/sites-enabled:/etc/nginx/sites-enabled
+      - /etc/utahmosphere:/etc/utahmosphere
       - /dev/shm:/dev/shm
       - /dev/snd:/dev/snd
+      - .:/app
+    working_dir: /app
     environment:
-      - NODE_ENV=production
       - PYTHONUNBUFFERED=1
+      - UTAH_ENV=production
+      - UTAH_DATA_DIR=/var/lib/utahmosphere
     devices:
       - "/dev/snd:/dev/snd"
+    command: python3 genesis_deploy.py
     deploy:
       resources:
         limits:
-          cpus: '0.75'
+          cpus: '0.80'
           memory: 1024M
         reservations:
-          cpus: '0.25'
+          cpus: '0.20'
           memory: 256M

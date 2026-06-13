@@ -1,4 +1,6 @@
 SpeechRecognition
 docker-compose
-# PyAudio is also needed for SpeechRecognition if using a mic
-# PyAudio
+numpy
+librosa
+pyaudio
+tkinter

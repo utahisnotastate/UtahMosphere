@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v16.0 Master)
+# 🌌 UtahMosphere OS (v25.0 Omega-Genesis)
 
-**The Sovereign, Decentralized, Zero-Maintenance Edge Cloud Platform.**
+**The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a state-of-the-art platform designed to liberate enterprises and individuals from the high costs and complexities of centralized cloud providers (AWS, GCP, Azure). By utilizing local hardware footprints and a peer-to-peer gossip mesh, UtahMosphere provides infinite compute and storage with zero egress fees.
+UtahMosphere OS is a revolutionary platform that completely discards legacy cloud abstractions (Docker, Nginx, K8s) in favor of a unified, sovereign architectural ecosystem. It leverages local bare-metal footprints to provide infinite compute, storage, and financial sovereignty.
 
 ---
 
@@ -27,18 +27,23 @@ We have tailored documentation for every role:
     sudo bash setup.sh
     ```
 
-2.  **Start the Engine:**
+2.  **Start the Sovereign Engine:**
+    ```bash
+    sudo python3 genesis_deploy.py
+    ```
+    *Or via Docker-Compose:*
     ```bash
     docker-compose up -d
     ```
 
-3.  **Calibrate Voice Interface:**
+3.  **Calibrate Biometric Voice Interface:**
     ```bash
     python3 voice_bridge.py
     ```
+    *Say: "Claim node" to bind the hardware to your unique acoustic signature.*
 
-4.  **Deploy your first App:**
-    Just say: *"Butler, deploy application my-app from git https://github.com/example/repo"*
+4.  **Deploy your first Sovereign Container:**
+    Just say: *"Butler, deploy application my-app"*
 
 ---
 
@@ -53,11 +58,14 @@ UtahMosphere OS can be configured via environment variables:
 ---
 
 ## 🛠 Features
-- **S3 Mesh:** S3-compatible object storage with zero egress costs.
-- **Lambda Realtime:** Serverless execution with microsecond cold-starts.
-- **RDS Quantum Ledger:** State-synchronized distributed database.
-- **Vibe-Coding:** Semantic intent parsing for infrastructure management.
-- **Self-Healing:** Automated resource compaction and error correction.
+- **UtahX:** Fluidic TCP Proxy & Tollbooth Caching (Replaces Nginx).
+- **UtahContainerEngine:** Cryptographic execution sandboxes (Replaces Docker).
+- **UtahNetes:** Osmotic LAN/WAN discovery mesh (Replaces Kubernetes).
+- **Lazarus Daemon:** Zero-downtime AST live code mutation.
+- **Quantum Ledger:** Biometric Vibe-Print authentication.
+- **Global Swarm:** DNS-bypassing P2P routing protocol.
+- **Utah-Tycoon:** Automated cryptographic settlement daemon.
+- **Utah-Flux:** Reactive, state-driven UI engine.
 
 ---
 

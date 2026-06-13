@@ -1,53 +1,85 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Voice Command Interface Client
-Captures hardware microphone array arrays and transmits linguistic payloads
-directly to the UtahMosphere Core API for rapid system state mutation.
+UtahMosphere Voice Bridge - Biometric Extraction Build v22.0
+Captures spoken intent, extracts unique biological acoustic features (Vibe-Print),
+and transmits cryptographically signed payloads to the UtahMosphere Kernel.
 """
 
 import sys
 import json
 import time
+import hashlib
 import urllib.request
-# Note: speech_recognition requires 'SpeechRecognition' and 'PyAudio' or similar
+import numpy as np
+
+# Require standard audio processing libraries
 try:
     import speech_recognition as sr
+    import librosa  # Used for deep acoustic feature extraction
 except ImportError:
-    print("[Error] speech_recognition module not found. Please install via 'pip install SpeechRecognition'")
-    sr = None
+    print("[Critical] Ensure 'SpeechRecognition', 'pyaudio', 'numpy', and 'librosa' are installed.")
+    sys.exit(1)
 
 CORE_ENGINE_URL = "http://127.0.0.1:8999/command"
 
-def capture_and_transmit_vibe():
-    if sr is None:
-        print("[Bridge] Speech Recognition library unavailable. Standing by.")
-        return
+def extract_biological_signature(audio_data: sr.AudioData) -> str:
+    """
+    Analyzes the raw audio waveform to extract the speaker's unique vocal tract characteristics.
+    Returns a SHA-256 hash of the acoustic feature matrix.
+    """
+    try:
+        # Convert raw bytes to floating point numpy array for Librosa
+        raw_bytes = audio_data.get_raw_data(convert_rate=16000, convert_width=2)
+        audio_np = np.frombuffer(raw_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+        
+        # Extract MFCCs (Mel-Frequency Cepstral Coefficients)
+        mfccs = librosa.feature.mfcc(y=audio_np, sr=16000, n_mfcc=13)
+        
+        # Calculate the mean of the coefficients to form a stable biological profile
+        profile_vector = np.mean(mfccs, axis=1)
+        
+        # Quantize and hash the biological vector to create the Vibe-Print key
+        quantized_vector = np.round(profile_vector, decimals=1).tobytes()
+        vibe_hash = hashlib.sha256(quantized_vector).hexdigest()
+        
+        return vibe_hash
+    except Exception as e:
+        print(f"[Biometric Error] Could not extract signature: {e}")
+        return "0" * 64 # Fallback null hash
 
+def capture_and_transmit_vibe():
     recognizer = sr.Recognizer()
     try:
         microphone = sr.Microphone()
     except Exception as e:
-        print(f"[Bridge Error] Could not access microphone: {e}")
-        return
+        print(f"[Critical] Microphone not found: {e}")
+        sys.exit(1)
 
-    print("[Voice Bridge] Peripheral Microphones Calibrated. Awaiting instruction, General.")
+    print("[Voice Bridge] Biometric Sensors Calibrated. Awaiting Biological Input.")
     
     with microphone as source:
-        # Optimize matching profile based on ambient noise floors
-        recognizer.adjust_for_ambient_noise(source, duration=1)
+        recognizer.adjust_for_ambient_noise(source, duration=1.5)
         
         while True:
-            print("\n[Vibe] Listening for system modification intent...")
+            print("\n[Vibe] Listening...")
             try:
                 audio = recognizer.listen(source, timeout=None, phrase_time_limit=7)
+                
+                # 1. Semantic Extraction (What you said)
                 print("[Vibe] Processing temporal audio wave data...")
-                
-                # Perform local text translation via quick response acoustic profiles
                 transcript = recognizer.recognize_google(audio)
-                print(f"[Vibe] Decoded Intent string: '{transcript}'")
                 
-                # Deliver intent structural instructions to the backend engine
-                payload = json.dumps({"transcript": transcript}).encode('utf-8')
+                # 2. Biological Extraction (Who you are)
+                vibe_print_hash = extract_biological_signature(audio)
+                
+                print(f"[Vibe] Intent: '{transcript}'")
+                print(f"[Vibe] Biological Signature Hash: {vibe_print_hash[:16]}...")
+                
+                # Deliver intent + biological signature
+                payload = json.dumps({
+                    "transcript": transcript,
+                    "acoustic_hash": vibe_print_hash
+                }).encode('utf-8')
                 
                 req = urllib.request.Request(
                     CORE_ENGINE_URL, 
@@ -61,12 +93,11 @@ def capture_and_transmit_vibe():
                     print(f"[System Manifestation]: {res_data.get('response')}")
                     
             except sr.UnknownValueError:
-                # Discard unrecognizable ambient noises calmly
                 pass
             except sr.RequestError as e:
                 print(f"[Bridge Error] Network degradation in local audio mesh: {e}")
             except Exception as e:
-                print(f"[Bridge Exception] Matrix exception: {e}")
+                print(f"[Bridge Exception] Hardware boundary anomaly: {e}")
                 time.sleep(2)
 
 if __name__ == "__main__":

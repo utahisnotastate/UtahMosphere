@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  utahmosphere-core:
+    image: python:3.11-slim
+    container_name: utahmosphere-core-engine
+    restart: always
+    network_mode: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/utahmosphere:/etc/utahmosphere
+      - /var/lib/utahmosphere:/var/lib/utahmosphere
+      - /etc/nginx/sites-enabled:/etc/nginx/sites-enabled
+      - /dev/shm:/dev/shm
+      - /dev/snd:/dev/snd
+    environment:
+      - NODE_ENV=production
+      - PYTHONUNBUFFERED=1
+    devices:
+      - "/dev/snd:/dev/snd"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.75'
+          memory: 1024M
+        reservations:
+          cpus: '0.25'
+          memory: 256M

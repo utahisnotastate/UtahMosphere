@@ -42,6 +42,16 @@ We have tailored documentation for every role:
 
 ---
 
+## ⚙️ Configuration
+
+UtahMosphere OS can be configured via environment variables:
+
+- `UTAH_SECRET_VECTOR`: The HMAC secret key for tenant isolation (default: provided in code).
+- `UTAH_DATA_DIR`: The root directory for storage and registry (default: `/var/lib/utahmosphere`).
+- `UTAH_PROXY_CONF_DIR`: The path for Nginx virtual host configs (default: `/etc/nginx/sites-enabled`).
+
+---
+
 ## 🛠 Features
 - **S3 Mesh:** S3-compatible object storage with zero egress costs.
 - **Lambda Realtime:** Serverless execution with microsecond cold-starts.

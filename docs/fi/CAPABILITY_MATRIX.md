@@ -1,6 +1,6 @@
 # Ominaisuusmatriisi
 
-UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: globaali laitteisto quote -rekisteri, RA-TLS CA -kiinnitys, biometrinen TPM-sidonta.
+UtahMosphere OS **v31.0 Etätodentamisinfra** — suvereenit luottamusankkurit: globaali laitteisto quote -rekisteri, RA-TLS CA -kiinnitys, biometrinen TPM-sidonta.
 
 ---
 
@@ -8,10 +8,11 @@ UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 
 | Päätepiste | Metodi | Tila | Huomiot |
 |------------|--------|------|---------|
-| `/health` | GET | **Toteutettu** | `build: omega-build-v30-federated-attested` + täydellinen todentamistilannekuva |
+| `/health` | GET | **Toteutettu** | `build: omega-build-v31-federated-quorum` + täydellinen todentamistilannekuva |
 | `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote + `hardware_id` |
 | `/registry/quotes` | GET | **Toteutettu** | Globaalin laitteisto quote -rekisterin vienti |
 | `/registry/purge` | POST |
+| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Toteutettu** | Vaarantuneen laitteiston poisto (juuri-vibe) |
 | `/nonce` | GET | **Toteutettu** | Äänikomennon uudelleentoiston eston nonce |
@@ -37,7 +38,7 @@ UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 | **Voice Bridge Signed** | **Toteutettu** | Automaattinen nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Toteutettu** | Mesh + ääniturvallisuus |
 | **UtahNetes + Swarm DHT** | **Toteutettu** | RA-TLS + allekirjoitettu gossip + rekisterin yhdistäminen |
-| **Genesis ISO v30** | **Toteutettu** | `utah_genesis_v30.iso` |
+| **Genesis ISO v31** | **Toteutettu** | `utah_genesis_v31.iso` |
 | **Täysi pilvipariteetti** | **Toteutettu** | S3, Lambda, RDS, UtahX, kontit |
 
 ---
@@ -48,7 +49,7 @@ UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 |-----------|------|
 | `python3 utahmosphere_master.py` | **Suositeltu** |
 | `sudo bash bootstrap.sh` | **Tuotanto** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v30 ISO** |
+| `python3 genesis_iso_builder.py` | **v31 ISO** |
 
 ## Ympäristö
 
@@ -56,6 +57,8 @@ UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 |----------|--------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Vaadi TPM-sinetti claimissä |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Vaadi RA-TLS quote meshissä |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX-sisääntulon CA-kiinnitys |
@@ -63,7 +66,7 @@ UtahMosphere OS **v30.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 
 ## Tiekartta
 
-Kaikki v28.0:n tiekartan kohdat on **toteutettu** v30.0:ssa (etä-RA-TLS CA -kiinnitys, laitteisto quote -rekisteri).
+Kaikki v28.0:n tiekartan kohdat on **toteutettu** v31.0:ssa (etä-RA-TLS CA -kiinnitys, laitteisto quote -rekisteri).
 
 Tulevaisuus: laitteisto quote -DHT-federointi, automaattinen PCR-driftin tunnistus.
 

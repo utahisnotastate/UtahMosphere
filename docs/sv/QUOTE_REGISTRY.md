@@ -1,4 +1,4 @@
-# Hårdvarucitatregister (v30.0)
+# Hårdvarucitatregister (v31.0)
 
 **Hårdvarucitatregistret** är den distribuerade sanningen för giltiga TPM-hårdvaruavtryck i UtahMosphere-svärmen. Noder litar inte på IP-adresser — de litar på **hårdvarucitat** signerade av Utah-Kernel Root CA och registrerade i detta register.
 
@@ -49,7 +49,7 @@ Se [API-referens](API_REFERENCE.md): `GET /registry/quotes`, `POST /registry/pur
 |----------|----------|-------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Registerpersistens |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Citatsigneringsrot |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | Citatsigneringsrot |
 
 Dev:
 

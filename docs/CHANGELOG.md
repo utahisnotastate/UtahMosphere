@@ -2,6 +2,23 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [31.0] — Federated Quorum & PCR-Drift-Healing (2026-06)
+
+### Added
+- `dht_consensus_engine.py` — `GlobalQuoteQuorum` with 51%+ majority consensus
+- `GET /quorum/consensus` — export quorum vote ledger
+- `drift_detector.perform_rollback()` — kexec to last verified kernel image
+- Quorum vote replication on mesh gossip (`quorum_consensus` payload)
+- [Federated Quorum Consensus](QUORUM_CONSENSUS.md) documentation
+
+### Changed
+- `drift_detector.py` — automated kexec rollback after quarantine
+- `utahmosphere_os.py` — quorum verify on attestation response; combined quarantine status
+- `ra_tls_attest.py` — quorum verification on mesh quotes
+- Genesis ISO: `utah_genesis_v31.iso`
+- Build: `omega-build-v31-federated-quorum`
+- v30.0 roadmap complete; all locale docs updated
+
 ## [30.0] — DHT-Federated Attestation & Drift Healing (2026-06)
 
 ### Added

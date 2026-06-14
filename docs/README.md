@@ -11,7 +11,8 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
-| [DHT-Federated Attestation](DHT_FEDERATION.md) | Swarm golden TPM consensus ledger |
+| [Federated Quorum Consensus](QUORUM_CONSENSUS.md) | 51%+ majority DHT vote ledger |
+| [DHT-Federated Attestation](DHT_FEDERATION.md) | Swarm golden TPM consensus |
 | [PCR Drift Detection](PCR_DRIFT.md) | Automated PCR0 monitor + emergency quarantine |
 | [Hardware Quote Registry](QUOTE_REGISTRY.md) | Global TPM hardware fingerprint ledger |
 | [RA-TLS Mesh Attestation](RA_TLS.md) | TPM quote verification + CA pinning for mesh peers |

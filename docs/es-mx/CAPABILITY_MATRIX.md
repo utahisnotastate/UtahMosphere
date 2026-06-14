@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza soberana completa.
+UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana completa.
 
 ---
 
@@ -8,10 +8,11 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza sobe
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | `build: omega-build-v30-federated-attested` + instantánea de attestation completa |
+| `/health` | GET | **Implementado** | `build: omega-build-v31-federated-quorum` + instantánea de attestation completa |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
 | `/nonce` | GET | **Implementado** | Nonce anti-replay para comando de voz |
@@ -29,6 +30,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza sobe
 | Componente | Estado | Qué funciona hoy |
 |------------|--------|------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Implementado** | Vibe-Print sellado al PCR0 vía `tpm2_create` / `tpm2_unseal` |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
 | **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
@@ -39,7 +41,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza sobe
 | **Voice Bridge firmado** | **Implementado** | Nonce automático + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementado** | Seguridad de malla + voz |
 | **UtahNetes + Swarm DHT** | **Implementado** | RA-TLS + gossip firmado |
-| **Genesis ISO v30** | **Implementado** | `utah_genesis_v30.iso` |
+| **Genesis ISO v31** | **Implementado** | `utah_genesis_v31.iso` |
 | **Paridad cloud completa** | **Implementado** | S3, Lambda, RDS, UtahX, contenedores |
 
 ---
@@ -57,6 +59,8 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza sobe
 | Variable | Predeterminado | Propósito |
 |----------|----------------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Exigir sellado TPM en el claim |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
@@ -65,7 +69,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — cadena de confianza sobe
 
 ## Hoja de ruta
 
-Todos los elementos de la hoja de ruta v28.0 están **implementados** en v30.0.
+Todos los elementos de la hoja de ruta v28.0 están **implementados** en v31.0.
 
 Futuro: fijación de CA RA-TLS remota, servicio de registro de citas de hardware.
 

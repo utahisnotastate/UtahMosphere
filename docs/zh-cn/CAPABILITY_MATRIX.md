@@ -1,6 +1,6 @@
 # 能力矩阵
 
-UtahMosphere OS **v30.0 DHT-Federated Attestation** — 主权信任链已全部完成。
+UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
 
 ---
 
@@ -8,10 +8,11 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — 主权信任链已全部
 
 | 端点 | 方法 | 状态 | 说明 |
 |------|------|------|------|
-| `/health` | GET | **已实现** | `build: omega-build-v30-federated-attested` + 完整 attestation 快照 |
+| `/health` | GET | **已实现** | `build: omega-build-v31-federated-quorum` + 完整 attestation 快照 |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **已实现** | RA-TLS TPM 引用，用于网格对等节点验证 |
 | `/nonce` | GET | **已实现** | 语音命令防重放 nonce |
@@ -35,7 +36,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — 主权信任链已全部
 | **签名语音桥** | **已实现** | 自动 nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **已实现** | 网格 + 语音安全 |
 | **UtahNetes + Swarm DHT** | **已实现** | RA-TLS + 签名 gossip |
-| **Genesis ISO v30** | **已实现** | `utah_genesis_v30.iso` |
+| **Genesis ISO v31** | **已实现** | `utah_genesis_v31.iso` |
 | **完整云 parity** | **已实现** | S3、Lambda、RDS、UtahX、容器 |
 
 ---
@@ -46,13 +47,15 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — 主权信任链已全部
 |------|------|
 | `python3 utahmosphere_master.py` | **推荐** |
 | `sudo bash bootstrap.sh` | **生产**（TPM + tpm2-tools） |
-| `python3 genesis_iso_builder.py` | **v30 ISO** |
+| `python3 genesis_iso_builder.py` | **v31 ISO** |
 
 ## 环境变量
 
 | 变量 | 默认值 | 用途 |
 |------|--------|------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | 认领时要求 TPM 密封 |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
@@ -61,7 +64,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — 主权信任链已全部
 
 ## 路线图
 
-v28.0 路线图所有项目已在 v30.0 **实现**。
+v28.0 路线图所有项目已在 v31.0 **实现**。
 
 未来：远程 RA-TLS CA 固定、硬件引用注册服务。
 

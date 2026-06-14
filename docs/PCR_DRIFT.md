@@ -1,65 +1,42 @@
-# PCR Drift Detection (v30.0)
+# PCR Drift Detection (v31.0)
 
-The **PCR Drift Detector** continuously monitors TPM PCR0. If firmware or kernel state drifts from the anchored golden measurement, the kernel triggers **emergency quarantine** — stopping all containers and notifying the swarm.
+The **PCR Drift Detector** continuously monitors TPM PCR0. On drift (firmware tamper or kernel injection), it triggers **emergency quarantine** and **automated kexec rollback** to the last verified kernel image.
 
-## Monitor Loop
+## Monitor + Rollback Flow
 
 ```
 every 10s:
   read tpm2_pcrread sha256:0
-  compare digest vs golden_pcr0.txt
-  if drift -> emergency_quarantine()
+  if digest != golden_pcr0.txt:
+    emergency_quarantine()     # stop all containers
+    perform_rollback()         # kexec to known-good vmlinuz
 ```
 
-## Emergency Quarantine (`emergency_quarantine`)
+## `perform_rollback()`
 
-On drift detection the kernel:
+Atomic transition via `kexec` (no full reboot):
 
-1. Stops all UtahContainerEngine listeners (`stop_all_containers()`)
-2. Marks tenants `quarantined`
-3. Purges hardware from `quote_registry` and `dht_quote_registry`
-4. Sets UI status `QUARANTINED: PCR DRIFT`
-5. Broadcasts `QUARANTINE_NOTICE` to swarm peers
-
-## Golden PCR Anchor
-
-On `"Claim node"`, `drift_detector.anchor_golden()` records the current PCR0 digest to `{UTAH_DATA_DIR}/golden_pcr0.txt`.
+```bash
+kexec -l /boot/vmlinuz-previous-known-good --initrd=/boot/initramfs-previous
+kexec -e
+```
 
 ## Environment
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | Enable drift monitoring (`0` = dev) |
-| `UTAH_PCR_DRIFT_INTERVAL_SEC` | `10` | Probe interval in seconds |
-| `UTAH_GOLDEN_PCR_PATH` | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden measurement store |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | Enable kexec rollback (`0` = dev/sim) |
+| `UTAH_PCR_DRIFT_INTERVAL_SEC` | `10` | Probe interval |
+| `UTAH_KEXEC_KERNEL` | `/boot/vmlinuz-previous-known-good` | Rollback kernel |
+| `UTAH_KEXEC_INITRD` | `/boot/initramfs-previous` | Rollback initramfs |
 
-Dev skip:
+## Kernel Status on Drift
 
-```bash
-export UTAH_PCR_DRIFT_ENFORCE=0
-export UTAH_DHT_FEDERATION_ENFORCE=0
-```
-
-## Kernel `/health` Snapshot
-
-```json
-{
-  "pcr_drift": {
-    "enforce": true,
-    "golden_set": true,
-    "drift_detected": false,
-    "interval_sec": 10
-  },
-  "dht_federation": {
-    "consensus": 1,
-    "quarantined": 0,
-    "total": 1,
-    "enforce": true
-  }
-}
-```
+UI: `QUARANTINED: PCR DRIFT / QUORUM MISMATCH`
 
 ## Related
 
-- [DHT-Federated Attestation](DHT_FEDERATION.md)
+- [Federated Quorum Consensus](QUORUM_CONSENSUS.md)
+- [DHT Federation](DHT_FEDERATION.md)
 - [Hardware Attestation](ATTESTATION.md)

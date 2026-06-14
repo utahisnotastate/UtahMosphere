@@ -1,4 +1,4 @@
-# Registro de citas de hardware (v30.0)
+# Registro de citas de hardware (v31.0)
 
 El **registro de citas de hardware** es la fuente de verdad distribuida de huellas TPM válidas en el enjambre UtahMosphere. Los nodos no confían en direcciones IP — confían en **citas de hardware** firmadas por la CA raíz Utah-Kernel y registradas en este ledger.
 
@@ -49,7 +49,7 @@ Ver [Referencia API](API_REFERENCE.md): `GET /registry/quotes`, `POST /registry/
 |----------|----------------|-----------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Persistencia del registro |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Ingress UtahX + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Raíz de firma de citas |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | Raíz de firma de citas |
 
 Dev:
 

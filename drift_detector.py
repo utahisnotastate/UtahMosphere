@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere PCR Drift Detector (v30.0)
-Continuous TPM PCR0 monitoring; triggers emergency quarantine on kernel drift.
+UtahMosphere PCR Drift Detector (v31.0)
+Continuous TPM PCR0 monitoring; emergency quarantine + kexec rollback on drift.
 """
 
 import hashlib
@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 DRIFT_ENFORCE = os.environ.get("UTAH_PCR_DRIFT_ENFORCE", "1") != "0"
+ROLLBACK_ENFORCE = os.environ.get("UTAH_PCR_ROLLBACK_ENFORCE", "1") != "0"
 DRIFT_INTERVAL_SEC = int(os.environ.get("UTAH_PCR_DRIFT_INTERVAL_SEC", "10"))
 GOLDEN_PCR_PATH = Path(
     os.environ.get(
@@ -23,6 +24,8 @@ GOLDEN_PCR_PATH = Path(
         ),
     )
 )
+KEXEC_KERNEL = os.environ.get("UTAH_KEXEC_KERNEL", "/boot/vmlinuz-previous-known-good")
+KEXEC_INITRD = os.environ.get("UTAH_KEXEC_INITRD", "/boot/initramfs-previous")
 
 try:
     from attestation_guard import HardwareAttestation, ATTESTATION_STORE
@@ -32,13 +35,14 @@ except ImportError:
 
 
 class PCRDriftDetector:
-    """Monitors PCR0; signals kernel quarantine when measurements drift."""
+    """Monitors PCR0; quarantines and kexec-rolls back on measurement drift."""
 
     def __init__(self):
         self._lock = threading.RLock()
         self._golden_digest: Optional[str] = None
         self._last_check: Optional[float] = None
         self._drift_detected = False
+        self._rollback_attempted = False
         self._monitor_thread: Optional[threading.Thread] = None
         self._stop = threading.Event()
         self._load_golden()
@@ -91,6 +95,7 @@ class PCRDriftDetector:
         with self._lock:
             self._golden_digest = self.digest_pcr(raw)
             self._drift_detected = False
+            self._rollback_attempted = False
             self._persist_golden(raw)
         print("[PCRDrift] Golden PCR0 measurement anchored.")
         return True
@@ -109,14 +114,45 @@ class PCRDriftDetector:
                 return True
             return digest == self._golden_digest
 
+    def perform_rollback(self) -> bool:
+        """Atomic kexec to last verified kernel image without full reboot."""
+        if not ROLLBACK_ENFORCE:
+            print("[PCRDrift] Rollback disabled (UTAH_PCR_ROLLBACK_ENFORCE=0).")
+            return False
+        kernel = Path(KEXEC_KERNEL)
+        initrd = Path(KEXEC_INITRD)
+        if not kernel.is_file():
+            print(f"[PCRDrift] Rollback kernel not found: {kernel}")
+            return False
+        with self._lock:
+            if self._rollback_attempted:
+                return False
+            self._rollback_attempted = True
+        try:
+            cmd = ["kexec", "-l", str(kernel)]
+            if initrd.is_file():
+                cmd.extend([f"--initrd={initrd}"])
+            subprocess.run(cmd, check=True, capture_output=True, timeout=30)
+            subprocess.run(["kexec", "-e"], check=True, capture_output=True, timeout=10)
+            print("[PCRDrift] kexec rollback initiated.")
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
+            print(f"[PCRDrift] kexec rollback unavailable: {exc}")
+            return False
+
+    def _handle_drift(self, kernel_ref: Any):
+        print("[Critical] PCR Drift Detected. Purging container silos and rolling back.")
+        with self._lock:
+            self._drift_detected = True
+        if hasattr(kernel_ref, "emergency_quarantine"):
+            kernel_ref.emergency_quarantine(reason="pcr_drift")
+        self.perform_rollback()
+
     def check_once(self, on_drift: Optional[Callable[[], None]] = None) -> bool:
         current = self.read_current_pcr()
         self._last_check = time.time()
         if self.is_expected(current):
             return True
-        with self._lock:
-            self._drift_detected = True
-        print("[Critical] PCR Drift Detected. Purging container silos.")
         if on_drift:
             on_drift()
         return False
@@ -125,11 +161,7 @@ class PCRDriftDetector:
         def _loop():
             while not self._stop.is_set():
                 if not self.is_expected():
-                    print("[Critical] PCR Drift Detected. Purging container silos.")
-                    with self._lock:
-                        self._drift_detected = True
-                    if hasattr(kernel_ref, "emergency_quarantine"):
-                        kernel_ref.emergency_quarantine(reason="pcr_drift")
+                    self._handle_drift(kernel_ref)
                 self._last_check = time.time()
                 self._stop.wait(interval)
 
@@ -137,7 +169,7 @@ class PCRDriftDetector:
             return
         self._monitor_thread = threading.Thread(target=_loop, daemon=True, name="pcr-drift")
         self._monitor_thread.start()
-        print(f"[PCRDrift] Monitor online (interval {interval}s).")
+        print(f"[PCRDrift] Monitor online (interval {interval}s, rollback={ROLLBACK_ENFORCE}).")
 
     def stop(self):
         self._stop.set()
@@ -146,10 +178,13 @@ class PCRDriftDetector:
         with self._lock:
             return {
                 "enforce": DRIFT_ENFORCE,
+                "rollback_enforce": ROLLBACK_ENFORCE,
                 "golden_set": bool(self._golden_digest),
                 "drift_detected": self._drift_detected,
+                "rollback_attempted": self._rollback_attempted,
                 "last_check": self._last_check,
                 "interval_sec": DRIFT_INTERVAL_SEC,
+                "kexec_kernel": KEXEC_KERNEL,
             }
 
 

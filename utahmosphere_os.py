@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Omega-Build v30.0
-DHT-federated attestation, PCR drift healing, unified sovereign cloud stack.
+UtahMosphere Operating System Kernel - Omega-Build v31.0
+Federated quorum consensus, PCR drift healing with kexec rollback.
 """
 
 import os
@@ -37,6 +37,7 @@ try:
     from quote_registry import quote_registry
     from ra_tls_guard import RATLSGuard, ra_tls_guard
     from dht_quote_registry import dht_quote_registry
+    from dht_consensus_engine import dht_consensus_engine
     from drift_detector import drift_detector
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
@@ -51,6 +52,7 @@ except ImportError:
     RATLSGuard = None
     ra_tls_guard = None
     dht_quote_registry = None
+    dht_consensus_engine = None
     drift_detector = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
@@ -71,7 +73,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v30.0 Federated Attested]",
+            "node_status": "Active [Omega-Build v31.0 Federated Quorum]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -97,7 +99,7 @@ class UtahmosphereSovereignKernel:
         if drift_detector:
             drift_detector.monitor(self)
 
-        print(f"[{self.node_identity}] Omega-Build v30.0 federated-attested kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v31.0 federated-quorum kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -128,6 +130,8 @@ class UtahmosphereSovereignKernel:
 
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
+            if dht_consensus_engine:
+                payload["quorum_consensus"] = dht_consensus_engine.export_consensus()
             if dht_quote_registry:
                 payload["dht_golden_registry"] = dht_quote_registry.export_golden()
             if RATLSAttestation:
@@ -152,6 +156,8 @@ class UtahmosphereSovereignKernel:
                 print("[Swarm Link] Rejected unsigned DHT ledger sync")
                 return
         registry = payload.get("registry", {})
+        if dht_consensus_engine and payload.get("quorum_consensus"):
+            dht_consensus_engine.merge_quorum_votes(payload["quorum_consensus"])
         origin = payload.get("origin_node", "unknown")
         print(f"[Swarm Link] DHT state sync from {origin}")
         self._apply_remote_registry(registry)
@@ -172,19 +178,26 @@ class UtahmosphereSovereignKernel:
         if ptype == "ATTESTATION_RESPONSE":
             quote = payload.get("quote")
             peer_id = payload.get("peer_id") or source_hash
-            if dht_quote_registry and quote and not dht_quote_registry.verify_against_swarm(peer_id, quote):
-                print(f"[DHT-Federation] Peer {peer_id[:12]} failed golden measurement consensus.")
+            if dht_consensus_engine and quote:
+                dht_consensus_engine.record_vote(peer_id, quote, self.node_identity)
+            if dht_consensus_engine and quote and not dht_consensus_engine.verify_against_quorum(peer_id, quote):
+                print(f"[Quorum] Peer {peer_id[:12]} failed majority consensus.")
                 hw = payload.get("hardware_id")
                 if quote_registry and hw:
-                    quote_registry.purge_node(hw, "dht_consensus_mismatch")
-                dht_quote_registry.purge_peer(peer_id, "consensus_mismatch")
+                    quote_registry.purge_node(hw, "quorum_mismatch")
+                if dht_consensus_engine:
+                    dht_consensus_engine.purge_peer(peer_id, "quorum_mismatch")
+                elif dht_quote_registry:
+                    dht_quote_registry.purge_peer(peer_id, "quorum_mismatch")
             return
         if ptype == "QUARANTINE_NOTICE":
             hw = payload.get("hardware_id")
             peer = payload.get("peer_id", source_hash)
             if quote_registry and hw:
                 quote_registry.purge_node(hw, payload.get("reason", "remote_quarantine"))
-            if dht_quote_registry:
+            if dht_consensus_engine:
+                dht_consensus_engine.purge_peer(peer, payload.get("reason", "remote_quarantine"))
+            elif dht_quote_registry:
                 dht_quote_registry.purge_peer(peer, payload.get("reason", "remote_quarantine"))
             print(f"[DHT-Federation] Swarm quarantine notice for peer {peer[:12]}")
 
@@ -198,15 +211,22 @@ class UtahmosphereSovereignKernel:
         hw_id = self.cluster_registry.get("hardware_id")
         if quote_registry and hw_id:
             quote_registry.purge_node(hw_id, reason)
-        if dht_quote_registry:
+        if dht_consensus_engine:
+            dht_consensus_engine.purge_peer(self.node_identity, reason)
+        elif dht_quote_registry:
             dht_quote_registry.purge_peer(self.node_identity, reason)
         self.cluster_registry["quarantined"] = True
         self.cluster_registry["quarantine_reason"] = reason
         if quote_registry:
             self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        if dht_consensus_engine:
+            self.cluster_registry["quorum_consensus"] = dht_consensus_engine.export_consensus()
         if dht_quote_registry:
             self.cluster_registry["dht_golden_registry"] = dht_quote_registry.export_golden()
-        status_label = "QUARANTINED: PCR DRIFT" if reason == "pcr_drift" else f"QUARANTINED: {reason.upper()}"
+        if reason in ("pcr_drift", "quorum_mismatch"):
+            status_label = "QUARANTINED: PCR DRIFT / QUORUM MISMATCH"
+        else:
+            status_label = f"QUARANTINED: {reason.upper()}"
         self.ui_state["node_status"] = status_label
         self.ui_state["cluster_health"] = "Quarantined"
         self._save_registry_unlocked()
@@ -252,6 +272,8 @@ class UtahmosphereSovereignKernel:
             snap["ra_tls"] = RATLSAttestation.status()
         if quote_registry:
             snap["quote_registry"] = quote_registry.stats()
+        if dht_consensus_engine:
+            snap["quorum"] = dht_consensus_engine.stats()
         if dht_quote_registry:
             snap["dht_federation"] = dht_quote_registry.stats()
         if drift_detector:
@@ -278,19 +300,28 @@ class UtahmosphereSovereignKernel:
             pcr_digest=body.get("pcr0_digest"),
             node_id=self.node_identity,
         )
-        if dht_quote_registry:
+        if dht_consensus_engine:
+            dht_consensus_engine.record_golden(
+                self.node_identity,
+                quote,
+                voter_id=self.node_identity,
+            )
+        elif dht_quote_registry:
             dht_quote_registry.record_golden(
                 self.node_identity,
                 quote,
                 pcr_digest=body.get("pcr0_digest"),
                 hardware_id=hw_id,
             )
-            if drift_detector:
-                drift_detector.anchor_golden()
+        if drift_detector:
+            drift_detector.anchor_golden()
         self.cluster_registry["hardware_id"] = hw_id
         self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
         self.cluster_registry["dht_golden_registry"] = (
             dht_quote_registry.export_golden() if dht_quote_registry else {}
+        )
+        self.cluster_registry["quorum_consensus"] = (
+            dht_consensus_engine.export_consensus() if dht_consensus_engine else {}
         )
         self._save_registry_unlocked()
         print(f"[RA-TLS] Hardware quote registered globally: {hw_id[:16]}...")
@@ -308,6 +339,9 @@ class UtahmosphereSovereignKernel:
         if quote_registry and remote.get("quote_registry"):
             quote_registry.merge_remote(remote["quote_registry"])
             self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        if dht_consensus_engine and remote.get("quorum_consensus"):
+            dht_consensus_engine.merge_quorum_votes(remote["quorum_consensus"])
+            self.cluster_registry["quorum_consensus"] = dht_consensus_engine.export_consensus()
         if dht_quote_registry and remote.get("dht_golden_registry"):
             dht_quote_registry.merge_dht_consensus(remote["dht_golden_registry"])
             self.cluster_registry["dht_golden_registry"] = dht_quote_registry.export_golden()
@@ -687,8 +721,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "30.0",
-                "build": "omega-build-v30-federated-attested",
+                "version": "31.0",
+                "build": "omega-build-v31-federated-quorum",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -707,9 +741,23 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             if dht_quote_registry is None:
                 self._json_response(503, {"error": "DHT federation unavailable"})
                 return
-            self._json_response(200, {
+            body = {
                 "golden": dht_quote_registry.export_golden(),
                 "stats": dht_quote_registry.stats(),
+            }
+            if dht_consensus_engine:
+                body["quorum"] = dht_consensus_engine.export_consensus()
+                body["quorum_stats"] = dht_consensus_engine.stats()
+            self._json_response(200, body)
+            return
+
+        if path == "/quorum/consensus":
+            if dht_consensus_engine is None:
+                self._json_response(503, {"error": "Quorum engine unavailable"})
+                return
+            self._json_response(200, {
+                "consensus": dht_consensus_engine.export_consensus(),
+                "stats": dht_consensus_engine.stats(),
             })
             return
 

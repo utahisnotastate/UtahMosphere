@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign trust chain.
+UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,10 +8,11 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign tr
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | `build: omega-build-v30-federated-attested` + kompleto na attestation snapshot |
+| `/health` | GET | **Ma implement** | `build: omega-build-v31-federated-quorum` + kompleto na attestation snapshot |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
 | `/nonce` | GET | **Ma implement** | Voice command anti-replay nonce |
@@ -29,6 +30,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign tr
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Ma implement** | Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
 | **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
@@ -39,7 +41,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign tr
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v30** | **Ma implement** | `utah_genesis_v30.iso` |
+| **Genesis ISO v31** | **Ma implement** | `utah_genesis_v31.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -50,13 +52,15 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign tr
 |--------|--------|
 | `python3 utahmosphere_master.py` | **Ma recommend** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v30 ISO** |
+| `python3 genesis_iso_builder.py` | **v31 ISO** |
 
 ## Environment
 
 | Variable | Default | Para håfa |
 |----------|---------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Require TPM seal gi claim |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
@@ -65,7 +69,7 @@ UtahMosphere OS **v30.0 DHT-Federated Attestation** — kompleto na sovereign tr
 
 ## Roadmap
 
-Todu i v28.0 roadmap items **ma implement** gi v30.0.
+Todu i v28.0 roadmap items **ma implement** gi v31.0.
 
 Futuru: remote RA-TLS CA pinning, hardware quote registry service.
 

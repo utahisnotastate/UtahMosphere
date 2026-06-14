@@ -1,82 +1,51 @@
-# DHT-Federated Attestation (v30.0)
+# DHT-Federated Attestation (v31.0)
 
-**DHT-Federated Attestation** prevents split-brain swarms: nodes cross-verify hardware quotes against a **global DHT consensus** of golden TPM measurements, not just local registry state.
+**DHT-Federated Attestation** with **majority-quorum consensus** prevents split-brain swarms: nodes cross-verify hardware quotes against a global vote ledger where 51%+ of peers must agree on the golden TPM measurement.
 
 ## Topology
 
 ```
 Node A                          Swarm DHT
   |                                 |
-  |-- LEDGER_SYNC + dht_golden ---->|-- merge_dht_consensus()
-  |-- ATTESTATION_CHALLENGE ------->|-- ATTESTATION_RESPONSE (TPM quote)
-  |                                 |-- verify_against_swarm()
-  |<-- QUARANTINE_NOTICE (drift) ---|
+  |-- LEDGER_SYNC + quorum_votes -->|-- merge_quorum_votes()
+  |-- ATTESTATION_CHALLENGE ------->|-- ATTESTATION_RESPONSE
+  |                                 |-- verify_against_quorum()
+  |<-- QUARANTINE_NOTICE -----------|
 ```
 
-## Global Quote Registry (`dht_quote_registry.py`)
+## Layers
 
-| Method | Purpose |
-|--------|---------|
-| `record_golden(peer_id, quote, ...)` | Anchor golden measurement on claim |
-| `verify_against_swarm(peer_id, quote)` | Cross-check peer quote vs DHT consensus |
-| `merge_dht_consensus(remote_golden)` | Replicate golden ledger from mesh |
-| `purge_peer(peer_id, reason)` | Quarantine drifted peer |
-| `export_golden()` | Full DHT snapshot for sync |
-
-Persistence: `{UTAH_DATA_DIR}/dht_golden_registry.json`
+| Module | Role |
+|--------|------|
+| `dht_consensus_engine.py` | Majority-quorum vote tally + `verify_against_quorum()` |
+| `dht_quote_registry.py` | Golden measurement ledger (underlying DHT store) |
+| `drift_detector.py` | PCR0 monitor + kexec rollback |
 
 ## Swarm Packet Types
 
-| Type | Direction | Purpose |
-|------|-----------|---------|
-| `ATTESTATION_CHALLENGE` | Any → peer | Request fresh TPM quote |
-| `ATTESTATION_RESPONSE` | Peer → challenger | Signed RA-TLS quote payload |
-| `DHT_GOLDEN_SYNC` | Mesh broadcast | Replicate golden measurements |
-| `QUARANTINE_NOTICE` | Drifted node → swarm | Notify peers to purge hardware |
+| Type | Purpose |
+|------|---------|
+| `ATTESTATION_CHALLENGE` | Request fresh TPM quote |
+| `ATTESTATION_RESPONSE` | Present quote; voter records quorum vote |
+| `QUARANTINE_NOTICE` | Notify swarm of drift/quorum mismatch |
+| `DHT_GOLDEN_SYNC` | Replicate golden measurements |
 
 ## HTTP API
 
-### GET /dht/consensus
-
-```bash
-curl http://127.0.0.1:8999/dht/consensus
-```
-
-**Response `200`:**
-
-```json
-{
-  "golden": {
-    "my-host": {
-      "golden_quote": "sha256-fingerprint",
-      "pcr_digest": "...",
-      "hardware_id": "...",
-      "status": "consensus"
-    }
-  },
-  "stats": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}
-}
-```
-
-### POST /dht/challenge
-
-Issue attestation challenge to a swarm peer.
-
-```bash
-curl -X POST http://127.0.0.1:8999/dht/challenge \
-  -H "Content-Type: application/json" \
-  -d '{"peer_hash": "abc123...64chars"}'
-```
+- `GET /quorum/consensus` — quorum vote ledger
+- `GET /dht/consensus` — golden + quorum combined
+- `POST /dht/challenge` — issue attestation challenge
 
 ## Environment
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | Require DHT golden consensus (`0` = dev) |
-| `UTAH_DHT_GOLDEN_REGISTRY_PATH` | `{UTAH_DATA_DIR}/dht_golden_registry.json` | Golden ledger persistence |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum enforcement |
+| `UTAH_QUORUM_THRESHOLD` | `0.51` | Consensus ratio |
+| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden ledger enforcement |
 
 ## Related
 
+- [Federated Quorum Consensus](QUORUM_CONSENSUS.md)
 - [PCR Drift Detection](PCR_DRIFT.md)
-- [Hardware Quote Registry](QUOTE_REGISTRY.md)
 - [RA-TLS](RA_TLS.md)

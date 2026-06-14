@@ -16,18 +16,19 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "30.0",
-  "build": "omega-build-v30-federated-attested",
+  "version": "31.0",
+  "build": "omega-build-v31-federated-quorum",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v30_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v31_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
-    "pcr_drift": {"enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
+    "quorum": {"quorum_reached": 1, "pending": 0, "quarantined": 0, "total": 1, "threshold": 0.51, "enforce": true},
+    "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
   }
 }
 ```
@@ -50,7 +51,7 @@ curl http://127.0.0.1:8999/health
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v30-federated-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v31-federated-quorum\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -112,6 +113,36 @@ Purger un identifiant matériel compromis du registre global. Titulaire vibe rac
 
 
 ---
+
+
+
+---
+
+## GET /quorum/consensus
+
+Export majority-quorum vote ledger.
+
+**Response `200`:**
+
+```json
+{
+  "consensus": {
+    "my-host": {
+      "golden_quote": "sha256-fingerprint",
+      "votes": {"voter-node": "sha256-fingerprint"},
+      "quorum_ratio": 1.0,
+      "vote_count": 1,
+      "status": "quorum_reached"
+    }
+  },
+  "stats": {"quorum_reached": 1, "pending": 0, "quarantined": 0, "total": 1, "threshold": 0.51, "enforce": true}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/quorum/consensus
+```
+
 
 ## GET /dht/consensus
 
@@ -491,6 +522,8 @@ Révoquer un nœud délégué de `authorized_nodes[]`. Titulaire vibe racine uni
 | `security/biometric_ledger.json` | Hash vibe racine (repli local si `/etc` non inscriptible) |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 | `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden ledger |
+| `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
+| `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum vote ledger |
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Registre global des citations matérielles |
 

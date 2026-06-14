@@ -1,4 +1,4 @@
-# 硬件引用注册表 (v30.0)
+# 硬件引用注册表 (v31.0)
 
 **硬件引用注册表**是 UtahMosphere 集群中有效 TPM 硬件指纹的分布式真相源。节点不信任 IP 地址——它们信任由 Utah-Kernel 根 CA 签名并登记在本注册表中的**硬件引用**。
 
@@ -49,7 +49,7 @@ UtahX ingress ----------------------> ra_tls_guard.verify_http_headers()
 |------|--------|------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | 注册表持久化 |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX 入口 + CA（`0` = 开发） |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | 引用签名根 |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | 引用签名根 |
 
 开发环境：
 

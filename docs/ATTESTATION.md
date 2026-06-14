@@ -1,6 +1,6 @@
-# Hardware Attestation (v30.0)
+# Hardware Attestation (v31.0)
 
-TPM 2.0 PCR0 verification, **TPM-locked Vibe-Print sealing**, **global hardware quote registration**, and **PCR drift healing** anchor hardware root-of-trust from Genesis boot through DHT-federated mesh attestation.
+TPM 2.0 PCR0 verification, **TPM-locked Vibe-Print sealing**, **majority-quorum DHT consensus**, and **kexec PCR rollback** anchor hardware root-of-trust from Genesis boot through federated mesh attestation.
 
 ## Bootstrap Gate
 
@@ -22,11 +22,11 @@ python3 -c "from tpm_lock import TPMLocker; print(TPMLocker.unseal_vibe_print())
 
 If PCR0 changes (kernel tamper, hardware swap), unseal fails and voice commands are rejected.
 
-## PCR Drift Healing (v30.0)
+## PCR Drift Healing (v31.0)
 
-`drift_detector.PCRDriftDetector` monitors PCR0 every 10 seconds. On drift, `emergency_quarantine()` stops all containers and notifies the swarm.
+`drift_detector.PCRDriftDetector` monitors PCR0 and executes `perform_rollback()` via kexec on drift.
 
-See [PCR Drift Detection](PCR_DRIFT.md) and [DHT Federation](DHT_FEDERATION.md).
+See [PCR Drift Detection](PCR_DRIFT.md) and [Federated Quorum Consensus](QUORUM_CONSENSUS.md).
 
 ## Biometric-to-TPM Binding
 
@@ -58,8 +58,8 @@ See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer v
   },
   "ra_tls": {
     "enforce": true,
-    "kernel_root_ca": "utahmosphere_omega_build_v30_root_ca",
-    "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}
+    "kernel_root_ca": "utahmosphere_omega_build_v31_root_ca",
+    "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true}
   },
   "quote_registry": {"active": 1, "purged": 0, "total": 1},
   "pcr_drift": {"enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
@@ -75,7 +75,8 @@ See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer v
 | `UTAH_RA_TLS_ENFORCE` | `1` | Mesh quote enforcement |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR0 drift monitor + quarantine |
-| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum consensus |
+| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback on drift |
 
 Dev skip all TPM layers:
 

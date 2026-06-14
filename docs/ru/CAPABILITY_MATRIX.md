@@ -9,15 +9,15 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
 | `/health` | GET | **Реализовано** | `build: omega-build-v32-lazarus-self-healing` + полный снимок аттестации |
-| `/attestation/quote` | GET |
-| `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
-| `/registry/purge` | POST |
+| `/attestation/quote` | GET | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
+| `/registry/quotes` | GET | **Реализовано** | Глобальный реестр аппаратных цитат |
+| `/registry/purge` | POST | **Реализовано** | Удаление скомпрометированного оборудования |
 | `/witness/status` | GET | **Реализовано** | Кворум-свидетели в нескольких регионах |
 | `/lazarus/status` | GET | **Реализовано** | Контрольная точка Lazarus |
 | `/lazarus/restore` | POST | **Реализовано** | Восстановление Golden Master |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
+| `/quorum/consensus` | GET | **Реализовано** | Реестр кворум-голосов |
+| `/dht/consensus` | GET | **Реализовано** | DHT золотой реестр |
+| `/dht/challenge` | POST | **Реализовано** | Вызов аттестации роя |
 | `/nonce` | GET | **Реализовано** | Nonce против повторного воспроизведения голосовых команд |
 | `/status` | GET | **Реализовано** | TPM lock, RA-TLS, регионы mempool Океании |
 | `/command` | POST | **Реализовано** | Голос + nonce + TPM-привязанная проверка vibe |
@@ -65,7 +65,11 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 | Переменная | По умолчанию | Назначение |
 |------------|--------------|------------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Требовать TPM seal при claim |
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_QUORUM_ENFORCE` | `1` | Кворум большинства |
+| `UTAH_WITNESS_ENFORCE` | `1` | Мультирегиональные свидетели |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Автовосстановление |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec при восстановлении |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Запутанная delta-синхронизация |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

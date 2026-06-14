@@ -27,8 +27,10 @@
     "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
-    "quorum": {"quorum_reached": 1, "pending": 0, "quarantined": 0, "total": 1, "threshold": 0.51, "enforce": true},
-    "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
+    "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
+    "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
+    "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
+    "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }
 ```
@@ -554,12 +556,8 @@ curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 | `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden ledger |
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
-| `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum ledger |
-| `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus checkpoint |
-| `{UTAH_DATA_DIR}/quorum_witness.json` | Witness registry checkpoint |
-| `{UTAH_DATA_DIR}/quorum_witness.json` | Witness registry |
 | `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum vote ledger |
-| `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
-| `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry | | Состояние счетов и платежей |
+| `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus Golden Master checkpoint |
+| `{UTAH_DATA_DIR}/quorum_witness.json` | Multi-region witness registry |
 
 По умолчанию `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (при ошибках прав — локальные каталоги).

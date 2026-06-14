@@ -9,15 +9,15 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
 | `/health` | GET | **Implementado** | `build: omega-build-v32-lazarus-self-healing` + instantánea de attestation completa |
-| `/attestation/quote` | GET |
-| `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
-| `/registry/purge` | POST |
+| `/attestation/quote` | GET | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
+| `/registry/quotes` | GET | **Implementado** | Registro global de citas de hardware |
+| `/registry/purge` | POST | **Implementado** | Eliminar hardware comprometido |
 | `/witness/status` | GET | **Implementado** | Testigos multi-región |
 | `/lazarus/status` | GET | **Implementado** | Punto de control Lazarus |
 | `/lazarus/restore` | POST | **Implementado** | Restauración Golden Master |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
+| `/quorum/consensus` | GET | **Implementado** | Libro de votos de quórum |
+| `/dht/consensus` | GET | **Implementado** | Libro dorado DHT |
+| `/dht/challenge` | POST | **Implementado** | Desafío de atestación del enjambre |
 | `/nonce` | GET | **Implementado** | Nonce anti-replay para comando de voz |
 | `/status` | GET | **Implementado** | Bloqueo TPM, RA-TLS, regiones mempool Oceanía |
 | `/command` | POST | **Implementado** | Voz + nonce + verificación vibe vinculada al TPM |
@@ -65,7 +65,11 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 | Variable | Predeterminado | Propósito |
 |----------|----------------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Exigir sellado TPM en el claim |
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_QUORUM_ENFORCE` | `1` | Quórum mayoritario |
+| `UTAH_WITNESS_ENFORCE` | `1` | Testigos multi-región |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Restauración automática |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec Lazarus |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Sync delta entrelazada |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

@@ -27,7 +27,7 @@ Liveness probe for load balancers and monitoring.
     "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca"},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
-    "lazarus": {"auto_restore": true, "checkpoint_exists": true},
+    "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }

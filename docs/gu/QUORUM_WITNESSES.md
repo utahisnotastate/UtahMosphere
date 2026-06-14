@@ -39,7 +39,7 @@ curl http://127.0.0.1:8999/witness/status
 |----------|---------|---------|
 | `UTAH_WITNESS_ENFORCE` | `1` | Require witness quorum (`0` = dev) |
 | `UTAH_WITNESS_THRESHOLD` | `0.51` | Minimum witness vote ratio |
-| `UTAH_WITNESS_NODES` | 3 defaults | Comma-separated witness endpoints |
+| `UTAH_WITNESS_NODES` | 4 defaults | Comma-separated witness endpoints |
 
 ## Related
 

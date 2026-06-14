@@ -9,15 +9,15 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
 | `/health` | GET | **Implementerat** | `build: omega-build-v32-lazarus-self-healing` + fullständig attesteringsögonblicksbild |
-| `/attestation/quote` | GET |
-| `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
-| `/registry/purge` | POST |
+| `/attestation/quote` | GET | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
+| `/registry/quotes` | GET | **Implementerat** | Globalt register för hårdvarucitat |
+| `/registry/purge` | POST | **Implementerat** | Rensa komprometterad hårdvara |
 | `/witness/status` | GET | **Implementerat** | Flerregions vittnen |
 | `/lazarus/status` | GET | **Implementerat** | Lazarus-kontrollpunkt |
 | `/lazarus/restore` | POST | **Implementerat** | Golden Master-återställning |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
+| `/quorum/consensus` | GET | **Implementerat** | Majoritetskvorum-ledger |
+| `/dht/consensus` | GET | **Implementerat** | DHT gyllene ledger |
+| `/dht/challenge` | POST | **Implementerat** | Svärm-attesteringsutmaning |
 | `/nonce` | GET | **Implementerat** | Nonce mot återuppspelning av röstkommandon |
 | `/status` | GET | **Implementerat** | TPM lock, RA-TLS, Oceanien mempool-regioner |
 | `/command` | POST | **Implementerat** | Röst + nonce + TPM-bunden vibe-verifiering |
@@ -65,7 +65,11 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 | Variabel | Standard | Syfte |
 |----------|----------|-------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Kräv TPM-försegling vid claim |
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majoritetskvorum |
+| `UTAH_WITNESS_ENFORCE` | `1` | Flerregions vittnen |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Autoåterställning |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec Lazarus |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Entanglad deltasynk |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

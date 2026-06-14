@@ -11,13 +11,13 @@ UtahMosphere OS **v32.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 | `/health` | GET | **Toteutettu** | `build: omega-build-v32-lazarus-self-healing` + täydellinen todentamistilannekuva |
 | `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote + `hardware_id` |
 | `/registry/quotes` | GET | **Toteutettu** | Globaalin laitteisto quote -rekisterin vienti |
-| `/registry/purge` | POST |
+| `/registry/purge` | POST | **Toteutettu** | Poista vaarantunut laitteisto |
 | `/witness/status` | GET | **Toteutettu** | Monialueiset todistajat |
 | `/lazarus/status` | GET | **Toteutettu** | Lazarus-tarkistuspiste |
 | `/lazarus/restore` | POST | **Toteutettu** | Golden Master -palautus |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Toteutettu** | Vaarantuneen laitteiston poisto (juuri-vibe) |
+| `/quorum/consensus` | GET | **Toteutettu** | Enemmistökvoorumin kirjanpito |
+| `/dht/consensus` | GET | **Toteutettu** | DHT kultainen kirjanpito |
+| `/dht/challenge` | POST | **Toteutettu** | Parven todentamishaaste |
 | `/nonce` | GET | **Toteutettu** | Äänikomennon uudelleentoiston eston nonce |
 | `/status` | GET | **Toteutettu** | TPM lock, RA-TLS guard, quote-rekisterin tilastot |
 | `/command` | POST | **Toteutettu** | Ääni + nonce + TPM-sidottu vibe + rekisterin push claimissä |
@@ -60,7 +60,11 @@ UtahMosphere OS **v32.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 |----------|--------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Vaadi TPM-sinetti claimissä |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Vaadi RA-TLS quote meshissä |
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_QUORUM_ENFORCE` | `1` | Enemmistökvoorum |
+| `UTAH_WITNESS_ENFORCE` | `1` | Monialueiset todistajat |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Automaattinen palautus |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec Lazarus-palautus |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Kietoutunut deltasynk |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

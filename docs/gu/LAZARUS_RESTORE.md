@@ -23,6 +23,7 @@ PCR drift detected
 | `get_golden_master(kernel_ref)` | Load from checkpoint or DHT |
 | `apply_state(kernel_ref, golden)` | Atomic state re-instantiation |
 | `save_checkpoint(kernel_ref)` | Persist golden state to disk |
+| `perform_kexec_instantiation()` | Load + execute verified kexec image |
 | `schedule_auto_restore(kernel_ref)` | Async restore after quarantine |
 
 Checkpoint: `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json`
@@ -42,6 +43,9 @@ curl -X POST http://127.0.0.1:8999/lazarus/restore
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Auto-restore after quarantine (`0` = dev) |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec during restore (`0` = dev) |
+| `UTAH_LAZARUS_KEXEC_KERNEL` | `/boot/vmlinuz-verified` | Verified recovery kernel |
+| `UTAH_LAZARUS_KEXEC_INITRD` | `/boot/initramfs-verified` | Verified initramfs |
 | `UTAH_LAZARUS_CHECKPOINT_PATH` | `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Golden Master checkpoint |
 
 ## Related

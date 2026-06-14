@@ -39,7 +39,7 @@ curl http://127.0.0.1:8999/witness/status
 |---------|-----------|---------|
 | `UTAH_WITNESS_ENFORCE` | `1` | Nõua tunnistaja kvoorumit (`0` = arendus) |
 | `UTAH_WITNESS_THRESHOLD` | `0.51` | Minimaalne häälte suhe |
-| `UTAH_WITNESS_NODES` | 3 vaikimisi | Komaeraldusega tunnistaja lõpp-punktid |
+| `UTAH_WITNESS_NODES` | 4 vaikimisi | Komaeraldusega tunnistaja lõpp-punktid |
 
 ## Seotud
 

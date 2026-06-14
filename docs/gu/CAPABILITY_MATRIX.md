@@ -9,15 +9,15 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
 | `/health` | GET | **Ma implement** | `build: omega-build-v32-lazarus-self-healing` + kompleto na attestation snapshot |
-| `/attestation/quote` | GET |
-| `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
-| `/registry/purge` | POST |
+| `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
+| `/registry/quotes` | GET | **Ma implement** | Global hardware quote registry |
+| `/registry/purge` | POST | **Ma implement** | Purge compromised hardware |
 | `/witness/status` | GET | **Implemented** | Multi-region witnesses |
 | `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint |
 | `/lazarus/restore` | POST | **Implemented** | Golden Master restore |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
+| `/quorum/consensus` | GET | **Ma implement** | Majority-quorum ledger |
+| `/dht/consensus` | GET | **Ma implement** | DHT golden ledger |
+| `/dht/challenge` | POST | **Ma implement** | Swarm attestation challenge |
 | `/nonce` | GET | **Ma implement** | Voice command anti-replay nonce |
 | `/status` | GET | **Ma implement** | TPM lock, RA-TLS, Oceania mempool regions |
 | `/command` | POST | **Ma implement** | Voice + nonce + TPM-bound vibe verification |
@@ -66,6 +66,10 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 |----------|---------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Require TPM seal gi claim |
 | `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witnesses |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Auto-restore |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec Lazarus restore |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Entangled delta sync |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

@@ -11,13 +11,13 @@ UtahMosphere OS **v32.0 Infrastructure d'attestation à distance** — ancres de
 | `/health` | GET | **Implémenté** | `build: omega-build-v32-lazarus-self-healing` + instantané d'attestation complet |
 | `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS + `hardware_id` |
 | `/registry/quotes` | GET | **Implémenté** | Export du registre global des citations matérielles |
-| `/registry/purge` | POST |
+| `/registry/purge` | POST | **Implémenté** | Purger le matériel compromis |
 | `/witness/status` | GET | **Implémenté** | Témoins multi-régions |
 | `/lazarus/status` | GET | **Implémenté** | Point de contrôle Lazarus |
 | `/lazarus/restore` | POST | **Implémenté** | Restauration Golden Master |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
-| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
-| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implémenté** | Purger le matériel compromis (vibe racine) |
+| `/quorum/consensus` | GET | **Implémenté** | Registre de votes quorum |
+| `/dht/consensus` | GET | **Implémenté** | Registre doré DHT |
+| `/dht/challenge` | POST | **Implémenté** | Défi d'attestation de l'essaim |
 | `/nonce` | GET | **Implémenté** | Nonce anti-rejeu pour commande vocale |
 | `/status` | GET | **Implémenté** | Verrou TPM, garde RA-TLS, statistiques du registre de citations |
 | `/command` | POST | **Implémenté** | Voix + nonce + vibe liée au TPM + envoi au registre lors de la revendication |
@@ -60,7 +60,11 @@ UtahMosphere OS **v32.0 Infrastructure d'attestation à distance** — ancres de
 |----------|--------|----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Exiger le scellement TPM à la revendication |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Exiger les citations RA-TLS sur le maillage |
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum |
+| `UTAH_QUORUM_ENFORCE` | `1` | Quorum majoritaire |
+| `UTAH_WITNESS_ENFORCE` | `1` | Témoins multi-régions |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Restauration automatique |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec Lazarus |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Sync delta entrelacée |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |

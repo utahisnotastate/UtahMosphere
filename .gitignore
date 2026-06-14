@@ -19,6 +19,10 @@ ENV/
 Thumbs.db
 
 # UtahMosphere specific (if run locally)
+.utah-data/
+security/
+tycoon/
+swarm/
 *.json
 !docker-compose.yaml
 !package.json

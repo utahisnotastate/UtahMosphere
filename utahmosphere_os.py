@@ -310,9 +310,31 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
 
     def do_GET(self):
         client_id = self.headers.get("X-Client-ID", self.client_address[0])
-        
-        # Check if the path corresponds to a tenant application
         parts = self.path.split("/")
+
+        if self.path == "/health":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "status": "healthy",
+                "node": self.core_engine.node_identity,
+                "version": "25.0",
+            }).encode("utf-8"))
+            return
+
+        if self.path == "/status":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "ui_state": self.core_engine.ui_state,
+                "tenants": list(self.core_engine.cluster_registry.get("tenants", {}).keys()),
+                "claimed": self.core_engine.root_vibe is not None,
+            }).encode("utf-8"))
+            return
+
+        # Check if the path corresponds to a tenant application
         if len(parts) > 2 and parts[1] == "app":
             app_name = parts[2]
             

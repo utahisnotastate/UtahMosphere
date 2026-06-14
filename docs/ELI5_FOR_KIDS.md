@@ -17,3 +17,5 @@ With UtahMosphere, you get a tiny "Robot Butler" (a Mini PC or Raspberry Pi) tha
 - **RDS (The Secret Diary):** A diary that shares secrets with other Robot Butlers around the world so everyone knows the same fun facts at the same time.
 
 **No more rent, no more grumpy skyscrapers. Just you and your magical digital house!**
+
+**Try it:** [Tutorial: Your First Robot Butler](tutorials/01-kids-first-robot-butler.md) · [Fun Activities](recipes/kids-activities.md)

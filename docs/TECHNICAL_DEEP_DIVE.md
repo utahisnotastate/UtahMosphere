@@ -42,6 +42,12 @@ Replaces IAM roles and passwords.
 ---
 
 #### **System Requirements**
-- **OS:** Minimal Linux Footprint (Ubuntu Minimal, Alpine, or Bare-Metal).
+- **OS:** Minimal Linux Footprint (Ubuntu Minimal, Alpine, or Bare-Metal). Windows/macOS supported for local dev — see [Local Development Guide](LOCAL_DEVELOPMENT.md).
 - **Hardware:** x86_64 or ARM64 (Mini PC, Raspberry Pi 4/5, M5Stack).
 - **Dependencies:** Python 3.11+, `librosa`, `numpy`, `SpeechRecognition`.
+
+#### **Further Reading**
+- [Architect Tutorial](tutorials/03-architect-deployment.md)
+- [Architect Recipes](recipes/architect-recipes.md)
+- [API Reference](API_REFERENCE.md)
+- [Access Control](ACCESS_CONTROL.md)

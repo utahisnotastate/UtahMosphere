@@ -14,5 +14,8 @@ UtahMosphere is a new way to run your websites and apps without paying monthly r
 2.  **Run the Setup:** A technician (or a tech-savvy friend) runs one command to install the UtahMosphere brain.
 3.  **Deploy your App:** Tell the system where your website code is, and it handles the rest. No more complicated settings!
 
+**Step-by-step tutorial:** [Setup Without Jargon](tutorials/06-non-technical-setup.md)  
+**Ops help:** [Operations Runbook](OPERATIONS_RUNBOOK.md)
+
 #### **The "No-Maintenance" Promise**
 UtahMosphere is designed to heal itself. It cleans up its own mess, fixes its own errors, and optimizes its own memory. You set it up once and forget about it. It just works.

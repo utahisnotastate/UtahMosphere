@@ -15,7 +15,20 @@ import hashlib
 from typing import Dict, List, Any
 
 # --- SWARM CONFIGURATION ---
-UTAH_SWARM_DIR = "/var/lib/utahmosphere/swarm"
+def _resolve_swarm_dir() -> str:
+    primary = os.path.join(
+        os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere"), "swarm"
+    )
+    try:
+        os.makedirs(primary, exist_ok=True)
+        return primary
+    except PermissionError:
+        fallback = "swarm"
+        os.makedirs(fallback, exist_ok=True)
+        return fallback
+
+
+UTAH_SWARM_DIR = _resolve_swarm_dir()
 ROUTING_TABLE_FILE = os.path.join(UTAH_SWARM_DIR, "dht_routing.json")
 SWARM_PORT = 9055  # Dynamic UDP listening port for global hole-punching
 
@@ -43,13 +56,7 @@ class UtahSwarmNode:
             threading.Thread(target=self._ping_nearest_neighbors, daemon=True).start()
 
     def _bootstrap_swarm_paths(self):
-        try:
-            os.makedirs(UTAH_SWARM_DIR, exist_ok=True)
-        except PermissionError:
-            global UTAH_SWARM_DIR, ROUTING_TABLE_FILE
-            UTAH_SWARM_DIR = "swarm"
-            ROUTING_TABLE_FILE = os.path.join(UTAH_SWARM_DIR, "dht_routing.json")
-            os.makedirs(UTAH_SWARM_DIR, exist_ok=True)
+        os.makedirs(UTAH_SWARM_DIR, exist_ok=True)
 
         if os.path.exists(ROUTING_TABLE_FILE):
             try:

@@ -11,7 +11,18 @@ import hmac
 import hashlib
 from typing import Dict, Any
 
-UTAH_SECURITY_DIR = "/etc/utahmosphere/security"
+def _resolve_security_dir() -> str:
+    primary = "/etc/utahmosphere/security"
+    try:
+        os.makedirs(primary, exist_ok=True)
+        return primary
+    except PermissionError:
+        fallback = "security"
+        os.makedirs(fallback, exist_ok=True)
+        return fallback
+
+
+UTAH_SECURITY_DIR = _resolve_security_dir()
 ROOT_LEDGER_FILE = os.path.join(UTAH_SECURITY_DIR, "biometric_ledger.json")
 
 class QuantumLedgerGuard:
@@ -21,14 +32,7 @@ class QuantumLedgerGuard:
         print("[Quantum Ledger] Biometric Guard Layer Initialized. Static secrets deprecated.")
 
     def _ensure_security_paths(self):
-        try:
-            os.makedirs(UTAH_SECURITY_DIR, exist_ok=True)
-        except PermissionError:
-            # Fallback for local testing if /etc is not writable
-            global UTAH_SECURITY_DIR, ROOT_LEDGER_FILE
-            UTAH_SECURITY_DIR = "security"
-            ROOT_LEDGER_FILE = os.path.join(UTAH_SECURITY_DIR, "biometric_ledger.json")
-            os.makedirs(UTAH_SECURITY_DIR, exist_ok=True)
+        os.makedirs(UTAH_SECURITY_DIR, exist_ok=True)
 
     def _load_ledger(self) -> Dict[str, Any]:
         if os.path.exists(ROOT_LEDGER_FILE):

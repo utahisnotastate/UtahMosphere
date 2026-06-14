@@ -12,7 +12,8 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
-MANIFEST_PATH = "/var/lib/utahmosphere/flux_ui_manifest.json"
+UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
+MANIFEST_PATH = os.path.join(UTAH_DATA_DIR, "flux_ui_manifest.json")
 
 class UtahFluxDisplayApp:
     def __init__(self, root):

@@ -1,0 +1,99 @@
+# UtahMosphere Documentation Portal
+
+Welcome to the UtahMosphere OS documentation hub. Content is organized by **audience role**, **hands-on tutorials**, **copy-paste recipes**, and **starter projects**.
+
+**Other languages:** Each locale is a fully separate site (one language per page). See [Documentation Languages](LANGUAGES.md).
+
+---
+
+## Start Here
+
+| Document | Best for |
+|----------|----------|
+| [Capability Matrix](CAPABILITY_MATRIX.md) | Everyone — what works today vs. roadmap |
+| [API Reference](API_REFERENCE.md) | Developers and operators |
+| [Access Control Model](ACCESS_CONTROL.md) | Architects and security reviewers |
+| [Local Development Guide](LOCAL_DEVELOPMENT.md) | Developers on Windows, macOS, or Linux |
+| [Operations Runbook](OPERATIONS_RUNBOOK.md) | Sysadmins and on-call engineers |
+
+---
+
+## Role Guides (Overview)
+
+| Role | Overview doc | Tutorial | Recipes |
+|------|--------------|----------|---------|
+| **Kids & families** | [ELI5 For Kids](ELI5_FOR_KIDS.md) | [Tutorial: Your First Robot Butler](tutorials/01-kids-first-robot-butler.md) | [Kids Activities](recipes/kids-activities.md) |
+| **Executives (CEO/CTO)** | [Executive Summary](EXECUTIVE_SUMMARY.md) | [Tutorial: Executive Quickstart](tutorials/02-executive-quickstart.md) | [Executive Recipes](recipes/executive-recipes.md) |
+| **Architects** | [Technical Deep-Dive](TECHNICAL_DEEP_DIVE.md) | [Tutorial: Architect Deployment](tutorials/03-architect-deployment.md) | [Architect Recipes](recipes/architect-recipes.md) |
+| **Cloud migrators** | [Cloud Parity Migration](CLOUD_PARITY_MIGRATION.md) | [Tutorial: Migration Walkthrough](tutorials/04-cloud-migration-walkthrough.md) | [Migration Recipes](recipes/migration-recipes.md) |
+| **Developers** | [Developer Cookbook](DEVELOPER_COOKBOOK.md) | [Tutorial: Your First App](tutorials/05-developer-first-app.md) | [Frontend](recipes/frontend-recipes.md) · [Backend](recipes/backend-recipes.md) · [Voice](recipes/voice-recipes.md) |
+| **Non-technical users** | [Non-Technical Guide](NON_TECHNICAL_GUIDE.md) | [Tutorial: Setup Without Jargon](tutorials/06-non-technical-setup.md) | [Ops Recipes](recipes/ops-recipes.md) |
+
+---
+
+## Tutorials (Step-by-Step)
+
+1. [Your First Robot Butler](tutorials/01-kids-first-robot-butler.md) — kids & families
+2. [Executive Quickstart](tutorials/02-executive-quickstart.md) — business leaders
+3. [Architect Deployment](tutorials/03-architect-deployment.md) — system design & topology
+4. [Cloud Migration Walkthrough](tutorials/04-cloud-migration-walkthrough.md) — AWS/GCP/Azure owners
+5. [Your First App](tutorials/05-developer-first-app.md) — end-to-end developer flow
+6. [Setup Without Jargon](tutorials/06-non-technical-setup.md) — non-technical onboarding
+
+---
+
+## Recipes (Copy-Paste Code)
+
+- [Recipes Index](recipes/README.md) — master list of all recipes
+- [Executive Recipes](recipes/executive-recipes.md) — ROI worksheets, hybrid migration checklists
+- [Architect Recipes](recipes/architect-recipes.md) — topology diagrams, port maps, mesh config
+- [Migration Recipes](recipes/migration-recipes.md) — S3/Lambda/RDS parity patterns
+- [Frontend Recipes](recipes/frontend-recipes.md) — uploads, API clients, payment flows
+- [Backend Recipes](recipes/backend-recipes.md) — handlers, sessions, HMAC signing
+- [Voice Recipes](recipes/voice-recipes.md) — custom intents, biometric calibration
+- [Ops Recipes](recipes/ops-recipes.md) — systemd, backups, troubleshooting
+- [Kids Activities](recipes/kids-activities.md) — fun experiments with the butler
+
+---
+
+## Templates & Starter Projects
+
+### Templates (`templates/`)
+
+Reusable boilerplate you can copy into your own project:
+
+| Template | Purpose |
+|----------|---------|
+| [python-http-service](../templates/python-http-service/) | Standalone HTTP microservice |
+| [container-handler](../templates/container-handler/) | UtahContainerEngine `handler.py` |
+| [voice-command-client](../templates/voice-command-client/) | Programmatic `/command` client |
+| [frontend-upload](../templates/frontend-upload/) | Browser upload client |
+| [tycoon-payment-client](../templates/tycoon-payment-client/) | HTTP 402 payment flow |
+
+### Examples (`examples/`)
+
+Small runnable scripts that exercise the live API:
+
+| Example | What it demonstrates |
+|---------|---------------------|
+| [hello-world](../examples/hello-world/) | Deploy an app via `/command` |
+| [check-node-health](../examples/check-node-health/) | Health and status probes |
+| [paid-app-access](../examples/paid-app-access/) | Tycoon tollbooth settlement |
+| [voice-deploy-simulator](../examples/voice-deploy-simulator/) | Deploy without a microphone |
+
+### Starter Projects (`starter-projects/`)
+
+Full mini-projects to fork and extend:
+
+| Project | Description |
+|---------|-------------|
+| [minimal-api](../starter-projects/minimal-api/) | Smallest deployable API workload |
+| [voice-controlled-dashboard](../starter-projects/voice-controlled-dashboard/) | Voice + status dashboard |
+| [monetized-endpoint](../starter-projects/monetized-endpoint/) | Pay-to-access app pattern |
+
+---
+
+## Contributing & History
+
+- [Contributing Guide](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)

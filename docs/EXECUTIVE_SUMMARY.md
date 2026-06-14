@@ -2,25 +2,27 @@
 
 #### **Executive Summary for CEOs & CTOs**
 
-UtahMosphere OS (v16.0) is the first decentralized "Cloud-on-a-Brick" platform that renders legacy hyper-scalers (AWS, GCP, Azure) obsolete by eliminating the three primary financial drains on modern enterprises: **Data Egress Taxes**, **Idle Compute Costs**, and **Operational Overhead**.
+UtahMosphere OS (v25.0 Omega-Genesis) is a decentralized "Cloud-on-a-Brick" platform that reduces reliance on hyperscalers (AWS, GCP, Azure) by addressing three primary cost drivers: **data egress fees**, **idle compute billing**, and **operational overhead**.
 
 ---
 
 #### **The Value Proposition**
 
-1.  **Zero-Cost Data Egress:** Traditional clouds charge to move *your* data. UtahMosphere uses a localized P2P mesh. Once you own the hardware, data transit is free.
-2.  **Autonomous Sovereignty:** Total control over data residency. No third-party API changes or "forced" upgrades. Your infrastructure is yours.
-3.  **Infinite Traffic Resilience:** Built-in Nginx RAM-caching and kernel-level socket management allow a $100 Mini-PC to handle traffic surges that would cost thousands on AWS.
-4.  **Zero-Maintenance (ASEN):** The Autonomous Sovereign Edge Network (ASEN) handles self-healing, log pruning, and resource reclamation automatically. No more expensive SysAdmin teams.
+1.  **Zero-Cost Data Egress:** Traditional clouds charge to move *your* data. UtahMosphere uses a localized P2P mesh. Once you own the hardware, LAN data transit is free.
+2.  **Autonomous Sovereignty:** Total control over data residency. No third-party API changes or forced upgrades. Your infrastructure is yours.
+3.  **Edge Traffic Resilience:** Built-in caching manifests and kernel-level HTTP ingress allow a $100 Mini-PC to serve edge workloads that would cost significantly more on cloud VMs.
+4.  **Zero-Maintenance (ASEN):** The Autonomous Sovereign Edge Network handles self-healing, log pruning, and resource reclamation automatically.
 
 ---
 
 #### **Financial Impact**
-- **OpEx Reduction:** 90-95% reduction in monthly cloud billing.
-- **CapEx Efficiency:** Low-cost hardware (Mini PCs/Pi) replaces complex VM billing.
-- **Developer Velocity:** "Vibe-Coding" allows for rapid infrastructure changes via semantic intent, bypassing complex CI/CD bottlenecks.
+- **OpEx Reduction:** Potential 90–95% reduction in monthly cloud billing for edge-suitable workloads.
+- **CapEx Efficiency:** Low-cost hardware (Mini PCs / Pi) replaces per-hour VM billing.
+- **Developer Velocity:** Voice and API deploy bypass complex CI/CD for internal tools and pilots.
 
 #### **Strategic Roadmap**
-Migrating to UtahMosphere doesn't require a total rewrite. Our **Cloud Parity Layer** provides 1:1 API compatibility with S3, Lambda, and RDS. Start with a hybrid approach: keep the legacy frontend on AWS while moving the expensive data-heavy backend to the UtahMosphere Mesh.
+Migrating to UtahMosphere does not require a total rewrite. The **Cloud Parity Layer** targets 1:1 API compatibility with S3, Lambda, and RDS — see the [Capability Matrix](CAPABILITY_MATRIX.md) for current implementation status. Start hybrid: keep the legacy frontend on a CDN while moving data-heavy backends to the UtahMosphere mesh.
+
+**Quick evaluation:** [Executive Quickstart Tutorial](tutorials/02-executive-quickstart.md) · [Executive Recipes](recipes/executive-recipes.md)
 
 **The future of compute is liquid; the future of storage is local. Reclaim your sovereignty.**

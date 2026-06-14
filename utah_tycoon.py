@@ -13,7 +13,20 @@ import threading
 from typing import Dict, Any
 
 # --- FINANCIAL CONFIGURATION PATHS ---
-UTAH_FINANCE_DIR = "/var/lib/utahmosphere/tycoon"
+def _resolve_finance_dir() -> str:
+    primary = os.path.join(
+        os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere"), "tycoon"
+    )
+    try:
+        os.makedirs(primary, exist_ok=True)
+        return primary
+    except PermissionError:
+        fallback = "tycoon"
+        os.makedirs(fallback, exist_ok=True)
+        return fallback
+
+
+UTAH_FINANCE_DIR = _resolve_finance_dir()
 PAYMENT_LEDGER = os.path.join(UTAH_FINANCE_DIR, "settlement_ledger.json")
 
 # In a full deployment, this integrates directly with your derive_address.py and cyborg_core.py
@@ -30,13 +43,7 @@ class UtahTycoonDaemon:
         print("[Utah-Tycoon] Financial Daemon Online. Tollbooth gates active.")
 
     def _bootstrap_finance_paths(self):
-        try:
-            os.makedirs(UTAH_FINANCE_DIR, exist_ok=True)
-        except PermissionError:
-            global UTAH_FINANCE_DIR, PAYMENT_LEDGER
-            UTAH_FINANCE_DIR = "tycoon"
-            PAYMENT_LEDGER = os.path.join(UTAH_FINANCE_DIR, "settlement_ledger.json")
-            os.makedirs(UTAH_FINANCE_DIR, exist_ok=True)
+        os.makedirs(UTAH_FINANCE_DIR, exist_ok=True)
 
         if os.path.exists(PAYMENT_LEDGER):
             try:

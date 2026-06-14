@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UtahMosphere Dashboard</title>
+  <style>
+    body { font-family: system-ui; background: #0d0d12; color: #d1d1e0; padding: 2rem; }
+    .ok { color: #00ff66; }
+    .warn { color: #ffcc00; }
+    card { display: block; background: #1a1a24; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>UtahMosphere Dashboard</h1>
+  <card id="health">Loading health…</card>
+  <card id="status">Loading status…</card>
+  <p class="warn">Serve this file via a local HTTP server (CORS). Example: <code>python -m http.server 3000</code></p>
+  <script>
+    const BASE = "http://127.0.0.1:8999";
+
+    async function refresh() {
+      try {
+        const [h, s] = await Promise.all([
+          fetch(`${BASE}/health`).then(r => r.json()),
+          fetch(`${BASE}/status`).then(r => r.json()),
+        ]);
+        document.getElementById("health").innerHTML =
+          `<span class="ok">${h.node}</span> — ${h.status} (v${h.version})`;
+        document.getElementById("status").innerHTML =
+          `Workloads: ${s.ui_state.active_workloads}<br>` +
+          `Tenants: ${s.tenants.join(", ") || "(none)"}<br>` +
+          `Claimed: ${s.claimed}<br>` +
+          `Last command: ${s.ui_state.last_voice_command}`;
+      } catch (e) {
+        document.getElementById("health").textContent = "Kernel unreachable — start utahmosphere_os.py";
+      }
+    }
+    refresh();
+    setInterval(refresh, 3000);
+  </script>
+</body>
+</html>

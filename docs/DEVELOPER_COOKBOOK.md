@@ -1,7 +1,28 @@
 ### 🍳 Developer Cookbook: UtahMosphere Recipes
 
+The cookbook is the developer entry point. For the full recipe library, see **[Recipes Index](recipes/README.md)**.
+
+---
+
+#### **Quick Links**
+
+| Task | Recipe |
+|------|--------|
+| Deploy via API | [Backend — Deploy via /command](recipes/backend-recipes.md#deploy-via-command) |
+| Health monitoring | [Ops — Health probe](recipes/ops-recipes.md#health-monitoring) |
+| Payment flow (402) | [Frontend — Tycoon flow](recipes/frontend-recipes.md#tycoon-payment-flow) |
+| HMAC signatures | [Backend — HMAC](recipes/backend-recipes.md#hmac-tenant-signature) |
+| Voice intents | [Voice Recipes](recipes/voice-recipes.md) |
+
+**Tutorial:** [Your First App](tutorials/05-developer-first-app.md)  
+**Templates:** [templates/](../templates/) · **Starters:** [starter-projects/](../starter-projects/)
+
+---
+
 #### **Frontend Recipe: Direct-to-Edge Image Upload**
-Frontend developers can bypass their backend entirely to upload assets to the S3 Mesh.
+
+> **Status:** Roadmap (S3 Mesh API not yet routed). Pattern ready for migration.
+
 ```javascript
 async function uploadToUtah(file, tenantId, signature) {
   const response = await fetch(`http://utahmosphere.local:8999/s3/assets/${file.name}`, {
@@ -17,8 +38,40 @@ async function uploadToUtah(file, tenantId, signature) {
 }
 ```
 
+**Implemented today:** use `fetch('http://127.0.0.1:8999/status')` — see [frontend-upload template](../templates/frontend-upload/).
+
+---
+
+#### **Backend Recipe: Deploy via /command**
+
+> **Status:** Implemented
+
+```python
+import json, urllib.request
+
+def deploy(app_name):
+    payload = json.dumps({
+        "transcript": f"deploy application {app_name}",
+        "acoustic_hash": "0" * 64,
+    }).encode()
+    req = urllib.request.Request(
+        "http://127.0.0.1:8999/command",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req) as resp:
+        return json.loads(resp.read())
+```
+
+Or run: `python examples/voice-deploy-simulator/deploy.py my-app`
+
+---
+
 #### **Backend Recipe: Synchronized Session Store**
-Using the RDS Ledger for cross-node session management.
+
+> **Status:** Roadmap (RDS ledger HTTP routes)
+
 ```python
 import requests
 
@@ -32,18 +85,31 @@ def get_session(session_id):
     return requests.get(url).json()['value']
 ```
 
+---
+
 #### **Voice Bridge Recipe: Custom Vibe-Coding**
-Integrate custom triggers into the voice bridge.
+
 ```python
-# Edit voice_bridge.py to add custom intent handlers
-def handle_vibe(transcript):
-    if "go dark mode" in transcript:
-        # Trigger an API call to your frontend to change CSS
-        print("[Vibe] Initiating aesthetic shift...")
+CUSTOM_INTENTS = {
+    "go dark mode": lambda: print("[Vibe] Initiating aesthetic shift..."),
+}
+
+def handle_custom(transcript):
+    for phrase, action in CUSTOM_INTENTS.items():
+        if phrase in transcript.lower():
+            action()
+            return True
+    return False
 ```
 
+Full pattern: [Voice Recipes](recipes/voice-recipes.md)
+
+---
+
 #### **Boilerplate: UtahMosphere Python Service**
-A simple template for a Python backend that runs on UtahMosphere.
+
+Template: [templates/python-http-service/](../templates/python-http-service/)
+
 ```python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
@@ -56,22 +122,20 @@ class SimpleHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps({"status": "running", "environment": "UtahMosphere"}).encode())
 
 if __name__ == "__main__":
-    print("UtahMosphere Service starting on port 80...")
-    HTTPServer(('', 80), SimpleHandler).serve_forever()
+    HTTPServer(('', 8080), SimpleHandler).serve_forever()
 ```
 
 ---
 
 #### **Security Note: Generating Signatures**
-To generate the `X-Utah-Signature` for a request:
-```python
-import hmac
-import hashlib
 
-SECRET = b"utah_akashic_sovereign_perimeter_authorization_vector"
+```python
+import hmac, hashlib, os
+
+SECRET = os.environ.get("UTAH_SECRET_VECTOR", "utah_akashic_sovereign_perimeter_authorization_vector").encode()
 tenant_id = "my-tenant"
 path = "/s3/bucket/key"
-
 signature = hmac.new(SECRET, f"{tenant_id}:{path}".encode(), hashlib.sha256).hexdigest()
-print(signature)
 ```
+
+See [Access Control](ACCESS_CONTROL.md) for production hardening.

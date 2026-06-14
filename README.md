@@ -2,75 +2,117 @@
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a revolutionary platform that completely discards legacy cloud abstractions (Docker, Nginx, K8s) in favor of a unified, sovereign architectural ecosystem. It leverages local bare-metal footprints to provide infinite compute, storage, and financial sovereignty.
+UtahMosphere OS is a unified sovereign edge platform that runs on bare-metal hardware (Mini PC, Raspberry Pi, x86) and provides voice-driven deployment, biometric node ownership, and optional pay-per-access monetization.
 
 ---
 
 ## 📚 Documentation Portal
 
-We have tailored documentation for every role:
+**[Full documentation index →](docs/README.md)**  
+**[Other languages →](docs/LANGUAGES.md)** — separate single-language sites (Estonian, Russian, French, Finnish, Swedish, Chamorro, Spanish, Chinese)
 
-- **[For Children (ELI5)](docs/ELI5_FOR_KIDS.md)** - House and Robot Butler analogy.
-- **[Executive Summary](docs/EXECUTIVE_SUMMARY.md)** - Value prop and ROI for CEOs/CTOs.
-- **[Technical Deep-Dive](docs/TECHNICAL_DEEP_DIVE.md)** - Architecture, P2P, and Security for Architects.
-- **[Cloud Migration Guide](docs/CLOUD_PARITY_MIGRATION.md)** - Recipes for GCP/AWS/Azure owners and developers.
-- **[Developer Cookbook](docs/DEVELOPER_COOKBOOK.md)** - Code recipes and boilerplate for Frontend/Backend devs.
-- **[Non-Technical User Guide](docs/NON_TECHNICAL_GUIDE.md)** - The "It Just Works" overview.
+### By role
+
+| Role | Overview | Tutorial | Recipes |
+|------|----------|----------|---------|
+| Kids & families | [ELI5](docs/ELI5_FOR_KIDS.md) | [First Robot Butler](docs/tutorials/01-kids-first-robot-butler.md) | [Kids Activities](docs/recipes/kids-activities.md) |
+| Executives | [Executive Summary](docs/EXECUTIVE_SUMMARY.md) | [Executive Quickstart](docs/tutorials/02-executive-quickstart.md) | [Executive Recipes](docs/recipes/executive-recipes.md) |
+| Architects | [Technical Deep-Dive](docs/TECHNICAL_DEEP_DIVE.md) | [Architect Deployment](docs/tutorials/03-architect-deployment.md) | [Architect Recipes](docs/recipes/architect-recipes.md) |
+| Cloud migrators | [Migration Guide](docs/CLOUD_PARITY_MIGRATION.md) | [Migration Walkthrough](docs/tutorials/04-cloud-migration-walkthrough.md) | [Migration Recipes](docs/recipes/migration-recipes.md) |
+| Developers | [Developer Cookbook](docs/DEVELOPER_COOKBOOK.md) | [Your First App](docs/tutorials/05-developer-first-app.md) | [All Recipes](docs/recipes/README.md) |
+| Non-technical | [User Guide](docs/NON_TECHNICAL_GUIDE.md) | [Setup Without Jargon](docs/tutorials/06-non-technical-setup.md) | [Ops Recipes](docs/recipes/ops-recipes.md) |
+
+### Reference
+
+- [API Reference](docs/API_REFERENCE.md) — `/health`, `/status`, `/command`, `/app/{name}`
+- [Capability Matrix](docs/CAPABILITY_MATRIX.md) — what works today vs. roadmap
+- [Local Development](docs/LOCAL_DEVELOPMENT.md) — Windows, macOS, Linux without root
+- [Operations Runbook](docs/OPERATIONS_RUNBOOK.md) — backup, recovery, monitoring
+
+### Templates & projects
+
+- **[templates/](templates/)** — boilerplate handlers, clients, upload helpers
+- **[examples/](examples/)** — runnable scripts against the live API
+- **[starter-projects/](starter-projects/)** — forkable mini-apps
 
 ---
 
 ## 🚀 Quick Start
 
-1.  **Provision Hardware:**
-    Run the automated setup script on a clean Ubuntu/Debian installation:
-    ```bash
-    sudo bash setup.sh
-    ```
+### Linux (production)
 
-2.  **Start the Sovereign Engine:**
-    ```bash
-    sudo python3 genesis_deploy.py
-    ```
-    *Or via Docker-Compose:*
-    ```bash
-    docker-compose up -d
-    ```
+```bash
+sudo bash setup.sh
+sudo python3 genesis_deploy.py
+```
 
-3.  **Calibrate Biometric Voice Interface:**
-    ```bash
-    python3 voice_bridge.py
-    ```
-    *Say: "Claim node" to bind the hardware to your unique acoustic signature.*
+### Local dev (any OS)
 
-4.  **Deploy your first Sovereign Container:**
-    Just say: *"Butler, deploy application my-app"*
+```bash
+export UTAH_DATA_DIR="$(pwd)/.utah-data"   # PowerShell: $env:UTAH_DATA_DIR = "$PWD\.utah-data"
+pip install -r requirements.txt
+python utahmosphere_os.py
+```
+
+Verify:
+
+```bash
+curl http://127.0.0.1:8999/health
+python examples/voice-deploy-simulator/deploy.py hello
+```
+
+### Voice (optional)
+
+```bash
+python voice_bridge.py
+```
+
+Say: **"Claim node"** then **"deploy application my-app"**
+
+### Docker (optional)
+
+```bash
+docker-compose up -d
+```
+
+> Docker and Nginx configs are **optional** convenience paths. The sovereign runtime is bare-metal Python. See [Capability Matrix](docs/CAPABILITY_MATRIX.md).
 
 ---
 
 ## ⚙️ Configuration
 
-UtahMosphere OS can be configured via environment variables:
-
-- `UTAH_SECRET_VECTOR`: The HMAC secret key for tenant isolation (default: provided in code).
-- `UTAH_DATA_DIR`: The root directory for storage and registry (default: `/var/lib/utahmosphere`).
-- `UTAH_PROXY_CONF_DIR`: The path for Nginx virtual host configs (default: `/etc/nginx/sites-enabled`).
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `UTAH_SECRET_VECTOR` | (in-code default) | HMAC secret — **change in production** |
+| `UTAH_DATA_DIR` | `/var/lib/utahmosphere` | Registry, containers, UtahX manifests |
+| `UTAH_PROXY_CONF_DIR` | `/etc/nginx/sites-enabled` | Legacy proxy path |
+| `UTAH_XPUB` | placeholder | Tycoon master xpub |
+| `UTAH_ENV` | — | Environment label |
 
 ---
 
 ## 🛠 Features
-- **UtahX:** Fluidic TCP Proxy & Tollbooth Caching (Replaces Nginx).
-- **UtahContainerEngine:** Cryptographic execution sandboxes (Replaces Docker).
-- **UtahNetes:** Osmotic LAN/WAN discovery mesh (Replaces Kubernetes).
-- **Lazarus Daemon:** Zero-downtime AST live code mutation.
-- **Quantum Ledger:** Biometric Vibe-Print authentication.
-- **Global Swarm:** DNS-bypassing P2P routing protocol.
-- **Utah-Tycoon:** Automated cryptographic settlement daemon.
-- **Utah-Flux:** Reactive, state-driven UI engine.
+
+- **UtahX** — Declarative proxy route manifests (JSON)
+- **UtahContainerEngine** — Tenant workspaces with `handler.py`
+- **UtahNetes** — LAN multicast gossip sync
+- **Lazarus Daemon** — Live handler patching (partial)
+- **Quantum Ledger** — Biometric vibe-print node claim
+- **Global Swarm** — UDP P2P peer table
+- **Utah-Tycoon** — HTTP 402 payment gate
+- **Utah-Flux** — Reactive Tkinter dashboard
 
 ---
 
 ## 🔒 Security
-UtahMosphere uses HMAC-SHA256 tokenization for multi-tenant isolation. Your data is anchored locally and synchronized only with trusted mesh peers.
+
+HMAC-SHA256 tenant isolation (future storage APIs), single-owner biometric claim for voice commands. See [Access Control](docs/ACCESS_CONTROL.md).
+
+---
+
+## 🤝 Contributing
+
+See [CONTRIBUTING](docs/CONTRIBUTING.md) and [CHANGELOG](docs/CHANGELOG.md).
 
 ---
 *UtahMosphere: Reclaiming the Digital Horizon.*

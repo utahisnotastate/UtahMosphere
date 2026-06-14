@@ -112,9 +112,17 @@ curl http://127.0.0.1:8999/rds/read/user:123
 
 Push Golden Master kernel updates to swarm peers. See [OTA Lazarus Channel](OTA_LAZARUS.md).
 
-### 13. Genesis ISO (`mk_iso.sh`)
+### 13. Genesis ISO (`genesis_iso_builder.py`)
 
-UEFI/hybrid bootable flash installer. See [Genesis ISO Installer](GENESIS_ISO.md).
+Alpine vmlinuz/initramfs hybrid ISO with syslinux auto-install. See [Genesis ISO Installer](GENESIS_ISO.md).
+
+### 14. Nonce-Guard (`nonce_guard.py`)
+
+30-second anti-replay window for voice commands. `GET /nonce` + `command_signature` on `/command`.
+
+### 15. Utah-Flux Revocation UI (`ui_revocation.py`)
+
+Administrative panel in `flux_gui.py` — revoke delegated nodes via `POST /admin/revoke-node`.
 
 ---
 
@@ -123,8 +131,10 @@ UEFI/hybrid bootable flash installer. See [Genesis ISO Installer](GENESIS_ISO.md
 1. **Hardware inoculation:** `sudo bash bootstrap.sh` — purges Docker/Nginx, installs `utah-genesis` systemd unit.
 2. **Voice manifestation:** `"Deploy application inventory-system"` — UtahContainerEngine + UtahX route created instantly.
 3. **Financial finality:** `GET /app/{name}` returns `402` until Tycoon confirms payment via mempool (or simulate for dev addresses).
-4. **Genesis ISO:** `./mk_iso.sh` → flash `utah_genesis_v25.iso` → `bootstrap.sh` on boot.
-5. **Cloud parity:** Run `python examples/omega-build-verify/verify.py` against a live kernel.
+4. **Genesis ISO:** `python3 genesis_iso_builder.py` -> flash `utah_genesis_v26.iso` -> plug-and-play boot.
+5. **Anti-replay:** `GET /nonce` before every claimed `/command` request.
+6. **Governance:** Utah-Flux revocation panel purges untrusted mesh nodes instantly.
+7. **Cloud parity:** Run `python examples/omega-build-verify/verify.py` against a live kernel.
 
 ---
 

@@ -2,6 +2,23 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [26.0] — Omega-Build FINAL (2026-06)
+
+### Added
+- `genesis_iso_builder.py` — Alpine vmlinuz/initramfs bundling, syslinux auto-install menu
+- `nonce_guard.py` — 30-second voice command anti-replay (`GET /nonce`, `command_signature`)
+- `ui_revocation.py` — Utah-Flux authorized node revocation panel
+- `POST /admin/revoke-node` — root-only mesh node revocation API
+- `GET /nonce` — server-issued command nonce endpoint
+
+### Changed
+- `mk_iso.sh` delegates to `genesis_iso_builder.py`; output `utah_genesis_v26.iso`
+- `flux_gui.py` — revocation admin panel wired to kernel API
+- `quantum_ledger.py` — `revoke_node()` with AuthGuard refresh
+- Build identifier: `omega-build-v26-final`
+- Roadmap items (Alpine ISO, nonce anti-replay, revocation UI): **complete**
+- All locale documentation updated for v26.0
+
 ## [25.3] — Migration Ready (2026-06)
 
 ### Added

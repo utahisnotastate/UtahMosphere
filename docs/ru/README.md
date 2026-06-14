@@ -1,6 +1,6 @@
 # Портал документации UtahMosphere
 
-Добро пожаловать в центр документации UtahMosphere OS. **v25.1 Migration Ready** — единое bare-metal ядро с полностью интегрированными Utah-Tycoon, UtahNetes и Global Swarm. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
+Добро пожаловать в центр документации UtahMosphere OS. **v26.0 Omega-Build FINAL** — полная реализация дорожной карты: защита nonce, отзыв узлов, Alpine Genesis ISO и полностью интегрированные Utah-Tycoon, UtahNetes и Global Swarm. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
 
 ---
 
@@ -8,7 +8,7 @@
 
 | Документ | Для кого |
 |----------|----------|
-| [Матрица возможностей](CAPABILITY_MATRIX.md) | Все — что работает сегодня и что в планах |
+| [Матрица возможностей](CAPABILITY_MATRIX.md) | Все — что работает сегодня и будущая работа |
 | [Справочник API](API_REFERENCE.md) | Разработчики и операторы |
 | [Руководство по локальной разработке](LOCAL_DEVELOPMENT.md) | Разработчики на Windows, macOS или Linux |
 
@@ -63,7 +63,7 @@
 | [hello-world](../../examples/hello-world/) | Развёртывание приложения через `/command` |
 | [check-node-health](../../examples/check-node-health/) | Проверки работоспособности и статуса |
 | [paid-app-access](../../examples/paid-app-access/) | Расчёт через Tycoon |
-| [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Развёртывание без микрофона |
+| [omega-build-verify](../../examples/omega-build-verify/) | Полный тест S3/Lambda/RDS/контейнер |
 
 ### Стартовые проекты (`starter-projects/`)
 
@@ -77,17 +77,19 @@
 
 ---
 
-## Ключевые характеристики UtahMosphere OS v25.0
+## Ключевые характеристики UtahMosphere OS v26.0
 
-- **Суверенное периферийное облако** на Python — ядро слушает порт `8999`
-- **Голосовое развёртывание** — команды через Voice Bridge или `POST /command`
-- **Биометрическое закрепление узла** — команда «Claim node» привязывает голосовой отпечаток
-- **Tycoon HTTP 402** — платный доступ к приложениям через `GET /app/{name}`
+- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v26-final`
+- **Голосовое развёртывание** — Voice Bridge или `POST /command` с `nonce` + `command_signature`
+- **Биометрическое закрепление узла** — команда «Claim node»; `GET /nonce` против повторного воспроизведения
+- **Отзыв узлов** — `POST /admin/revoke-node` и панель Utah-Flux
+- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v26.iso`
+- **Tycoon HTTP 402** — платный доступ через `GET /app/{name}`
 
 ---
 
 ## Дополнительные материалы
 
-- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v25.0
+- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v26.0
 - [Справочник API](API_REFERENCE.md) — все конечные точки HTTP
 - [Техническое погружение](TECHNICAL_DEEP_DIVE.md) — архитектура платформы

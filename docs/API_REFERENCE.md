@@ -16,8 +16,8 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -25,6 +25,28 @@ Liveness probe for load balancers and monitoring.
 
 ```bash
 curl http://127.0.0.1:8999/health
+```
+
+---
+
+## GET /nonce
+
+Issue a fresh voice-command nonce. Required after node claim when `UTAH_NONCE_ENFORCE=1` (default).
+
+**Response `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Example:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
 ```
 
 ---
@@ -70,6 +92,8 @@ Execute a voice intent programmatically. Same payload the Voice Bridge sends.
 |-------|------|----------|-------------|
 | `transcript` | string | Yes | Spoken command (case-insensitive) |
 | `acoustic_hash` | string | Yes | 64-char SHA-256 vibe-print hash |
+| `nonce` | integer | After claim | Server-issued timestamp from `GET /nonce` |
+| `command_signature` | string | After claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | No | Optional AuthGuard HMAC for delegated nodes |
 
 **Response `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**After claim:** `acoustic_hash` must match the anchored root vibe hash **or** an entry in `authorized_nodes[]`, or the kernel returns:
+**After claim:** `acoustic_hash` must match root or `authorized_nodes[]`, and `nonce` + `command_signature` must be valid, or the kernel returns:
 
 ```json
 {
@@ -261,12 +285,34 @@ After settlement, `GET /app/{app_name}` with the same `X-Client-ID` proxies to t
 
 ---
 
+## POST /admin/revoke-node
+
+Revoke a delegated node from `authorized_nodes[]`. Root vibe holder only. Utah-Flux revocation panel calls this endpoint.
+
+**Request body:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Response `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Error Responses
 
 | Code | When |
 |------|------|
-| `404` | Unknown path |
+| `404` | Unknown path or node not revocable |
 | `402` | App exists but client has not paid Tycoon invoice |
+| `403` | Invalid revocation credentials or HMAC |
 
 ---
 

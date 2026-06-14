@@ -16,8 +16,8 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -29,9 +29,31 @@ curl http://127.0.0.1:8999/health
 
 ---
 
+## GET /nonce
+
+Väljastab värske häälkäsu nonce. Nõutav pärast sõlme claim-i, kui `UTAH_NONCE_ENFORCE=1` (vaikimisi).
+
+**Vastus `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Näide:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
+```
+
+---
+
 ## GET /status
 
-Operatiivne hetktõmmis: UI olek, juurutatud rentnikud, claim olek, `authorized_nodes`, `swarm_peers` ja laiendatud Tycoon väljad.
+Operatiivne hetktõmmis: UI olek, juurutatud rentnikud ja kas sõlm on claim-itud.
 
 **Vastus `200`:**
 
@@ -70,6 +92,8 @@ Käivita hääle intent programmiliselt. Sama keha, mida Voice Bridge saadab.
 |------|------|-------------|-----------|
 | `transcript` | string | Jah | Kõnele käsk (tõstutundetu) |
 | `acoustic_hash` | string | Jah | 64-tähemärgiline SHA-256 vibe-print räsi |
+| `nonce` | integer | Pärast claim-i | Serveri väljastatud ajatempel `GET /nonce`-st |
+| `command_signature` | string | Pärast claim-i | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Ei | Valikuline AuthGuard HMAC delegeeritud sõlmedele |
 
 **Vastus `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Pärast claim-i:** `acoustic_hash` peab ühtima ankurdatud juur-vibe räsiga **või** olema kirjes `authorized_nodes[]`, muidu tagastab tuum:
+**Pärast claim-i:** `acoustic_hash` peab ühtima juure või `authorized_nodes[]`-ga ning `nonce` + `command_signature` peavad olema kehtivad, muidu tagastab tuum:
 
 ```json
 {
@@ -143,17 +167,89 @@ Arved lahenduvad praeguses simulatsioonis automaatselt ~60 sekundi pärast.
 
 ### Tasutud klient — Vastus `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
+UtahX suunab päringu UtahContainerEngine taustale rentniku pordil. Vastuse keha on handleri JSON väljund.
+
+```bash
+curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## PUT/POST /s3/{bucket}/{key}
+
+Kirjuta objekt Utah S3 Mesh-i (kohalik NVMe salvestus).
+
+**Päised (valikulised):**
+
+| Päis | Kirjeldus |
+|------|-----------|
+| `X-Utah-Tenant-ID` | Rentniku identifikaator |
+| `X-Utah-Signature` | HMAC-SHA256 `{tenant_id}:{path}` |
 
 **Näide:**
 
 ```bash
-curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Loe objekti. Tagastab toorbaite. Kasuta `GET /s3/{bucket}/prefix*` loendamiseks.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Kirjuta võti-väärtus kirje Utah RDS Ledgerisse.
+
+**Päringu keha:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Vastus `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Loe kirjet võtme järgi.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Kutsu Utah Lambda handlerit (ilma konteineri pildi tõmbamiseta).
+
+**Päringu keha:** JSON sündmus, mis edastatakse `handler(event, context)`-ile
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Vastus `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
 
 ---
@@ -189,12 +285,34 @@ Pärast arveldust suunab `GET /app/{app_name}` sama `X-Client-ID`-ga konteineris
 
 ---
 
+## POST /admin/revoke-node
+
+Tühista delegeeritud sõlm `authorized_nodes[]`-st. Ainult juur-vibe omanik. Utah-Flux tühistamise paneel kutsub seda lõpp-punkti.
+
+**Päringu keha:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Vastus `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Veavastused
 
 | Kood | Millal |
 |------|--------|
-| `404` | Tundmatu tee |
+| `404` | Tundmatu tee või sõlm pole tühistatav |
 | `402` | Rakendus eksisteerib, kuid klient pole Tycoon arvet tasunud |
+| `403` | Kehtetu tühistamise mandaat või HMAC |
 
 ---
 
@@ -214,7 +332,10 @@ Pärast arveldust suunab `GET /app/{app_name}` sama `X-Client-ID`-ga konteineris
 |------|---------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Rentnikud, UtahX marsruudid, salvestusindeks |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Utah-Flux UI olek |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Juurutatud handler stub |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Konteineri handler |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Lambda handler |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh objektid |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | RDS võti-väärtus salvestus |
 | `security/biometric_ledger.json` | Juur-vibe räsi (kohalik varuvariant, kui `/etc` pole kirjutatav) |
 | `tycoon/settlement_ledger.json` | Arve ja makse olek |
 

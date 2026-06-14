@@ -123,11 +123,21 @@ The ledger stores `authorized_nodes` in `biometric_ledger.json` and mirrors them
 | `real` | Always query mempool.space / electrum |
 | `simulate` | Timed settlement only (local dev) |
 
-```bash
-export UTAH_TYCOON_SETTLEMENT_MODE=real
-export UTAH_MEMPOOL_API=https://mempool.space/api
-export UTAH_ELECTRUM_URL=http://127.0.0.1:50001  # optional
-```
+## Voice Nonce Anti-Replay (v26.0)
+
+After node claim, every `/command` request requires:
+
+1. `GET /nonce` — receive fresh timestamp nonce
+2. Compute `command_signature = HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")`
+3. Include `nonce` and `command_signature` in the POST body
+
+Replayed commands fail after 30 seconds or if nonce is reused.
+
+Disable enforcement for testing: `export UTAH_NONCE_ENFORCE=0`
+
+## Utah-Flux Revocation (v26.0)
+
+Run `python flux_gui.py` to open the revocation panel. Set `UTAH_FLUX_ACOUSTIC_HASH` to your root vibe hash, or enter it when prompted. Revoking a node removes it from `authorized_nodes[]` and prunes mesh gossip instantly.
 
 ---
 
@@ -137,9 +147,9 @@ export UTAH_ELECTRUM_URL=http://127.0.0.1:50001  # optional
 |------|------------------|-----|
 | Unauthorized voice commands | Vibe-print + authorized_nodes | Open mode before claim |
 | Unauthorized mesh sync | AuthGuard mesh signatures | Open mode before claim |
-| Replay of voice payloads | None | Add nonce/timestamp |
+| Replay of voice payloads | Nonce-Guard 30s window | Disable with `UTAH_NONCE_ENFORCE=0` |
 | Default HMAC secret | Env var override | Must change in prod |
-| Multi-user admin | authorized_nodes delegation | No UI for revocation |
+| Multi-user admin | authorized_nodes + revocation UI | No automated revocation audit log |
 | Payment bypass | Mempool / electrum verification | Dev addresses simulate |
 
 See [Operations Runbook](OPERATIONS_RUNBOOK.md) for incident response steps.

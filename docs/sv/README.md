@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. **v25.1 Migration Ready** — enhetlig bare-metal-kärna med Utah-Tycoon, UtahNetes och Global Swarm fullt integrerade. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **v26.0 Omega-Build FINAL** — fullständig roadmap-implementering: nonce-skydd, nodåterkallande, Alpine Genesis ISO samt fullt integrerade Utah-Tycoon, UtahNetes och Global Swarm. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 
@@ -8,7 +8,7 @@ Välkommen till UtahMosphere OS dokumentation. **v25.1 Migration Ready** — enh
 
 | Dokument | Bäst för |
 |----------|----------|
-| [Kapacitetsmatris](CAPABILITY_MATRIX.md) | Alla — vad som fungerar idag vs. roadmap |
+| [Kapacitetsmatris](CAPABILITY_MATRIX.md) | Alla — vad som fungerar idag vs. framtida arbete |
 | [API-referens](API_REFERENCE.md) | Utvecklare och operatörer |
 | [Guide för lokal utveckling](LOCAL_DEVELOPMENT.md) | Utvecklare på Windows, macOS eller Linux |
 
@@ -55,7 +55,7 @@ Välkommen till UtahMosphere OS dokumentation. **v25.1 Migration Ready** — enh
 | [hello-world](../../examples/hello-world/) | Driftsättning via `/command` |
 | [check-node-health](../../examples/check-node-health/) | Hälsokontroll |
 | [paid-app-access](../../examples/paid-app-access/) | Tycoon-betalningsgrind |
-| [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Utan mikrofon |
+| [omega-build-verify](../../examples/omega-build-verify/) | Fullständigt S3/Lambda/RDS/container-test |
 
 | Startprojekt | Beskrivning |
 |--------------|-------------|
@@ -65,9 +65,11 @@ Välkommen till UtahMosphere OS dokumentation. **v25.1 Migration Ready** — enh
 
 ---
 
-## UtahMosphere OS v25.0
+## UtahMosphere OS v26.0
 
-- **Suverän edge-plattform** i Python — port `8999`
-- **Röstdriftsättning** — Voice Bridge eller `POST /command`
-- **Biometrisk claim** — kommandot «Claim node»
+- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v26-final`
+- **Röstdriftsättning** — Voice Bridge eller `POST /command` med `nonce` + `command_signature`
+- **Biometrisk claim** — kommandot «Claim node»; `GET /nonce` mot återuppspelning
+- **Nodåterkallande** — `POST /admin/revoke-node` och Utah-Flux-panel
+- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v26.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}`

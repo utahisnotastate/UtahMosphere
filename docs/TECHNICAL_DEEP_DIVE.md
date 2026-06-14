@@ -73,10 +73,22 @@ Replaces IAM roles and passwords.
 - **`authorized_nodes[]`:** enforced in biometric ledger and `secure_registry.json`
 - **Voice:** `"authorize node <64-char-hash>"`
 
-#### **10. Genesis ISO (`mk_iso.sh`)**
+#### **10. Genesis ISO (`genesis_iso_builder.py`)**
 
-- Builds `utah_genesis_v25.iso` for UEFI/hybrid USB boot
-- Packages kernel + `bootstrap.sh` for zero-touch edge provisioning
+- Fetches Alpine `vmlinuz-virt` + `initramfs-virt` into hybrid ISO
+- Syslinux menu: `autoinstall=/bootstrap.sh` for plug-and-play deployment
+- Output: `utah_genesis_v26.iso`
+
+#### **11. Nonce-Guard (`nonce_guard.py`)**
+
+- `GET /nonce` issues fresh timestamp
+- `command_signature = HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")`
+- 30-second replay window; reused nonces rejected
+
+#### **12. Utah-Flux Revocation UI (`ui_revocation.py`)**
+
+- Admin panel in `flux_gui.py` lists `authorized_nodes[]`
+- `POST /admin/revoke-node` prunes revoked nodes from mesh gossip
 
 ---
 

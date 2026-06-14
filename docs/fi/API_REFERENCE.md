@@ -16,8 +16,8 @@ Elvytystarkistus kuormantasaajille ja seurannalle.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -29,9 +29,31 @@ curl http://127.0.0.1:8999/health
 
 ---
 
+## GET /nonce
+
+Myöntää tuoreen äänikomennon noncen. Vaaditaan solmun claimin jälkeen, kun `UTAH_NONCE_ENFORCE=1` (oletus).
+
+**Vastaus `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Esimerkki:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
+```
+
+---
+
 ## GET /status
 
-Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset, claim-tila, `authorized_nodes`, `swarm_peers` ja laajennetut Tycoon-kentät.
+Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset ja onko solmu claimattu.
 
 **Vastaus `200`:**
 
@@ -70,6 +92,8 @@ Suorita ääni-intentti ohjelmallisesti. Sama payload, jonka Voice Bridge lähet
 |--------|--------|------------|--------|
 | `transcript` | string | Kyllä | Puhuttu komento (kirjainkoolla ei väliä) |
 | `acoustic_hash` | string | Kyllä | 64 merkin SHA-256 vibe-print -hash |
+| `nonce` | integer | Claimin jälkeen | Palvelimen myöntämä aikaleima `GET /nonce`:sta |
+| `command_signature` | string | Claimin jälkeen | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Ei | Valinnainen AuthGuard HMAC delegoiduille solmuille |
 
 **Vastaus `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Claimin jälkeen:** `acoustic_hash` täytyy vastata ankkuroitua juuri-vibe-hashia **tai** olla merkintä `authorized_nodes[]`-listassa, muuten ydin palauttaa:
+**Claimin jälkeen:** `acoustic_hash` täytyy vastata juurta tai `authorized_nodes[]`-listaa, ja `nonce` + `command_signature` täytyy olla kelvollisia, muuten ydin palauttaa:
 
 ```json
 {
@@ -143,17 +167,89 @@ Laskut selvitetään automaattisesti ~60 sekunnin kuluttua nykyisessä simulaati
 
 ### Maksanut asiakas — Vastaus `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
+UtahX välittää pyynnön UtahContainerEngine-taustaan vuokralaisen portissa. Vastauksen runko on käsittelijän JSON-tuloste.
+
+```bash
+curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## PUT/POST /s3/{bucket}/{key}
+
+Kirjoita objekti Utah S3 Meshiin (paikallinen NVMe-tallennus).
+
+**Otsikot (valinnaiset):**
+
+| Otsikko | Kuvaus |
+|---------|--------|
+| `X-Utah-Tenant-ID` | Vuokralaisen tunniste |
+| `X-Utah-Signature` | HMAC-SHA256 `{tenant_id}:{path}` |
 
 **Esimerkki:**
 
 ```bash
-curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Lue objekti. Palauttaa raakatavut. Käytä `GET /s3/{bucket}/prefix*` listaukseen.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Kirjoita avain-arvo-tietue Utah RDS Ledgeriin.
+
+**Pyynnön runko:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Vastaus `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Lue tietue avaimella.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Kutsu Utah Lambda -käsittelijää (ilman konttikuvan latausta).
+
+**Pyynnön runko:** JSON-tapahtuma, joka välitetään `handler(event, context)`-funktiolle
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Vastaus `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
 
 ---
@@ -189,12 +285,34 @@ Selvityksen jälkeen `GET /app/{app_name}` samalla `X-Client-ID`:llä välittä�
 
 ---
 
+## POST /admin/revoke-node
+
+Peruuta delegoitu solmu `authorized_nodes[]`-listasta. Vain juuri-vibe-omistaja. Utah-Flux-peruutuspaneeli kutsuu tätä päätepistettä.
+
+**Pyynnön runko:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Vastaus `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Virhevastaukset
 
 | Koodi | Milloin |
 |-------|---------|
-| `404` | Tuntematon polku |
+| `404` | Tuntematon polku tai solmua ei voi peruuttaa |
 | `402` | Sovellus on olemassa, mutta asiakas ei ole maksanut Tycoon-laskua |
+| `403` | Virheelliset peruutustunnukset tai HMAC |
 
 ---
 
@@ -214,7 +332,10 @@ Selvityksen jälkeen `GET /app/{app_name}` samalla `X-Client-ID`:llä välittä�
 |----------|-----------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Vuokralaiset, UtahX-reitit, tallennusindeksi |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Utah-Flux UI -tila |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Käyttöön otettu käsittelijäpohja |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Kontin käsittelijä |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Lambda-käsittelijä |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh -objektit |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | RDS avain-arvo -tallennus |
 | `security/biometric_ledger.json` | Juuri-vibe-hash (paikallinen varmuuskopio jos `/etc` ei kirjoitettavissa) |
 | `tycoon/settlement_ledger.json` | Lasku- ja maksutila |
 

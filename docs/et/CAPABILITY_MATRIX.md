@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi järgi.
+UtahMosphere OS **v26.0 Omega-Build FINAL** — täielik teekaardi rakendamine.
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi jär
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | Elusoleku päring + `build: golden-master-v25.1` |
+| `/health` | GET | **Rakendatud** | Elusoleku päring + `build: omega-build-v26-final` |
+| `/nonce` | GET | **Rakendatud** | Väljastab värske häälkäsu nonce (30s aken) |
 | `/status` | GET | **Rakendatud** | UI olek, rentnikud, claim olek, S3 juur |
-| `/command` | POST | **Rakendatud** | Hääle intenti käivitus |
+| `/command` | POST | **Rakendatud** | Hääle intenti käivitus + nonce korduskasutuse vastu pärast claim-i |
+| `/admin/revoke-node` | POST | **Rakendatud** | Ainult juur — volitatud sõlme tühistamine |
 | `/app/unlock` | POST | **Rakendatud** | Esita makse; tagastab 202 kuni arveldus |
 | `/app/{name}` | GET | **Rakendatud** | Tycoon 402 värav + UtahX proksi konteinerisse |
 | `/app/{name}/{path}` | GET | **Rakendatud** | Alamtee proksi konteineri taustale |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi jär
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Rakendatud** | Kohalik objektisalvestus + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Rakendatud** | Handleri kutsumine ilma piltideta |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Rakendatud** | JSON võti-väärtus register |
-| **Quantum Ledger** | Rakendatud | Biomeetriline claim + kinnitamine |
-| **Utah-Tycoon** | **Rakendatud** | Mempool/electrum arveldus (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402 värav |
+| **Quantum Ledger** | **Rakendatud** | Biomeetriline claim + kinnitamine |
+| **Utah-Tycoon** | **Rakendatud** | Mempool/electrum arveldus (`tycoon_settlement.py`) |
+| **AuthGuard (`ledger_auth.py`)** | **Rakendatud** | `authorized_nodes[]` jõustamine hääle ja võrgu jaoks |
+| **Nonce-Guard (`nonce_guard.py`)** | **Rakendatud** | 30s korduskasutuse vastu häälkäskudele |
 | **UtahNetes Gossip** | **Rakendatud** | AuthGuard-allkirjastatud 5s multicast `utah_mesh_engine.py` kaudu |
 | **Global Swarm** | **Rakendatud** | Deterministiline DHT + allkirjastatud registeri sünk |
-| **AuthGuard (`ledger_auth.py`)** | **Rakendatud** | `authorized_nodes[]` jõustamine hääle ja võrgu jaoks |
-| **Genesis ISO (`mk_iso.sh`)** | **Rakendatud** | UEFI/hübriid flash-installeri ehitaja |
-| **Utah-Flux UI** | Rakendatud | Tkinter oleku armatuurlaud |
+| **Genesis ISO (`genesis_iso_builder.py`)** | **Rakendatud** | Alpine vmlinuz/initramfs hübriid ISO |
+| **Utah-Flux tühistamise UI (`ui_revocation.py`)** | **Rakendatud** | Admin-paneel `flux_gui.py` sees |
+| **Utah-Flux UI** | **Rakendatud** | Tkinter olek + tühistamise armatuurlaud |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Rakendatud** | Mitmeprotsessiline orkestreerija |
 | **Bootstrap (`bootstrap.sh`)** | **Rakendatud** | Palja riistvara systemd paigaldus |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi jär
 | Käsu muster | Olek | Näide |
 |-------------|------|-------|
 | Claim node | Rakendatud | `"Claim node"` |
+| Authorize node | **Rakendatud** | `"authorize node <64-char-vibe-hash>"` |
 | Deploy application | Rakendatud | `"deploy application my-app"` |
 | Patch application | **Rakendatud** | `"patch app my-app to add logging"` |
-| Authorize node | **Rakendatud** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Rakendatud | `"status grid"` |
+
+**Pärast claim-i:** lisa iga `/command` päringule `nonce` + `command_signature` pärit `GET /nonce`-st.
 
 ---
 
@@ -69,13 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi jär
 | `python3 genesis_deploy.py` | Rakendatud | Linux / arendus |
 | `sudo bash bootstrap.sh` | **Soovitatav tootmises** | Linux systemd |
 | `sudo bash setup.sh` | Rakendatud | Aliase bootstrapile |
-| `./mk_iso.sh` | **Rakendatud** | Linux — ehitab `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **Rakendatud** | Linux — ehitab `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **Rakendatud** | Genesis ISO ehitaja ümbris |
 | `docker-compose up` | Valikuline | Ainult pärand mugavus |
 
 ---
 
-## Teekaart (ülejäänud lüngad)
+## Teekaart
 
-- Alpine/vmlinuz bundling Genesis ISO sees (käivitusmenüü dokumenteerib praegu käsitsi paigaldustee)
-- Nonce/ajatempel häälkäskude korduskasutamise vastu
-- `authorized_nodes` tühistamise kasutajaliides
+Kõik v25.x teekaardi punktid on v26.0-s **rakendatud**. Tuleviku töö:
+
+- Riistvara tõendamine Genesis ISO automaatseks paigaldamiseks
+- Mitme piirkonna mempool varuühendus
+- Voice Bridge automaatne nonce allkirjastamine
+
+Vaata [API viidet](API_REFERENCE.md) ja [Arendaja retseptiraamatut](DEVELOPER_COOKBOOK.md) praeguste rakenduse detailide jaoks.

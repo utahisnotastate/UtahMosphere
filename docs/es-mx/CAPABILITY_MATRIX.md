@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-UtahMosphere OS **v25.1 Migration Ready** — estado de implementación según Omega-Build.
+UtahMosphere OS **v26.0 Omega-Build FINAL** — implementación completa de la hoja de ruta.
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — estado de implementación según O
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | Sonda de disponibilidad + `build: golden-master-v25.1` |
+| `/health` | GET | **Implementado** | Sonda de disponibilidad + `build: omega-build-v26-final` |
+| `/nonce` | GET | **Implementado** | Emite nonce nuevo para comando de voz (ventana 30 s) |
 | `/status` | GET | **Implementado** | Estado UI, inquilinos, claim, raíz S3 |
-| `/command` | POST | **Implementado** | Ejecución de intención de voz |
+| `/command` | POST | **Implementado** | Intención de voz + anti-replay nonce si reclamado |
+| `/admin/revoke-node` | POST | **Implementado** | Revocación de nodo autorizado (solo raíz) |
 | `/app/unlock` | POST | **Implementado** | Enviar pago; devuelve 202 pendiente de liquidación |
 | `/app/{name}` | GET | **Implementado** | Puerta Tycoon 402 + proxy UtahX al contenedor |
 | `/app/{name}/{path}` | GET | **Implementado** | Proxy de subruta al backend del contenedor |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — estado de implementación según O
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Implementado** | Almacenamiento de objetos local + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Implementado** | Invocación de handler sin imágenes |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Implementado** | Registro clave-valor JSON |
-| **Quantum Ledger** | Implementado | Claim biométrico + verificación |
-| **Utah-Tycoon** | **Implementado** | Liquidación mempool/electrum (`tycoon_settlement.py`), `POST /app/unlock`, puerta HTTP 402 |
+| **Quantum Ledger** | **Implementado** | Claim biométrico + verificación |
+| **Utah-Tycoon** | **Implementado** | Liquidación mempool/electrum (`tycoon_settlement.py`) |
+| **AuthGuard (`ledger_auth.py`)** | **Implementado** | Aplicación de `authorized_nodes[]` para voz + malla |
+| **Nonce-Guard (`nonce_guard.py`)** | **Implementado** | Anti-replay 30 s para comandos de voz |
 | **Gossip UtahNetes** | **Implementado** | Multidifusión 5 s firmada AuthGuard vía `utah_mesh_engine.py` |
 | **Global Swarm** | **Implementado** | DHT determinista + sincronización de registro firmada |
-| **AuthGuard (`ledger_auth.py`)** | **Implementado** | Aplicación de `authorized_nodes[]` para voz + malla |
-| **Genesis ISO (`mk_iso.sh`)** | **Implementado** | Generador de instalador flash UEFI/híbrido |
-| **UI Utah-Flux** | Implementado | Tablero Tkinter de estado |
+| **Genesis ISO (`genesis_iso_builder.py`)** | **Implementado** | ISO híbrida Alpine vmlinuz/initramfs |
+| **UI de revocación Utah-Flux (`ui_revocation.py`)** | **Implementado** | Panel admin en `flux_gui.py` |
+| **UI Utah-Flux** | **Implementado** | Tablero Tkinter de estado + revocación |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Implementado** | Orquestador multiproceso |
 | **Bootstrap (`bootstrap.sh`)** | **Implementado** | Instalación bare-metal systemd |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — estado de implementación según O
 | Patrón de comando | Estado | Ejemplo |
 |-------------------|--------|---------|
 | Reclamar nodo | Implementado | `"Claim node"` |
+| Autorizar nodo | **Implementado** | `"authorize node <64-char-vibe-hash>"` |
 | Desplegar aplicación | Implementado | `"deploy application my-app"` |
 | Parchear aplicación | **Implementado** | `"patch app my-app to add logging"` |
-| Autorizar nodo | **Implementado** | `"authorize node <64-char-vibe-hash>"` |
 | Estado / grid | Implementado | `"status grid"` |
+
+**Después del claim:** incluir `nonce` + `command_signature` de `GET /nonce` en cada solicitud `/command`.
 
 ---
 
@@ -69,15 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — estado de implementación según O
 | `python3 genesis_deploy.py` | Implementado | Linux / dev |
 | `sudo bash bootstrap.sh` | **Recomendado prod** | Linux systemd |
 | `sudo bash setup.sh` | Implementado | Alias de bootstrap |
-| `./mk_iso.sh` | **Implementado** | Linux — genera `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **Implementado** | Linux — genera `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **Implementado** | Wrapper para el generador Genesis ISO |
 | `docker-compose up` | Opcional | Solo conveniencia heredada |
 
 ---
 
-## Hoja de ruta (pendiente)
+## Hoja de ruta
 
-- Empaquetado Alpine/vmlinuz dentro de Genesis ISO (el menú de arranque documenta hoy la ruta de instalación manual)
-- Anti-replay nonce/marca de tiempo para comandos de voz
-- Interfaz de revocación de `authorized_nodes`
+Todos los elementos de la hoja de ruta v25.x están **implementados** en v26.0. Trabajo futuro:
+
+- Atestación de hardware para autoinstall Genesis ISO
+- Conmutación por error mempool multi-región
+- Firma automática de nonce en el puente de voz
 
 Consulta la [Referencia de API](API_REFERENCE.md) y el [Recetario del desarrollador](DEVELOPER_COOKBOOK.md) para detalles de implementación actuales.

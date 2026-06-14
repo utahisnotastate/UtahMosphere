@@ -1,11 +1,11 @@
-# Genesis ISO Installer (v25.1)
+# Genesis ISO Installer (v26.0)
 
-Build a UEFI/hybrid bootable flash-drive image that packages the Golden Master kernel, `bootstrap.sh`, and all sovereign Python modules.
+Build a standalone UEFI/BIOS hybrid bootable image with **Alpine Linux vmlinuz-virt**, initramfs, and the full UtahMosphere sovereign stack.
 
 ## Prerequisites (Linux)
 
 ```bash
-sudo apt-get install -y xorriso isolinux syslinux
+sudo apt-get install -y xorriso isolinux syslinux python3
 ```
 
 ## Build
@@ -13,44 +13,53 @@ sudo apt-get install -y xorriso isolinux syslinux
 ```bash
 chmod +x mk_iso.sh
 ./mk_iso.sh
+# or
+python3 genesis_iso_builder.py
 ```
 
-Output: `utah_genesis_v25.iso` in the repository root (override with `ISO_OUTPUT=/path/to/image.iso`).
+Output: `utah_genesis_v26.iso` (override with `ISO_OUTPUT=/path/to/image.iso`).
+
+The builder:
+
+1. Fetches Alpine `vmlinuz-virt` and `initramfs-virt` from the official netboot CDN
+2. Writes syslinux + GRUB menus with `autoinstall=/bootstrap.sh`
+3. Packages all Python modules and `bootstrap.sh` into the image
+4. Produces a hybrid ISO via `xorriso`
 
 ## Flash to USB
 
 ```bash
-# Replace /dev/sdX with your USB device — this erases the drive
-sudo dd if=utah_genesis_v25.iso of=/dev/sdX bs=4M status=progress conv=fsync
+sudo dd if=utah_genesis_v26.iso of=/dev/sdX bs=4M status=progress conv=fsync
 ```
 
-## Install on Boot
+## Boot Behavior
 
-1. Boot target hardware from the USB media (UEFI preferred).
-2. Mount the volume and run:
+| Menu entry | Behavior |
+|------------|----------|
+| **Genesis Auto-Install** | Boots Alpine ramdisk, passes `autoinstall=/bootstrap.sh` |
+| **Manual Boot** | Boots Alpine without auto-install (run `bootstrap.sh` manually) |
 
-```bash
-sudo bash /path/to/mount/bootstrap.sh
-```
-
-3. Reboot — `utah-genesis` systemd service manifests the kernel on port **8999**.
+After install, `utah-genesis` systemd service manifests the kernel on port **8999**.
 
 ## ISO Contents
 
 | Path | Purpose |
 |------|---------|
-| `bootstrap.sh` | Bare-metal provisioning (purges Docker/Nginx, installs systemd unit) |
+| `vmlinuz-virt` | Alpine kernel (netboot) |
+| `initramfs-virt` | Alpine initramfs |
+| `bootstrap.sh` | Bare-metal provisioning |
 | `utahmosphere/` | Full Python sovereign stack |
-| `requirements.txt` | Runtime dependencies |
-| `README.txt` | Quick install instructions |
+| `isolinux/isolinux.cfg` | BIOS boot menu |
+| `boot/grub/grub.cfg` | UEFI boot menu |
 
 ## Environment (Build-Time)
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `ISO_STAGING` | `/tmp/utah_iso` | Staging directory |
-| `ISO_OUTPUT` | `./utah_genesis_v25.iso` | Output image path |
-| `ISO_LABEL` | `UTAH_GENESIS_V25` | Volume label |
+| `ISO_OUTPUT` | `./utah_genesis_v26.iso` | Output image path |
+| `ISO_LABEL` | `UTAH_GENESIS_V26` | Volume label |
+| `UTAH_ALPINE_NETBOOT_URL` | Alpine v3.20 x86_64 netboot base URL | Kernel source |
 
 ## Related
 

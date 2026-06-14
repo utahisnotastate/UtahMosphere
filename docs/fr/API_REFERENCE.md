@@ -16,8 +16,8 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -25,6 +25,28 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 
 ```bash
 curl http://127.0.0.1:8999/health
+```
+
+---
+
+## GET /nonce
+
+Émet un nonce frais pour commande vocale. Requis après revendication du nœud lorsque `UTAH_NONCE_ENFORCE=1` (par défaut).
+
+**Réponse `200` :**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Exemple :**
+
+```bash
+curl http://127.0.0.1:8999/nonce
 ```
 
 ---
@@ -70,6 +92,8 @@ Exécuter une intention vocale par programmation. Même charge utile que celle e
 |-------|------|--------|-------------|
 | `transcript` | string | Oui | Commande parlée (insensible à la casse) |
 | `acoustic_hash` | string | Oui | Hash vibe-print SHA-256 sur 64 caractères |
+| `nonce` | integer | Après revendication | Horodatage émis par le serveur depuis `GET /nonce` |
+| `command_signature` | string | Après revendication | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Non | HMAC AuthGuard optionnel pour nœuds délégués |
 
 **Réponse `200` :**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Après revendication :** `acoustic_hash` doit correspondre au hash vibe racine ancré **ou** à une entrée dans `authorized_nodes[]`, sinon le noyau renvoie :
+**Après revendication :** `acoustic_hash` doit correspondre à la racine ou à `authorized_nodes[]`, et `nonce` + `command_signature` doivent être valides, sinon le noyau renvoie :
 
 ```json
 {
@@ -151,6 +175,85 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ---
 
+## PUT/POST /s3/{bucket}/{key}
+
+Écrire un objet dans Utah S3 Mesh (stockage NVMe local).
+
+**En-têtes (optionnels) :**
+
+| En-tête | Description |
+|---------|-------------|
+| `X-Utah-Tenant-ID` | Identifiant locataire |
+| `X-Utah-Signature` | HMAC-SHA256 de `{tenant_id}:{path}` |
+
+**Exemple :**
+
+```bash
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Lire un objet. Renvoie des octets bruts. Utiliser `GET /s3/{bucket}/prefix*` pour lister.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Écrire un enregistrement clé-valeur dans Utah RDS Ledger.
+
+**Corps de la requête :**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Réponse `200` :**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Lire un enregistrement par clé.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Invoquer un handler Utah Lambda (sans tirage d'image conteneur).
+
+**Corps de la requête :** événement JSON passé à `handler(event, context)`
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Réponse `200` :**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
+```
+
+---
+
 ## POST /app/unlock
 
 Soumettre une demande de déverrouillage par paiement. Tycoon interroge mempool.space (ou electrum-server) pour la finalité du paiement. Les adresses de développement (`bc1q_utah_*`) utilisent un règlement temporisé en mode `auto`.
@@ -182,12 +285,34 @@ Après règlement, `GET /app/{app_name}` avec le même `X-Client-ID` transmet la
 
 ---
 
+## POST /admin/revoke-node
+
+Révoquer un nœud délégué de `authorized_nodes[]`. Titulaire vibe racine uniquement. Le panneau de révocation Utah-Flux appelle ce point de terminaison.
+
+**Corps de la requête :**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Réponse `200` :**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Réponses d'erreur
 
 | Code | Quand |
 |------|-------|
-| `404` | Chemin inconnu |
+| `404` | Chemin inconnu ou nœud non révocable |
 | `402` | L'application existe mais le client n'a pas payé la facture Tycoon |
+| `403` | Identifiants de révocation ou HMAC invalides |
 
 ---
 
@@ -207,7 +332,10 @@ Après règlement, `GET /app/{app_name}` avec le même `X-Client-ID` transmet la
 |---------|----------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Locataires, routes UtahX, index de stockage |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | État de l'interface Utah-Flux |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Stub de handler déployé |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Handler conteneur |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Handler Lambda |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | Objets S3 Mesh |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | Magasin clé-valeur RDS |
 | `security/biometric_ledger.json` | Hash vibe racine (repli local si `/etc` non inscriptible) |
 | `tycoon/settlement_ledger.json` | État des factures et paiements |
 

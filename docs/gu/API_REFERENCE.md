@@ -16,8 +16,8 @@ Chek si mumuña para load balancers yan monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -25,6 +25,28 @@ Chek si mumuña para load balancers yan monitoring.
 
 ```bash
 curl http://127.0.0.1:8999/health
+```
+
+---
+
+## GET /nonce
+
+Ma issue fresh voice command nonce. Necessario después claim yanggen `UTAH_NONCE_ENFORCE=1` (default).
+
+**Response `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Ehemplo:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
 ```
 
 ---
@@ -70,6 +92,8 @@ Ma execute voice intent programmaticamente. I mismo payload Voice Bridge ma send
 |-------|------|------------|-------------|
 | `transcript` | string | Si | Komando gi bos (ti importa uppercase/lowercase) |
 | `acoustic_hash` | string | Si | 64-char SHA-256 vibe-print hash |
+| `nonce` | integer | Después claim | Server-issued timestamp ginen `GET /nonce` |
+| `command_signature` | string | Después claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Tåya' | Optional AuthGuard HMAC para delegated nodes |
 
 **Response `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Después claim:** `acoustic_hash` debi match anchored root vibe hash **pat** entry gi `authorized_nodes[]`, pat core returns:
+**Después claim:** `acoustic_hash` debi match root pat `authorized_nodes[]`, yan `nonce` + `command_signature` debi valid, pat core returns:
 
 ```json
 {
@@ -151,6 +175,85 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ---
 
+## PUT/POST /s3/{bucket}/{key}
+
+Write object gi Utah S3 Mesh (local NVMe storage).
+
+**Headers (optional):**
+
+| Header | Deskripsion |
+|--------|-------------|
+| `X-Utah-Tenant-ID` | Tenant identifier |
+| `X-Utah-Signature` | HMAC-SHA256 gi `{tenant_id}:{path}` |
+
+**Ehemplo:**
+
+```bash
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Read object. Ma return raw bytes. Usa `GET /s3/{bucket}/prefix*` para list.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Write key-value record gi Utah RDS Ledger.
+
+**Request body:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Response `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Read record by key.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Invoke Utah Lambda handler (sin container image pull).
+
+**Request body:** JSON event passed to `handler(event, context)`
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Response `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
+```
+
+---
+
 ## POST /app/unlock
 
 Submit payment unlock request. Tycoon ma poll mempool.space (pat electrum-server) para payment finality. Dev addresses (`bc1q_utah_*`) ma usa timed settlement gi `auto` mode.
@@ -182,12 +285,34 @@ Después settlement, `GET /app/{app_name}` yan i mismo `X-Client-ID` ma proxy gi
 
 ---
 
+## POST /admin/revoke-node
+
+Revoke delegated node ginen `authorized_nodes[]`. Root vibe holder ha'. Utah-Flux revocation panel ma call este endpoint.
+
+**Request body:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Response `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Error Responses
 
 | Code | Yanggen |
 |------|---------|
-| `404` | Unknown path |
+| `404` | Unknown path pat node ti revocable |
 | `402` | App exists pero client ti pago Tycoon invoice |
+| `403` | Invalid revocation credentials pat HMAC |
 
 ---
 
@@ -207,7 +332,10 @@ Después settlement, `GET /app/{app_name}` yan i mismo `X-Client-ID` ma proxy gi
 |------|-----------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Tenants, UtahX routes, storage index |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Utah-Flux UI state |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Deployed handler boilerplate |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Container handler |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Lambda handler |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh objects |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | RDS key-value store |
 | `security/biometric_ledger.json` | Root vibe hash (lokal backup yanggen `/etc` not writable) |
 | `tycoon/settlement_ledger.json` | Invoice yan payment state |
 

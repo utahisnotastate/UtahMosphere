@@ -1,6 +1,6 @@
 # Ominaisuusmatriisi
 
-UtahMosphere OS **v25.1 Migration Ready** — toteutuksen tila Omega-Buildin mukaan.
+UtahMosphere OS **v26.0 Omega-Build FINAL** — täydellinen tiekartan toteutus.
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — toteutuksen tila Omega-Buildin muk
 
 | Päätepiste | Metodi | Tila | Huomiot |
 |------------|--------|------|---------|
-| `/health` | GET | **Toteutettu** | Elvytystarkistus + `build: golden-master-v25.1` |
+| `/health` | GET | **Toteutettu** | Elvytystarkistus + `build: omega-build-v26-final` |
+| `/nonce` | GET | **Toteutettu** | Myöntää tuoreen äänikomennon noncen (30 s ikkuna) |
 | `/status` | GET | **Toteutettu** | UI-tila, vuokralaiset, claim-tila, S3-juuri |
-| `/command` | POST | **Toteutettu** | Ääni-intentin suoritus |
+| `/command` | POST | **Toteutettu** | Ääni-intentti + nonce uudelleentoiston esto claimin jälkeen |
+| `/admin/revoke-node` | POST | **Toteutettu** | Vain juuri — delegoidun solmun peruutus |
 | `/app/unlock` | POST | **Toteutettu** | Lähetä maksu; palauttaa 202 odotettavaan selvitykseen |
 | `/app/{name}` | GET | **Toteutettu** | Tycoon 402 -portti + UtahX-välitys konttiin |
 | `/app/{name}/{path}` | GET | **Toteutettu** | Alipolun välitys kontin taustaan |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — toteutuksen tila Omega-Buildin muk
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Toteutettu** | Paikallinen objektitallennus + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Toteutettu** | Käsittelijän kutsu ilman kuvia |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Toteutettu** | JSON avain-arvo -rekisteri |
-| **Quantum Ledger** | Toteutettu | Biometrinen claim + vahvistus |
-| **Utah-Tycoon** | **Toteutettu** | Mempool/electrum-selvitys (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402 -portti |
+| **Quantum Ledger** | **Toteutettu** | Biometrinen claim + vahvistus |
+| **Utah-Tycoon** | **Toteutettu** | Mempool/electrum-selvitys (`tycoon_settlement.py`) |
+| **AuthGuard (`ledger_auth.py`)** | **Toteutettu** | `authorized_nodes[]`-pakottaminen äänelle ja verkolle |
+| **Nonce-Guard (`nonce_guard.py`)** | **Toteutettu** | 30 s uudelleentoiston esto äänikomennoille |
 | **UtahNetes Gossip** | **Toteutettu** | AuthGuard-allekirjoitettu 5 s multicast `utah_mesh_engine.py`:n kautta |
 | **Global Swarm** | **Toteutettu** | Deterministinen DHT + allekirjoitettu rekisterisynkronointi |
-| **AuthGuard (`ledger_auth.py`)** | **Toteutettu** | `authorized_nodes[]`-pakottaminen äänelle ja verkolle |
-| **Genesis ISO (`mk_iso.sh`)** | **Toteutettu** | UEFI/hybridi flash-asennuksen rakentaja |
-| **Utah-Flux UI** | Toteutettu | Tkinter-tilapaneeli |
+| **Genesis ISO (`genesis_iso_builder.py`)** | **Toteutettu** | Alpine vmlinuz/initramfs -hybridi-ISO |
+| **Utah-Flux peruutus-UI (`ui_revocation.py`)** | **Toteutettu** | Ylläpitopaneeli `flux_gui.py`:ssä |
+| **Utah-Flux UI** | **Toteutettu** | Tkinter-tila + peruutuskojelauta |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Toteutettu** | Moniprosessinen orkestroija |
 | **Bootstrap (`bootstrap.sh`)** | **Toteutettu** | Paljaan metallin systemd-asennus |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — toteutuksen tila Omega-Buildin muk
 | Komentomalli | Tila | Esimerkki |
 |--------------|------|-----------|
 | Claim node | Toteutettu | `"Claim node"` |
+| Authorize node | **Toteutettu** | `"authorize node <64-char-vibe-hash>"` |
 | Deploy application | Toteutettu | `"deploy application my-app"` |
 | Patch application | **Toteutettu** | `"patch app my-app to add logging"` |
-| Authorize node | **Toteutettu** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Toteutettu | `"status grid"` |
+
+**Claimin jälkeen:** sisällytä `nonce` + `command_signature` `GET /nonce`:sta jokaiseen `/command`-pyyntöön.
 
 ---
 
@@ -69,13 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — toteutuksen tila Omega-Buildin muk
 | `python3 genesis_deploy.py` | Toteutettu | Linux / kehitys |
 | `sudo bash bootstrap.sh` | **Suositeltu tuotannossa** | Linux systemd |
 | `sudo bash setup.sh` | Toteutettu | Alias bootstrapille |
-| `./mk_iso.sh` | **Toteutettu** | Linux — rakentaa `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **Toteutettu** | Linux — rakentaa `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **Toteutettu** | Genesis ISO -rakentajan kääre |
 | `docker-compose up` | Valinnainen | Vain perinteinen kätevyys |
 
 ---
 
-## Tiekartta (jäljellä olevat puutteet)
+## Tiekartta
 
-- Alpine/vmlinuz-paketointi Genesis ISO:ssa (käynnistysvalikko dokumentoi toistaiseksi manuaalisen asennuspolun)
-- Nonce/aikaleima äänikomentojen uudelleentoistoa vastaan
-- `authorized_nodes`-peruutuksen käyttöliittymä
+Kaikki v25.x-tiekartan kohdat on **toteutettu** v26.0:ssa. Tuleva työ:
+
+- Laitteiston todentaminen Genesis ISO -automaattiasennusta varten
+- Monialueinen mempool-varajärjestelmä
+- Voice Bridge -automaattinen nonce-allekirjoitus
+
+Katso [API-viite](API_REFERENCE.md) ja [Kehittäjän keittokirja](DEVELOPER_COOKBOOK.md) nykyisistä toteutusyksityiskohdista.

@@ -79,6 +79,17 @@ class QuantumLedgerGuard:
         self._save_ledger()
         return True
 
+    def revoke_node(self, node_hash: str) -> bool:
+        root = self.ledger.get("root_vibe_hash")
+        if node_hash == root:
+            return False
+        nodes: List[str] = self.ledger.setdefault("authorized_nodes", [])
+        if node_hash not in nodes:
+            return False
+        nodes.remove(node_hash)
+        self._save_ledger()
+        return True
+
     def get_authorized_nodes(self) -> List[str]:
         return list(self.ledger.get("authorized_nodes", []))
 

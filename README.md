@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v25.1 Migration Ready)
+# 🌌 UtahMosphere OS (v26.0 Omega-Build FINAL)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python socket-level event loops — mempool Tycoon settlement, AuthGuard mesh enforcement, Genesis ISO provisioning, and full S3/Lambda/RDS parity.
+UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Omega-Build FINAL Kernel** (`utahmosphere_master.py`) delivers mempool Tycoon settlement, AuthGuard mesh enforcement, Alpine Genesis ISO provisioning, voice nonce anti-replay, and Utah-Flux node revocation — plus full S3/Lambda/RDS parity.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -98,25 +98,25 @@ docker-compose up -d
 | `UTAH_TYCOON_SETTLEMENT_MODE` | `auto` | `auto`, `real`, or `simulate` Bitcoin settlement |
 | `UTAH_MEMPOOL_API` | `https://mempool.space/api` | Mempool confirmation endpoint |
 | `UTAH_ELECTRUM_URL` | — | Optional electrum-server JSON-RPC URL |
+| `UTAH_NONCE_ENFORCE` | `1` | Require nonce on `/command` after claim |
+| `UTAH_NONCE_WINDOW_SEC` | `30` | Nonce freshness window |
+| `UTAH_FLUX_ACOUSTIC_HASH` | — | Root hash for Utah-Flux revocation panel |
 
 ---
 
-## 🛠 Features (v25.1 Migration Ready)
+## 🛠 Features (v26.0 Omega-Build FINAL)
 
 - **UtahX:** Native HTTP/1.1 stream proxy to containers (replaces Nginx)
 - **UtahContainerEngine:** In-process handler servers on ports 8200+ (replaces Docker)
 - **Lazarus AST Engine:** Live handler mutation without rebuilds
-- **S3 Mesh:** Local NVMe object storage at `/s3/{bucket}/{key}`
-- **Utah Lambda:** `POST /lambda/{fn}/invoke` serverless handlers
-- **RDS Ledger:** `POST /rds/write`, `GET /rds/read/{key}` key-value store
-- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`) + HTTP 402 gate
-- **AuthGuard:** `authorized_nodes[]` enforcement for voice + mesh (`ledger_auth.py`)
-- **UtahNetes Mesh:** Signed 5s multicast gossip + `master_registry.json`
-- **Global Swarm DHT:** Deterministic XOR routing, `FIND_NODE` peer lookup
-- **Genesis ISO:** `./mk_iso.sh` → `utah_genesis_v25.iso` flash installer
-- **OTA Lazarus:** Push kernel updates to swarm nodes
+- **S3 Mesh / Lambda / RDS:** Full cloud parity on port 8999
+- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`)
+- **AuthGuard:** `authorized_nodes[]` enforcement (`ledger_auth.py`)
+- **Nonce-Guard:** 30s voice anti-replay (`nonce_guard.py`, `GET /nonce`)
+- **Utah-Flux Revocation UI:** Purge mesh nodes (`ui_revocation.py` + `flux_gui.py`)
+- **Genesis ISO:** Alpine vmlinuz bundling (`genesis_iso_builder.py` -> `utah_genesis_v26.iso`)
+- **UtahNetes + Swarm DHT:** Signed gossip and deterministic routing
 - **Quantum Ledger:** Biometric vibe-print node claim
-- **Utah-Flux:** Reactive Tkinter dashboard
 
 ---
 

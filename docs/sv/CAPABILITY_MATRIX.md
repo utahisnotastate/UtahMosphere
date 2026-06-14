@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega-Build.
+UtahMosphere OS **v26.0 Omega-Build FINAL** — fullständig roadmap-implementering.
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | Liveness-probe + `build: golden-master-v25.1` |
+| `/health` | GET | **Implementerat** | Liveness-probe + `build: omega-build-v26-final` |
+| `/nonce` | GET | **Implementerat** | Utfärdar färskt nonce för röstkommando (30s fönster) |
 | `/status` | GET | **Implementerat** | UI-tillstånd, tenants, claim-status, S3-rot |
-| `/command` | POST | **Implementerat** | Röstintent-exekvering |
+| `/command` | POST | **Implementerat** | Röstintent + nonce anti-replay efter claim |
+| `/admin/revoke-node` | POST | **Implementerat** | Endast root — återkallande av delegerad nod |
 | `/app/unlock` | POST | **Implementerat** | Skicka betalning; returnerar 202 tills avveckling |
 | `/app/{name}` | GET | **Implementerat** | Tycoon 402-grind + UtahX-proxy till container |
 | `/app/{name}/{path}` | GET | **Implementerat** | Subpath-proxy till container-backend |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Implementerat** | Lokal objektlagring + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Implementerat** | Handler-invokering utan images |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Implementerat** | JSON nyckel-värde-register |
-| **Quantum Ledger** | Implementerat | Biometrisk claim + verifiering |
-| **Utah-Tycoon** | **Implementerat** | Mempool/electrum-avveckling (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402-grind |
+| **Quantum Ledger** | **Implementerat** | Biometrisk claim + verifiering |
+| **Utah-Tycoon** | **Implementerat** | Mempool/electrum-avveckling (`tycoon_settlement.py`) |
+| **AuthGuard (`ledger_auth.py`)** | **Implementerat** | `authorized_nodes[]`-tillämpning för röst och mesh |
+| **Nonce-Guard (`nonce_guard.py`)** | **Implementerat** | 30s anti-replay för röstkommandon |
 | **UtahNetes Gossip** | **Implementerat** | AuthGuard-signerad 5s multicast via `utah_mesh_engine.py` |
 | **Global Swarm** | **Implementerat** | Deterministisk DHT + signerad register-synk |
-| **AuthGuard (`ledger_auth.py`)** | **Implementerat** | `authorized_nodes[]`-tillämpning för röst och mesh |
-| **Genesis ISO (`mk_iso.sh`)** | **Implementerat** | UEFI/hybrid flash-installationsbyggare |
-| **Utah-Flux UI** | Implementerat | Tkinter-statuspanel |
+| **Genesis ISO (`genesis_iso_builder.py`)** | **Implementerat** | Alpine vmlinuz/initramfs hybrid-ISO |
+| **Utah-Flux återkallande UI (`ui_revocation.py`)** | **Implementerat** | Adminpanel i `flux_gui.py` |
+| **Utah-Flux UI** | **Implementerat** | Tkinter-status + återkallandepanel |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Implementerat** | Multiprocess-orkestrator |
 | **Bootstrap (`bootstrap.sh`)** | **Implementerat** | Bare-metal systemd-installation |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega
 | Kommandomönster | Status | Exempel |
 |-----------------|--------|---------|
 | Claim node | Implementerat | `"Claim node"` |
+| Authorize node | **Implementerat** | `"authorize node <64-char-vibe-hash>"` |
 | Deploy application | Implementerat | `"deploy application my-app"` |
 | Patch application | **Implementerat** | `"patch app my-app to add logging"` |
-| Authorize node | **Implementerat** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Implementerat | `"status grid"` |
+
+**Efter claim:** inkludera `nonce` + `command_signature` från `GET /nonce` i varje `/command`-begäran.
 
 ---
 
@@ -69,13 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega
 | `python3 genesis_deploy.py` | Implementerat | Linux / dev |
 | `sudo bash bootstrap.sh` | **Rekommenderas prod** | Linux systemd |
 | `sudo bash setup.sh` | Implementerat | Alias till bootstrap |
-| `./mk_iso.sh` | **Implementerat** | Linux — bygger `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **Implementerat** | Linux — bygger `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **Implementerat** | Omslag för Genesis ISO-byggare |
 | `docker-compose up` | Valfritt | Endast legacy-bekvämlighet |
 
 ---
 
-## Roadmap (återstående luckor)
+## Roadmap
 
-- Alpine/vmlinuz-bundling i Genesis ISO (startmenyn dokumenterar för närvarande manuell installationsväg)
-- Nonce/tidsstämpel mot återuppspelning av röstkommandon
-- Användargränssnitt för återkallande av `authorized_nodes`
+Alla v25.x-roadmap-poster är **implementerade** i v26.0. Framtida arbete:
+
+- Hårdvaruattestering för Genesis ISO-autoinstallation
+- Mempool-failover i flera regioner
+- Voice Bridge automatisk nonce-signering
+
+Se [API-referens](API_REFERENCE.md) och [Utvecklarkokbok](DEVELOPER_COOKBOOK.md) för aktuella implementeringsdetaljer.

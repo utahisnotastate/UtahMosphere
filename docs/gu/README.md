@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. **Migration Ready v25.1** — unifikådo na bare-metal kernel yan mempool Tycoon settlement, AuthGuard `authorized_nodes[]` enforcement, Genesis ISO installer (`mk_iso.sh`), UtahNetes, yan Global Swarm må'pos implement. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v26.0 Omega-Build FINAL** — unifikådo na bare-metal sovereign edge platform, port **8999**. I Omega-Build FINAL kernel (`utahmosphere_master.py`) ma deliver mempool Tycoon settlement, AuthGuard `authorized_nodes[]` enforcement, Alpine Genesis ISO provisioning, voice nonce anti-replay, yan Utah-Flux node revocation — mas kompleto na S3/Lambda/RDS parity. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -8,11 +8,9 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. **Migration R
 
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
-| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — håfa mumuña på'go vs plan futuru |
+| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — kompleto na v26.0 implementasion vs. trabahu futuru |
 | [Referensia API](API_REFERENCE.md) | Desarrollador siha yan operadot siha |
 | [Guia Desarrollu Lokal](LOCAL_DEVELOPMENT.md) | Desarrollador siha gi Windows, macOS, pat Linux |
-| [Sumario Executivo](EXECUTIVE_SUMMARY.md) | CEO/CTO yan lideråt |
-| [Guia Teknikal Deep-Dive](TECHNICAL_DEEP_DIVE.md) | Arquitecto siha yan engineer siha |
 
 ---
 
@@ -80,8 +78,18 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## UtahMosphere OS v25.1 Migration Ready
+## Features v26.0 Omega-Build FINAL
 
-Suveranu edge Python platform — port `8999`, build `golden-master-v25.1`, voice deploy, biometric claim, mempool Tycoon settlement, AuthGuard `authorized_nodes[]`, Genesis ISO (`./mk_iso.sh`), `authorize node` voice command, HTTP 402, `POST /app/unlock`.
+- **UtahX:** Native HTTP/1.1 stream proxy gi containers
+- **UtahContainerEngine:** In-process handler servers gi ports 8200+
+- **Lazarus AST Engine:** Live handler mutation sin rebuilds
+- **S3 Mesh / Lambda / RDS:** Full cloud parity gi port 8999
+- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`)
+- **AuthGuard:** `authorized_nodes[]` enforcement (`ledger_auth.py`)
+- **Nonce-Guard:** 30s voice anti-replay (`nonce_guard.py`, `GET /nonce`)
+- **Utah-Flux Revocation UI:** Purge mesh nodes (`ui_revocation.py` + `flux_gui.py`)
+- **Genesis ISO:** Alpine vmlinuz bundling (`genesis_iso_builder.py` → `utah_genesis_v26.iso`)
+- **UtahNetes + Swarm DHT:** Signed gossip yan deterministic routing
+- **Quantum Ledger:** Biometric vibe-print node claim
 
-**Mas dokumentu:** [Referensia API](API_REFERENCE.md) · [Matrisis Kapasidad](CAPABILITY_MATRIX.md)
+Build `omega-build-v26-final`. Ma recommend na entry: `python3 utahmosphere_master.py`.

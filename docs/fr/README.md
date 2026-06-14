@@ -1,6 +1,6 @@
 # Portail de documentation UtahMosphere
 
-Bienvenue sur le hub de documentation d'UtahMosphere OS v25.1 — cloud souverain edge Python, port **8999**. **Migration Ready v25.1** : noyau unifié bare-metal avec règlement mempool Tycoon, application AuthGuard `authorized_nodes[]`, installateur Genesis ISO (`mk_iso.sh`), UtahNetes et Global Swarm entièrement opérationnels. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+Bienvenue sur le hub de documentation d'UtahMosphere OS **v26.0 Omega-Build FINAL** — plateforme souveraine edge bare-metal unifiée, port **8999**. Le noyau Omega-Build FINAL (`utahmosphere_master.py`) fournit le règlement mempool Tycoon, l'application AuthGuard `authorized_nodes[]`, le provisionnement Genesis ISO Alpine, l'anti-rejeu nonce vocal et la révocation de nœuds Utah-Flux — plus la parité complète S3/Lambda/RDS. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
 
 ---
 
@@ -8,7 +8,7 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS v25.1 — cloud souverai
 
 | Document | Idéal pour |
 |----------|------------|
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — ce qui fonctionne aujourd'hui vs. feuille de route |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — implémentation complète v26.0 vs. travaux futurs |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -48,11 +48,11 @@ Code réutilisable à copier dans votre propre projet :
 
 | Modèle | Objectif |
 |--------|----------|
-| `templates/python-http-service/` | Microservice HTTP autonome |
-| `templates/container-handler/` | `handler.py` pour UtahContainerEngine |
-| `templates/voice-command-client/` | Client programmatique pour `/command` |
-| `templates/frontend-upload/` | Client de téléversement navigateur |
-| `templates/tycoon-payment-client/` | Flux de paiement HTTP 402 |
+| [python-http-service](../../templates/python-http-service/) | Microservice HTTP autonome |
+| [container-handler](../../templates/container-handler/) | `handler.py` pour UtahContainerEngine |
+| [voice-command-client](../../templates/voice-command-client/) | Client programmatique pour `/command` |
+| [frontend-upload](../../templates/frontend-upload/) | Client de téléversement navigateur |
+| [tycoon-payment-client](../../templates/tycoon-payment-client/) | Flux de paiement HTTP 402 |
 
 ### Exemples (`examples/`)
 
@@ -60,11 +60,11 @@ Petits scripts exécutables qui utilisent l'API en direct :
 
 | Exemple | Ce qu'il démontre |
 |---------|-------------------|
-| `examples/hello-world/` | Déployer une application via `/command` |
-| `examples/check-node-health/` | Sondes de santé et de statut |
-| `examples/paid-app-access/` | Règlement mempool/electrum Tycoon |
-| `examples/omega-build-verify/` | Test de parité S3/Lambda/RDS/conteneur complet |
-| `examples/voice-deploy-simulator/` | Déployer sans microphone |
+| [hello-world](../../examples/hello-world/) | Déployer une application via `/command` |
+| [check-node-health](../../examples/check-node-health/) | Sondes de santé et de statut |
+| [paid-app-access](../../examples/paid-app-access/) | Règlement mempool/electrum Tycoon |
+| [omega-build-verify](../../examples/omega-build-verify/) | Test de parité S3/Lambda/RDS/conteneur complet |
+| [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Déployer sans microphone |
 
 ### Projets de démarrage (`starter-projects/`)
 
@@ -72,12 +72,24 @@ Mini-projets complets à forker et étendre :
 
 | Projet | Description |
 |--------|-------------|
-| `starter-projects/minimal-api/` | Charge de travail API déployable la plus simple |
-| `starter-projects/voice-controlled-dashboard/` | Tableau de bord vocal + statut |
-| `starter-projects/monetized-endpoint/` | Modèle d'application payante |
+| [minimal-api](../../starter-projects/minimal-api/) | Charge de travail API déployable la plus simple |
+| [voice-controlled-dashboard](../../starter-projects/voice-controlled-dashboard/) | Tableau de bord vocal + statut |
+| [monetized-endpoint](../../starter-projects/monetized-endpoint/) | Modèle d'application payante |
 
 ---
 
-## À propos de cette documentation
+## Fonctionnalités v26.0 Omega-Build FINAL
 
-Cette section de documentation est entièrement en français. UtahMosphere OS v25.1 Migration Ready est un cloud souverain edge basé sur Python, build `golden-master-v25.1`, accessible par défaut sur le port **8999**. Fonctionnalités clés : règlement mempool Tycoon, application `authorized_nodes[]` via AuthGuard, installateur Genesis ISO (`./mk_iso.sh`), commande vocale `authorize node`.
+- **UtahX :** proxy HTTP/1.1 natif vers les conteneurs
+- **UtahContainerEngine :** serveurs handler in-process sur les ports 8200+
+- **Lazarus AST :** mutation de handler en direct sans reconstruction
+- **S3 Mesh / Lambda / RDS :** parité cloud complète sur le port 8999
+- **Utah-Tycoon :** règlement mempool/electrum (`tycoon_settlement.py`)
+- **AuthGuard :** application de `authorized_nodes[]` (`ledger_auth.py`)
+- **Nonce-Guard :** anti-rejeu vocal 30 s (`nonce_guard.py`, `GET /nonce`)
+- **Interface révocation Utah-Flux :** purge de nœuds maillage (`ui_revocation.py` + `flux_gui.py`)
+- **Genesis ISO :** bundling Alpine vmlinuz (`genesis_iso_builder.py` → `utah_genesis_v26.iso`)
+- **UtahNetes + Swarm DHT :** gossip signé et routage déterministe
+- **Quantum Ledger :** revendication de nœud par vibe-print biométrique
+
+Build `omega-build-v26-final`. Entrée recommandée : `python3 utahmosphere_master.py`.

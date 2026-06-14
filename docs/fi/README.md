@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentaatio
 
-Tervetuloa UtahMosphere OS -dokumentaatioon. **v25.1 Migration Ready** — yhtenäinen bare-metal-ydin, jossa Utah-Tycoon, UtahNetes ja Global Swarm on täysin integroitu. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
+Tervetuloa UtahMosphere OS -dokumentaatioon. **v26.0 Omega-Build FINAL** — täydellinen tiekartan toteutus: nonce-suojaus, solmun peruutus, Alpine Genesis ISO sekä täysin integroitu Utah-Tycoon, UtahNetes ja Global Swarm. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
 
 ---
 
@@ -8,7 +8,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v25.1 Migration Ready** — yhten
 
 | Dokumentti | Parhaiten |
 |------------|-----------|
-| [Kykyjen matriisi](CAPABILITY_MATRIX.md) | Kaikille — mitä toimii nyt vs. tiekartta |
+| [Ominaisuusmatriisi](CAPABILITY_MATRIX.md) | Kaikille — mitä toimii nyt vs. tuleva työ |
 | [API-viite](API_REFERENCE.md) | Kehittäjille ja operaattoreille |
 | [Paikallisen kehityksen opas](LOCAL_DEVELOPMENT.md) | Kehittäjille Windowsissa, macOS:ssä tai Linuxissa |
 
@@ -55,7 +55,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v25.1 Migration Ready** — yhten
 | [hello-world](../../examples/hello-world/) | Käyttöönotto `/command`-kautta |
 | [check-node-health](../../examples/check-node-health/) | Terveystarkistus |
 | [paid-app-access](../../examples/paid-app-access/) | Tycoon-maksuportti |
-| [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Ilman mikrofonia |
+| [omega-build-verify](../../examples/omega-build-verify/) | Täysi S3/Lambda/RDS/kontti-testi |
 
 | Aloitusprojekti | Kuvaus |
 |-----------------|--------|
@@ -65,9 +65,11 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v25.1 Migration Ready** — yhten
 
 ---
 
-## UtahMosphere OS v25.0
+## UtahMosphere OS v26.0
 
-- **Suvereeni reunalaituri** Pythonilla — portti `8999`
-- **Äänikäyttöönotto** — Voice Bridge tai `POST /command`
-- **Biometrinen claim** — komento «Claim node»
+- **Suvereeni reunalaituri** Pythonilla — portti `8999`, `build: omega-build-v26-final`
+- **Äänikäyttöönotto** — Voice Bridge tai `POST /command` `nonce` + `command_signature` -kentillä
+- **Biometrinen claim** — komento «Claim node»; `GET /nonce` uudelleentoiston estoon
+- **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
+- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v26.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}`

@@ -16,8 +16,8 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -29,9 +29,31 @@ curl http://127.0.0.1:8999/health
 
 ---
 
+## GET /nonce
+
+Utfärdar ett färskt nonce för röstkommando. Krävs efter nod-claim när `UTAH_NONCE_ENFORCE=1` (standard).
+
+**Svar `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Exempel:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
+```
+
+---
+
 ## GET /status
 
-Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants, claim-status, `authorized_nodes`, `swarm_peers` och utökade Tycoon-fält.
+Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants och om noden har claimats.
 
 **Svar `200`:**
 
@@ -70,6 +92,8 @@ Kör en röstintent programmatiskt. Samma payload som Voice Bridge skickar.
 |------|-----|---------------|-------------|
 | `transcript` | string | Ja | Talat kommando (skiftlägesokänsligt) |
 | `acoustic_hash` | string | Ja | 64-teckens SHA-256 vibe-print-hash |
+| `nonce` | integer | Efter claim | Serverutfärdad tidsstämpel från `GET /nonce` |
+| `command_signature` | string | Efter claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Nej | Valfri AuthGuard HMAC för delegerade noder |
 
 **Svar `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Efter claim:** `acoustic_hash` måste matcha den förankrade rot-vibe-hashen **eller** vara en post i `authorized_nodes[]`, annars returnerar kärnan:
+**Efter claim:** `acoustic_hash` måste matcha root eller `authorized_nodes[]`, och `nonce` + `command_signature` måste vara giltiga, annars returnerar kärnan:
 
 ```json
 {
@@ -143,17 +167,89 @@ Fakturor avvecklas automatiskt efter ~60 sekunder i nuvarande simulering.
 
 ### Betald klient — Svar `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
+UtahX proxar begäran till UtahContainerEngine-backend på tenant-porten. Svarskroppen är handler-JSON-utdata.
+
+```bash
+curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## PUT/POST /s3/{bucket}/{key}
+
+Skriv objekt till Utah S3 Mesh (lokal NVMe-lagring).
+
+**Headers (valfria):**
+
+| Header | Beskrivning |
+|--------|-------------|
+| `X-Utah-Tenant-ID` | Tenant-identifierare |
+| `X-Utah-Signature` | HMAC-SHA256 av `{tenant_id}:{path}` |
 
 **Exempel:**
 
 ```bash
-curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Läs objekt. Returnerar råa bytes. Använd `GET /s3/{bucket}/prefix*` för listning.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Skriv nyckel-värde-post till Utah RDS Ledger.
+
+**Request body:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Svar `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Läs post efter nyckel.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Anropa Utah Lambda-handler (ingen container image pull).
+
+**Request body:** JSON-event som skickas till `handler(event, context)`
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Svar `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
 
 ---
@@ -189,12 +285,34 @@ Efter avveckling proxar `GET /app/{app_name}` med samma `X-Client-ID` till conta
 
 ---
 
+## POST /admin/revoke-node
+
+Återkalla en delegerad nod från `authorized_nodes[]`. Endast root vibe-innehavare. Utah-Flux återkallandepanel anropar denna endpoint.
+
+**Request body:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Svar `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Felsvar
 
 | Kod | När |
 |-----|-----|
-| `404` | Okänd sökväg |
+| `404` | Okänd sökväg eller nod kan inte återkallas |
 | `402` | App finns men klienten har inte betalat Tycoon-faktura |
+| `403` | Ogiltiga återkallandeuppgifter eller HMAC |
 
 ---
 
@@ -214,7 +332,10 @@ Efter avveckling proxar `GET /app/{app_name}` med samma `X-Client-ID` till conta
 |-----|-------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Tenants, UtahX-routes, lagringsindex |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Utah-Flux UI-tillstånd |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Driftsatt handler-stub |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Container-handler |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Lambda-handler |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh-objekt |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | RDS nyckel-värde-lagring |
 | `security/biometric_ledger.json` | Rot-vibe-hash (lokal fallback om `/etc` inte skrivbar) |
 | `tycoon/settlement_ledger.json` | Faktura- och betalningstillstånd |
 

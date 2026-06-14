@@ -16,8 +16,8 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.1",
-  "build": "golden-master-v25.1"
+  "version": "26.0",
+  "build": "omega-build-v26-final"
 }
 ```
 
@@ -29,9 +29,31 @@ curl http://127.0.0.1:8999/health
 
 ---
 
+## GET /nonce
+
+Выдаёт свежий nonce для голосовой команды. Требуется после закрепления узла при `UTAH_NONCE_ENFORCE=1` (по умолчанию).
+
+**Ответ `200`:**
+
+```json
+{
+  "nonce": 1718323200,
+  "window_sec": 30,
+  "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')"
+}
+```
+
+**Пример:**
+
+```bash
+curl http://127.0.0.1:8999/nonce
+```
+
+---
+
 ## GET /status
 
-Операционный снимок: состояние UI, развёрнутые арендаторы, статус claim, `authorized_nodes`, `swarm_peers` и расширенные поля Tycoon.
+Операционный снимок: состояние UI, развёрнутые арендаторы и статус закрепления узла.
 
 **Ответ `200`:**
 
@@ -70,6 +92,8 @@ curl http://127.0.0.1:8999/health
 |------|-----|-------------|----------|
 | `transcript` | string | Да | Произнесённая команда (без учёта регистра) |
 | `acoustic_hash` | string | Да | 64-символьный SHA-256 хеш vibe-print |
+| `nonce` | integer | После claim | Метка времени от сервера из `GET /nonce` |
+| `command_signature` | string | После claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
 | `request_signature` | string | Нет | Опциональный HMAC AuthGuard для делегированных узлов |
 
 **Ответ `200`:**
@@ -107,7 +131,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**После claim:** `acoustic_hash` должен совпадать с закреплённым корневым vibe-хешем **или** быть записью в `authorized_nodes[]`, иначе ядро вернёт:
+**После claim:** `acoustic_hash` должен совпадать с корневым или `authorized_nodes[]`, а `nonce` + `command_signature` должны быть действительными, иначе ядро вернёт:
 
 ```json
 {
@@ -143,17 +167,89 @@ curl -X POST http://127.0.0.1:8999/command \
 
 ### Оплативший клиент — ответ `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
+UtahX проксирует запрос в backend UtahContainerEngine на порту арендатора. Тело ответа — JSON-вывод обработчика.
+
+```bash
+curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## PUT/POST /s3/{bucket}/{key}
+
+Запись объекта в Utah S3 Mesh (локальное NVMe-хранилище).
+
+**Заголовки (опционально):**
+
+| Заголовок | Описание |
+|-----------|----------|
+| `X-Utah-Tenant-ID` | Идентификатор арендатора |
+| `X-Utah-Signature` | HMAC-SHA256 `{tenant_id}:{path}` |
 
 **Пример:**
 
 ```bash
-curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Чтение объекта. Возвращает сырые байты. Используйте `GET /s3/{bucket}/prefix*` для списка.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Запись ключ-значение в Utah RDS Ledger.
+
+**Тело запроса:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Ответ `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Чтение записи по ключу.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Вызов обработчика Utah Lambda (без загрузки образа контейнера).
+
+**Тело запроса:** JSON-событие, передаваемое в `handler(event, context)`
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Ответ `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
 
 ---
@@ -189,12 +285,34 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ---
 
+## POST /admin/revoke-node
+
+Отзыв делегированного узла из `authorized_nodes[]`. Только владелец корневого vibe. Панель отзыва Utah-Flux вызывает эту конечную точку.
+
+**Тело запроса:**
+
+```json
+{
+  "node_hash": "abc123...64chars",
+  "acoustic_hash": "root-vibe-hash-64chars"
+}
+```
+
+**Ответ `200`:**
+
+```json
+{"status": "revoked", "node_hash": "abc123..."}
+```
+
+---
+
 ## Ответы с ошибками
 
 | Код | Когда |
 |-----|-------|
-| `404` | Неизвестный путь |
+| `404` | Неизвестный путь или узел нельзя отозвать |
 | `402` | Приложение существует, но клиент не оплатил счёт Tycoon |
+| `403` | Недействительные учётные данные отзыва или HMAC |
 
 ---
 
@@ -214,7 +332,10 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 |------|------------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Арендаторы, маршруты UtahX, индекс хранилища |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Состояние UI Utah-Flux |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Заглушка развёрнутого обработчика |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Обработчик контейнера |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Обработчик Lambda |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | Объекты S3 Mesh |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | Хранилище ключ-значение RDS |
 | `security/biometric_ledger.json` | Корневой vibe-хеш (локальный fallback, если `/etc` недоступен для записи) |
 | `tycoon/settlement_ledger.json` | Состояние счетов и платежей |
 

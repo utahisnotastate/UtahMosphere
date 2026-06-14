@@ -1,6 +1,6 @@
 # 能力矩阵
 
-UtahMosphere OS **v25.1 Migration Ready** — Omega-Build 实现状态。
+UtahMosphere OS **v26.0 Omega-Build FINAL** — 路线图完整实现。
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — Omega-Build 实现状态。
 
 | 端点 | 方法 | 状态 | 说明 |
 |------|------|------|------|
-| `/health` | GET | **已实现** | 存活探测 + `build: golden-master-v25.1` |
+| `/health` | GET | **已实现** | 存活探测 + `build: omega-build-v26-final` |
+| `/nonce` | GET | **已实现** | 签发新的语音命令 nonce（30 秒窗口） |
 | `/status` | GET | **已实现** | UI 状态、租户、认领状态、S3 根 |
-| `/command` | POST | **已实现** | 语音意图执行 |
+| `/command` | POST | **已实现** | 语音意图 + 认领后 nonce 防重放 |
+| `/admin/revoke-node` | POST | **已实现** | 根节点专用授权节点撤销 |
 | `/app/unlock` | POST | **已实现** | 提交支付；返回 202 待结算 |
 | `/app/{name}` | GET | **已实现** | Tycoon 402 关卡 + UtahX 代理至容器 |
 | `/app/{name}/{path}` | GET | **已实现** | 子路径代理至容器后端 |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — Omega-Build 实现状态。
 | **S3 Mesh（`utah_s3_mesh.py`）** | **已实现** | 本地对象存储 + HMAC |
 | **Lambda Engine（`utah_lambda_engine.py`）** | **已实现** | 无镜像 handler 调用 |
 | **RDS Ledger（`utah_rds_ledger.py`）** | **已实现** | JSON 键值账本 |
-| **Quantum Ledger** | 已实现 | 生物识别认领 + 验证 |
-| **Utah-Tycoon** | **已实现** | 内存池/electrum 结算（`tycoon_settlement.py`）、`POST /app/unlock`、HTTP 402 关卡 |
+| **Quantum Ledger** | **已实现** | 生物识别认领 + 验证 |
+| **Utah-Tycoon** | **已实现** | 内存池/electrum 结算（`tycoon_settlement.py`） |
+| **AuthGuard（`ledger_auth.py`）** | **已实现** | 语音与网格的 `authorized_nodes[]` 强制执行 |
+| **Nonce-Guard（`nonce_guard.py`）** | **已实现** | 语音命令 30 秒防重放 |
 | **UtahNetes Gossip** | **已实现** | 经 `utah_mesh_engine.py` AuthGuard 签名 5 秒组播 |
 | **Global Swarm** | **已实现** | 确定性 DHT + 签名账本同步 |
-| **AuthGuard（`ledger_auth.py`）** | **已实现** | 语音与网格的 `authorized_nodes[]` 强制执行 |
-| **Genesis ISO（`mk_iso.sh`）** | **已实现** | UEFI/混合闪存安装镜像构建器 |
-| **Utah-Flux UI** | 已实现 | Tkinter 状态仪表板 |
+| **Genesis ISO（`genesis_iso_builder.py`）** | **已实现** | Alpine vmlinuz/initramfs 混合 ISO |
+| **Utah-Flux 撤销 UI（`ui_revocation.py`）** | **已实现** | `flux_gui.py` 中的管理面板 |
+| **Utah-Flux UI** | **已实现** | Tkinter 状态 + 撤销仪表板 |
 | **Auto-Genesis（`genesis_deploy.py`）** | **已实现** | 多进程编排器 |
 | **Bootstrap（`bootstrap.sh`）** | **已实现** | 裸机 systemd 安装 |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — Omega-Build 实现状态。
 | 命令模式 | 状态 | 示例 |
 |----------|------|------|
 | 认领节点 | 已实现 | `"Claim node"` |
+| 授权节点 | **已实现** | `"authorize node <64-char-vibe-hash>"` |
 | 部署应用 | 已实现 | `"deploy application my-app"` |
 | 修补应用 | **已实现** | `"patch app my-app to add logging"` |
-| 授权节点 | **已实现** | `"authorize node <64-char-vibe-hash>"` |
 | 状态 / 网格 | 已实现 | `"status grid"` |
+
+**认领后：** 每次 `/command` 请求须包含来自 `GET /nonce` 的 `nonce` + `command_signature`。
 
 ---
 
@@ -69,15 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — Omega-Build 实现状态。
 | `python3 genesis_deploy.py` | 已实现 | Linux / 开发 |
 | `sudo bash bootstrap.sh` | **推荐生产** | Linux systemd |
 | `sudo bash setup.sh` | 已实现 | bootstrap 别名 |
-| `./mk_iso.sh` | **已实现** | Linux — 生成 `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **已实现** | Linux — 生成 `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **已实现** | Genesis ISO 构建器包装脚本 |
 | `docker-compose up` | 可选 | 仅遗留便利方式 |
 
 ---
 
-## 路线图（剩余）
+## 路线图
 
-- Genesis ISO 内打包 Alpine/vmlinuz（启动菜单当前记录手动安装路径）
-- 语音命令 nonce/时间戳防重放
-- `authorized_nodes` 撤销界面
+v25.x 路线图所有项目已在 v26.0 **实现**。未来工作：
+
+- Genesis ISO 自动安装硬件 attestation
+- 多区域内存池故障转移
+- 语音桥接自动 nonce 签名
 
 详见 [API 参考](API_REFERENCE.md) 与 [开发者手册](DEVELOPER_COOKBOOK.md)。

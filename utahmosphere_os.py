@@ -32,11 +32,13 @@ try:
     from quantum_ledger import ledger_guard
     from utah_swarm_protocol import UtahSwarmNode
     from utah_tycoon import tycoon_engine
+    from nonce_guard import nonce_guard
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
     UtahSwarmNode = None
     tycoon_engine = None
+    nonce_guard = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -56,17 +58,19 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Golden Master v25.1 Migration Ready]",
+            "node_status": "Active [Omega-Build v26.0 FINAL]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
             "mutation_count": 0,
             "swarm_peers": 0,
             "tycoon_pending": 0,
+            "authorized_nodes": [],
         }
 
         self._bootstrap_sovereign_paths()
         self._load_cluster_registry()
+        self._sync_authorized_nodes_to_registry()
 
         self.root_vibe = None
         self.swarm_router = None
@@ -78,7 +82,7 @@ class UtahmosphereSovereignKernel:
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] Golden Master v25.1 kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v26.0 FINAL kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -123,6 +127,22 @@ class UtahmosphereSovereignKernel:
             return
         nodes = ledger_guard.get_authorized_nodes()
         self.cluster_registry["authorized_nodes"] = nodes
+        self.ui_state["authorized_nodes"] = nodes
+        self._save_registry_unlocked()
+
+    def revoke_node(self, node_hash: str) -> bool:
+        if not ledger_guard:
+            return False
+        if not ledger_guard.revoke_node(node_hash):
+            return False
+        self._sync_authorized_nodes_to_registry()
+        if self.mesh_engine:
+            self.mesh_engine._auth_guard = ledger_guard.auth_guard
+        print(f"[AuthGuard] Node {node_hash[:12]} revoked. Gossip mesh pruned.")
+        self.trigger_flux_ui_render()
+        return True
+
+    def save_registry(self):
         self._save_registry_unlocked()
 
     def _apply_remote_registry(self, remote: dict):
@@ -186,6 +206,7 @@ class UtahmosphereSovereignKernel:
         transcript = payload.get("transcript", "").lower()
         acoustic_hash = payload.get("acoustic_hash", "")
         self.ui_state["last_voice_command"] = transcript
+        claimed = bool(ledger_guard and ledger_guard.ledger.get("root_vibe_hash"))
 
         if ledger_guard:
             if "claim node" in transcript:
@@ -210,6 +231,22 @@ class UtahmosphereSovereignKernel:
                     return "Invalid node hash. Expected 64-char vibe-print."
                 except Exception:
                     return "Usage: authorize node <64-char-vibe-hash>"
+
+            if nonce_guard and nonce_guard.enforcement_required(claimed) and "claim node" not in transcript:
+                nonce = payload.get("nonce")
+                command_signature = payload.get("command_signature", "")
+                if nonce is None or not command_signature:
+                    return "Access Denied. Fresh nonce and command_signature required (GET /nonce)."
+                try:
+                    nonce_int = int(nonce)
+                except (TypeError, ValueError):
+                    return "Access Denied. Invalid nonce format."
+                if not nonce_guard.validate_and_process(
+                    transcript, nonce_int, command_signature, acoustic_hash
+                ):
+                    self.ui_state["node_status"] = "SECURITY LOCKDOWN: REPLAY DETECTED"
+                    self.trigger_flux_ui_render()
+                    return "Access Denied. Nonce replay or signature invalid."
 
             request_sig = payload.get("request_signature", "")
             if request_sig and not ledger_guard.verify_request_signature(request_sig, transcript):
@@ -396,6 +433,26 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             }).encode())
             return
 
+        if path == "/admin/revoke-node":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            node_hash = data.get("node_hash", "")
+            acoustic_hash = data.get("acoustic_hash", "")
+            if not node_hash or not acoustic_hash:
+                self._json_response(400, {"error": "node_hash and acoustic_hash required"})
+                return
+            if ledger_guard is None:
+                self._json_response(503, {"error": "Ledger guard unavailable"})
+                return
+            root = ledger_guard.ledger.get("root_vibe_hash")
+            if not root or not hmac.compare_digest(root, acoustic_hash):
+                self._json_response(403, {"error": "Root vibe required for revocation"})
+                return
+            if self.core_engine.revoke_node(node_hash):
+                self._json_response(200, {"status": "revoked", "node_hash": node_hash})
+            else:
+                self._json_response(404, {"error": "Node not found or cannot revoke root"})
+            return
+
         self.send_response(404)
         self.end_headers()
 
@@ -428,8 +485,20 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "25.1",
-                "build": "golden-master-v25.1",
+                "version": "26.0",
+                "build": "omega-build-v26-final",
+            })
+            return
+
+        if path == "/nonce":
+            if nonce_guard is None:
+                self._json_response(503, {"error": "Nonce guard unavailable"})
+                return
+            issued = nonce_guard.issue_nonce()
+            self._json_response(200, {
+                "nonce": issued,
+                "window_sec": nonce_guard.window_sec,
+                "signature_hint": "HMAC-SHA256(acoustic_hash, f'{nonce}:{transcript}')",
             })
             return
 

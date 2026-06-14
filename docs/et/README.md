@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v25.1 Migration Ready** — ühtne bare-metal tuum, kus Utah-Tycoon, UtahNetes ja Global Swarm on täielikult integreeritud. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v26.0 Omega-Build FINAL** — täielik teekaardi rakendamine: nonce-kaitse, sõlme tühistamine, Alpine Genesis ISO ja integreeritud Utah-Tycoon, UtahNetes ning Global Swarm. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 
@@ -8,7 +8,7 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v25.1 Migration Rea
 
 | Dokument | Sobib kõige paremini |
 |----------|----------------------|
-| [Võimekuste maatriks](CAPABILITY_MATRIX.md) | Kõigile — mis töötab täna vs teekaart |
+| [Võimekuste maatriks](CAPABILITY_MATRIX.md) | Kõigile — mis töötab täna vs tuleviku töö |
 | [API viide](API_REFERENCE.md) | Arendajatele ja operaatoritele |
 | [Kohaliku arenduse juhend](LOCAL_DEVELOPMENT.md) | Arendajatele Windowsis, macOS-is või Linuxis |
 
@@ -55,7 +55,7 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v25.1 Migration Rea
 | [hello-world](../../examples/hello-world/) | Juurutamine `/command` kaudu |
 | [check-node-health](../../examples/check-node-health/) | Tervisekontroll |
 | [paid-app-access](../../examples/paid-app-access/) | Tycoon maksevärav |
-| [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Ilma mikrofonita |
+| [omega-build-verify](../../examples/omega-build-verify/) | Täielik S3/Lambda/RDS/konteineri test |
 
 | Algprojekt | Kirjeldus |
 |------------|-----------|
@@ -65,9 +65,11 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v25.1 Migration Rea
 
 ---
 
-## UtahMosphere OS v25.0
+## UtahMosphere OS v26.0
 
-- **Suveräänne servplatvorm** Pythonis — port `8999`
-- **Hääljuurutus** — Voice Bridge või `POST /command`
-- **Biomeetriline claim** — käsk «Claim node»
+- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v26-final`
+- **Hääljuurutus** — Voice Bridge või `POST /command` koos `nonce` + `command_signature`
+- **Biomeetriline claim** — käsk «Claim node»; `GET /nonce` korduskasutuse vastu
+- **Sõlme tühistamine** — `POST /admin/revoke-node` ja Utah-Flux paneel
+- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v26.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}`

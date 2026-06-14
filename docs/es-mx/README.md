@@ -1,6 +1,6 @@
 # Portal de documentación UtahMosphere
 
-Bienvenido al centro de documentación de UtahMosphere OS v25.1 — plataforma soberana edge Python, puerto **8999**. **Migration Ready v25.1**: núcleo unificado bare-metal con liquidación mempool Tycoon, aplicación AuthGuard `authorized_nodes[]`, instalador Genesis ISO (`mk_iso.sh`), UtahNetes y Global Swarm totalmente operativos. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
+Bienvenido al centro de documentación de UtahMosphere OS **v26.0 Omega-Build FINAL** — plataforma soberana edge bare-metal unificada, puerto **8999**. El kernel Omega-Build FINAL (`utahmosphere_master.py`) entrega liquidación mempool Tycoon, aplicación AuthGuard `authorized_nodes[]`, aprovisionamiento Genesis ISO Alpine, anti-replay nonce de voz y revocación de nodos Utah-Flux — más paridad completa S3/Lambda/RDS. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
 
 ---
 
@@ -8,7 +8,7 @@ Bienvenido al centro de documentación de UtahMosphere OS v25.1 — plataforma s
 
 | Documento | Ideal para |
 |-----------|------------|
-| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — qué funciona hoy vs. hoja de ruta |
+| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — implementación completa v26.0 vs. trabajo futuro |
 | [Referencia de API](API_REFERENCE.md) | Desarrolladores y operadores |
 | [Guía de desarrollo local](LOCAL_DEVELOPMENT.md) | Desarrolladores en Windows, macOS o Linux |
 
@@ -78,6 +78,18 @@ Mini-proyectos completos para bifurcar y extender:
 
 ---
 
-## Acerca de esta documentación
+## Funciones v26.0 Omega-Build FINAL
 
-Esta sección de documentación está completamente en español de México. UtahMosphere OS v25.1 Migration Ready es una plataforma soberana edge basada en Python, build `golden-master-v25.1`, accesible por defecto en el puerto **8999**. Funciones clave: liquidación mempool Tycoon, aplicación `authorized_nodes[]` vía AuthGuard, instalador Genesis ISO (`./mk_iso.sh`), comando de voz `authorize node`.
+- **UtahX:** proxy HTTP/1.1 nativo a contenedores
+- **UtahContainerEngine:** servidores handler in-process en puertos 8200+
+- **Lazarus AST:** mutación de handler en vivo sin reconstrucción
+- **S3 Mesh / Lambda / RDS:** paridad cloud completa en puerto 8999
+- **Utah-Tycoon:** liquidación mempool/electrum (`tycoon_settlement.py`)
+- **AuthGuard:** aplicación de `authorized_nodes[]` (`ledger_auth.py`)
+- **Nonce-Guard:** anti-replay de voz 30 s (`nonce_guard.py`, `GET /nonce`)
+- **UI de revocación Utah-Flux:** purga de nodos de malla (`ui_revocation.py` + `flux_gui.py`)
+- **Genesis ISO:** empaquetado Alpine vmlinuz (`genesis_iso_builder.py` → `utah_genesis_v26.iso`)
+- **UtahNetes + Swarm DHT:** gossip firmado y enrutamiento determinista
+- **Quantum Ledger:** claim de nodo por vibe-print biométrico
+
+Build `omega-build-v26-final`. Entrada recomendada: `python3 utahmosphere_master.py`.

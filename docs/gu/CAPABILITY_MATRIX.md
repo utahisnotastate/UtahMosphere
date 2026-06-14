@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Build.
+UtahMosphere OS **v26.0 Omega-Build FINAL** — kompleto na implementasion gi roadmap.
 
 ---
 
@@ -8,9 +8,11 @@ UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Bui
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | Liveness check + `build: golden-master-v25.1` |
+| `/health` | GET | **Ma implement** | Liveness check + `build: omega-build-v26-final` |
+| `/nonce` | GET | **Ma implement** | Ma issue fresh voice command nonce (30s window) |
 | `/status` | GET | **Ma implement** | UI state, tenants, claim status, S3 root |
-| `/command` | POST | **Ma implement** | Voice intent execution |
+| `/command` | POST | **Ma implement** | Voice intent + nonce anti-replay yanggen claimed |
+| `/admin/revoke-node` | POST | **Ma implement** | Root-only authorized node revocation |
 | `/app/unlock` | POST | **Ma implement** | Submit payment; ma return 202 pending settlement |
 | `/app/{name}` | GET | **Ma implement** | Tycoon 402 gate + UtahX proxy gi container |
 | `/app/{name}/{path}` | GET | **Ma implement** | Sub-path proxy gi container backend |
@@ -36,13 +38,15 @@ UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Bui
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Ma implement** | Local object storage + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Ma implement** | Handler invoke sin images |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Ma implement** | JSON key-value ledger |
-| **Quantum Ledger** | Ma implement | Biometric claim + verification |
-| **Utah-Tycoon** | **Ma implement** | Mempool/electrum settlement (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402 gate |
+| **Quantum Ledger** | **Ma implement** | Biometric claim + verification |
+| **Utah-Tycoon** | **Ma implement** | Mempool/electrum settlement (`tycoon_settlement.py`) |
+| **AuthGuard (`ledger_auth.py`)** | **Ma implement** | `authorized_nodes[]` enforcement para voice + mesh |
+| **Nonce-Guard (`nonce_guard.py`)** | **Ma implement** | 30s anti-replay para voice commands |
 | **UtahNetes Gossip** | **Ma implement** | AuthGuard-signed 5s multicast via `utah_mesh_engine.py` |
 | **Global Swarm** | **Ma implement** | Deterministic DHT + signed ledger sync |
-| **AuthGuard (`ledger_auth.py`)** | **Ma implement** | `authorized_nodes[]` enforcement para voice + mesh |
-| **Genesis ISO (`mk_iso.sh`)** | **Ma implement** | UEFI/hybrid flash installer builder |
-| **Utah-Flux UI** | Ma implement | Tkinter status dashboard |
+| **Genesis ISO (`genesis_iso_builder.py`)** | **Ma implement** | Alpine vmlinuz/initramfs hybrid ISO |
+| **Utah-Flux Revocation UI (`ui_revocation.py`)** | **Ma implement** | Admin panel gi `flux_gui.py` |
+| **Utah-Flux UI** | **Ma implement** | Tkinter status + revocation dashboard |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Ma implement** | Multi-process orchestrator |
 | **Bootstrap (`bootstrap.sh`)** | **Ma implement** | Bare-metal systemd install |
 
@@ -53,10 +57,12 @@ UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Bui
 | Command Pattern | Status | Ehemplo |
 |-----------------|--------|---------|
 | Claim node | Ma implement | `"Claim node"` |
+| Authorize node | **Ma implement** | `"authorize node <64-char-vibe-hash>"` |
 | Deploy application | Ma implement | `"deploy application my-app"` |
 | Patch application | **Ma implement** | `"patch app my-app to add logging"` |
-| Authorize node | **Ma implement** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Ma implement | `"status grid"` |
+
+**Después claim:** include `nonce` + `command_signature` ginen `GET /nonce` gi kada `/command` request.
 
 ---
 
@@ -69,15 +75,18 @@ UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Bui
 | `python3 genesis_deploy.py` | Ma implement | Linux / dev |
 | `sudo bash bootstrap.sh` | **Ma recommend prod** | Linux systemd |
 | `sudo bash setup.sh` | Ma implement | Alias para bootstrap |
-| `./mk_iso.sh` | **Ma implement** | Linux — ma build `utah_genesis_v25.iso` |
+| `python3 genesis_iso_builder.py` | **Ma implement** | Linux — ma build `utah_genesis_v26.iso` |
+| `./mk_iso.sh` | **Ma implement** | Wrapper para Genesis ISO builder |
 | `docker-compose up` | Optional | Legacy convenience ha' |
 
 ---
 
-## Roadmap (remaining)
+## Roadmap
 
-- Alpine/vmlinuz bundling gi Genesis ISO (boot menu på'go ma dokumenta manual install path)
-- Nonce/timestamp anti-replay para voice commands
-- `authorized_nodes` revocation UI
+Todu i v25.x roadmap items **ma implement** gi v26.0. Trabahu futuru:
+
+- Hardware attestation para Genesis ISO autoinstall
+- Multi-region mempool failover
+- Voice bridge automatic nonce signing
 
 Para mas detalle: [Referensia API](API_REFERENCE.md) · [Cookbook Desarrollador](DEVELOPER_COOKBOOK.md)

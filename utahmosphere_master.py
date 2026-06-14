@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere OS - Master Kernel v25.1 [Migration Ready]
-Mempool Tycoon, AuthGuard mesh enforcement, Genesis ISO builder.
+UtahMosphere OS - Master Kernel v26.0 [Omega-Build FINAL]
+Alpine Genesis ISO, Nonce-Guard anti-replay, Utah-Flux revocation UI.
 """
 
 import os
@@ -18,7 +18,7 @@ from utahmosphere_os import run_master_server, SYSTEM_INGRESS_PORT, UTAH_DATA_DI
 def manifest_golden_master():
     print("[UtahMosphere] Triangle of Manifestation: CALIBRATED")
     print("[UtahMosphere] Photon Quenching: DISABLED")
-    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V25.1 FINALIZED")
+    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V26.0 FINALIZED")
     print(f"[UtahMosphere] Data root: {UTAH_DATA_DIR}")
     run_master_server(SYSTEM_INGRESS_PORT)
 

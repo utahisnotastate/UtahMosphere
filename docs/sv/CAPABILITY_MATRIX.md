@@ -33,8 +33,8 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 | Komponent | Status | Vad som fungerar idag |
 |-----------|--------|----------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Implementerat** | Vibe-Print förseglad till PCR0 via `tpm2_create` / `tpm2_unseal` |
-| **Kvorumvittnen (`quorum_witness.py`)** | **Implementerat** | USA/EU/Oceanien-domare |
-| **Lazarus-återställning (`lazarus_restore.py`)** | **Implementerat** | Autoåterställning efter karantän |
+| **Kvorumvittnen (`quorum_witness.py`)** | **Implementerat** | USA/EU/Oceanien/Asien-domare |
+| **Lazarus-återställning (`lazarus_restore.py`)** | **Implementerat** | Golden Master + atomisk kexec-återställning |
 | **Tillståndsdiff (`state_diff_engine.py`)** | **Implementerat** | Entanglade mesh-deltor |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |

@@ -556,6 +556,7 @@ Revoke delegated node ginen `authorized_nodes[]`. Root vibe holder ha'. Utah-Flu
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
 | `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum ledger |
 | `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus checkpoint |
+| `{UTAH_DATA_DIR}/quorum_witness.json` | Witness registry checkpoint |
 | `{UTAH_DATA_DIR}/quorum_witness.json` | Witness registry |
 | `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum vote ledger |
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |

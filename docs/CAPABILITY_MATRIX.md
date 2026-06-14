@@ -27,8 +27,8 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — multi-region quorum witnesses
 
 | Component | Status | What works today |
 |-----------|--------|------------------|
-| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania regional tie-breakers |
-| **Lazarus Auto-Restore (`lazarus_restore.py`)** | **Implemented** | Golden Master fetch + `apply_state()` |
+| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania/Asia regional tie-breakers |
+| **Lazarus Auto-Restore (`lazarus_restore.py`)** | **Implemented** | Golden Master + kexec atomic restore |
 | **State-Diff Engine (`state_diff_engine.py`)** | **Implemented** | Entangled delta mesh sync (<1KB) |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ federated vote consensus |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | kexec rollback + Lazarus trigger |
@@ -42,6 +42,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — multi-region quorum witnesses
 |----------|---------|---------|
 | `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness quorum |
 | `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Auto-restore after quarantine |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec load/execute during Lazarus restore |
 | `UTAH_STATE_DIFF_ENFORCE` | `1` | Entangled delta mesh sync |
 | `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum on quotes |
 

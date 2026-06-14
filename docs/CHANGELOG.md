@@ -5,8 +5,8 @@ All notable changes to UtahMosphere OS are documented here.
 ## [32.0] — Multi-Region Witnesses & Lazarus Auto-Restore (2026-06)
 
 ### Added
-- `quorum_witness.py` — multi-region witness quorum (US/EU/Oceania tie-breakers)
-- `lazarus_restore.py` — Golden Master auto-restore after PCR quarantine
+- `quorum_witness.py` — multi-region witness quorum (US/EU/Oceania/Asia tie-breakers)
+- `lazarus_restore.py` — Golden Master auto-restore with kexec atomic boot
 - `state_diff_engine.py` — entangled state-diff sync (<1KB mesh deltas)
 - `GET /witness/status`, `GET /lazarus/status`, `POST /lazarus/restore`
 - [Quorum Witnesses](QUORUM_WITNESSES.md), [Lazarus Restore](LAZARUS_RESTORE.md), [State-Diff Engine](STATE_DIFF_ENGINE.md)

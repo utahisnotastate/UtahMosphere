@@ -33,8 +33,8 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on t
 | Komponent | Olek | Mis täna töötab |
 |-----------|------|-----------------|
 | **TPM Locker (`tpm_lock.py`)** | **Rakendatud** | Vibe-Print pitstatud PCR0-sse `tpm2_create` / `tpm2_unseal` kaudu |
-| **Kvoorumi tunnistajad (`quorum_witness.py`)** | **Rakendatud** | USA/EL/Okeaania vahekohtunikud |
-| **Lazarus taastamine (`lazarus_restore.py`)** | **Rakendatud** | Automaatne taastamine pärast karantiini |
+| **Kvoorumi tunnistajad (`quorum_witness.py`)** | **Rakendatud** | USA/EL/Okeaania/Aasia vahekohtunikud |
+| **Lazarus taastamine (`lazarus_restore.py`)** | **Rakendatud** | Golden Master + kexec aatomtaastamine |
 | **Oleku-erinevus (`state_diff_engine.py`)** | **Rakendatud** | Põimunud mesh-deltad |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |

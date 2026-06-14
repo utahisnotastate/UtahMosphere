@@ -1,6 +1,6 @@
 # Testigos de quórum multi-región (v32.0)
 
-Los **nodos testigo** son observadores regionales ligeros que guardan los hashes criptográficos del consenso del enjambre. Si una región (p. ej., US-East) pierde conectividad troncal, los testigos en **Oceanía** y **Europa** actúan como desempates — manteniendo la integridad del enjambre sin control centralizado.
+Los **nodos testigo** son observadores regionales ligeros que guardan los hashes criptográficos del consenso del enjambre. Si una región (p. ej., US-East) pierde conectividad troncal, los testigos en **Oceanía**, **Europa** y **Asia** actúan como desempates — manteniendo la integridad del enjambre sin control centralizado.
 
 ## Arquitectura
 
@@ -10,6 +10,7 @@ US-East Node (partitioned)     Witness Layer
         |-- state_hash ------------>|-- us-east witness
         |                           |-- eu-west witness
         |                           |-- oceania-apac witness
+        |                           |-- asia-east witness
         |<-- quorum confirmed ------|   (>51% must agree)
 ```
 
@@ -22,7 +23,7 @@ US-East Node (partitioned)     Witness Layer
 | `record_local_witness(hash)` | Desempate local si remoto no alcanzable |
 | `export_witnesses()` | Estado regional de testigos |
 
-Regiones predeterminadas: `us-east`, `eu-west`, `oceania-apac`
+Regiones predeterminadas: `us-east`, `eu-west`, `oceania-apac`, `asia-east`
 
 ## API HTTP
 
@@ -38,7 +39,7 @@ curl http://127.0.0.1:8999/witness/status
 |----------|----------------|-----------|
 | `UTAH_WITNESS_ENFORCE` | `1` | Exigir quórum testigo (`0` = desarrollo) |
 | `UTAH_WITNESS_THRESHOLD` | `0.51` | Proporción mínima de votos |
-| `UTAH_WITNESS_NODES` | 3 por defecto | Endpoints testigo separados por coma |
+| `UTAH_WITNESS_NODES` | 4 por defecto | Endpoints testigo separados por coma |
 
 ## Relacionado
 

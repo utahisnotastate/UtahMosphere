@@ -108,6 +108,7 @@ docker-compose up -d
 | `UTAH_QUORUM_ENFORCE` | `1` | 51%+ majority quorum on peer quotes |
 | `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness tie-breakers |
 | `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Clean-room restore after quarantine |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec load/execute during Lazarus restore |
 | `UTAH_STATE_DIFF_ENFORCE` | `1` | Entangled delta mesh sync |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR0 drift monitor + quarantine |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback on PCR drift |
@@ -118,8 +119,8 @@ docker-compose up -d
 
 ## 🛠 Features (v32.0 Lazarus Self-Healing)
 
-- **Quorum Witnesses:** US/EU/Oceania regional tie-breakers (`quorum_witness.py`)
-- **Lazarus Auto-Restore:** Golden Master clean-room restoration (`lazarus_restore.py`)
+- **Quorum Witnesses:** US/EU/Oceania/Asia regional tie-breakers (`quorum_witness.py`)
+- **Lazarus Auto-Restore:** Golden Master + kexec atomic restoration (`lazarus_restore.py`)
 - **State-Diff Engine:** Entangled <1KB mesh deltas (`state_diff_engine.py`)
 - **Full v31 stack:** Federated quorum, PCR kexec rollback, RA-TLS, quote registry, Genesis ISO
 

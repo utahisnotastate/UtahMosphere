@@ -10,8 +10,9 @@ PCR drift detected
   --> perform_rollback() (kexec attempt)
   --> LazarusRestore.auto_restore()
         1. Fetch golden_master from checkpoint / DHT
-        2. apply_state() — re-inject registry + quorum
-        3. Resume compute
+        2. kexec -l /boot/vmlinuz-verified (load recovery image)
+        3. apply_state() — re-inject registry + quorum
+        4. kexec -e (atomic boot)
 ```
 
 ## Module (`lazarus_restore.py`)

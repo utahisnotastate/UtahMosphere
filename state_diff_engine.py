@@ -19,7 +19,7 @@ def state_hash(state: Dict[str, Any]) -> str:
 
 
 def get_state_delta(local_state: Dict[str, Any], remote_state: Dict[str, Any]) -> Dict[str, Any]:
-    """Compute minimal diff needed to synchronize sovereign nodes globally."""
+    """Computes minimal mathematical diff for global state sync."""
     delta: Dict[str, Any] = {}
     for key, val in local_state.items():
         if remote_state.get(key) != val:

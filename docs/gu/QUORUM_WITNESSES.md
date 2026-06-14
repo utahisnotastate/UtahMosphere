@@ -1,6 +1,6 @@
 # Multi-Region Quorum Witnesses (v32.0)
 
-**Witness nodes** — observadores regional ligåtu na ha'åni cryptographic hashes gi swarm consensus. Yang un region (e.g., US-East) ma'pos backbone connectivity, witnesses gi **Oceania** yan **Europe** mane'eben como tie-breakers — mañå'ñao swarm integrity sin centralized control.
+**Witness nodes** — observadores regional ligåtu na ha'åni cryptographic hashes gi swarm consensus. Yang un region (e.g., US-East) ma'pos backbone connectivity, witnesses gi **Oceania**, **Europe**, yan **Asia** mane'eben como tie-breakers — mañå'ñao swarm integrity sin centralized control.
 
 ## Architecture
 
@@ -10,6 +10,7 @@ US-East Node (partitioned)     Witness Layer
         |-- state_hash ------------>|-- us-east witness
         |                           |-- eu-west witness
         |                           |-- oceania-apac witness
+        |                           |-- asia-east witness
         |<-- quorum confirmed ------|   (>51% must agree)
 ```
 
@@ -22,7 +23,7 @@ US-East Node (partitioned)     Witness Layer
 | `record_local_witness(hash)` | Local tie-break yang remote ti inestable |
 | `export_witnesses()` | Regional witness status |
 
-Default regions: `us-east`, `eu-west`, `oceania-apac`
+Default regions: `us-east`, `eu-west`, `oceania-apac`, `asia-east`
 
 ## HTTP API
 

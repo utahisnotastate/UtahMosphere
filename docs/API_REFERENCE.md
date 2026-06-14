@@ -26,7 +26,7 @@ Liveness probe for load balancers and monitoring.
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
     "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca"},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
-    "witness": {"witnesses": 3, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac"]},
+    "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
     "lazarus": {"auto_restore": true, "checkpoint_exists": true},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
@@ -125,7 +125,7 @@ curl http://127.0.0.1:8999/witness/status
 ```json
 {
   "witnesses": [{"region": "us-east", "endpoint": "https://witness-us...", "last_seen": null}],
-  "stats": {"witnesses": 3, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac"]}
+  "stats": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]}
 }
 ```
 

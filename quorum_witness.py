@@ -30,6 +30,7 @@ DEFAULT_WITNESSES = [
     {"region": "us-east", "endpoint": "https://witness-us.utahmosphere.internal/consensus"},
     {"region": "eu-west", "endpoint": "https://witness-eu.utahmosphere.internal/consensus"},
     {"region": "oceania-apac", "endpoint": "https://witness-apac.utahmosphere.internal/consensus"},
+    {"region": "asia-east", "endpoint": "https://witness-asia.utahmosphere.internal/consensus"},
 ]
 
 _custom = os.environ.get("UTAH_WITNESS_NODES", "")
@@ -107,7 +108,7 @@ class QuorumWitness:
             pass
 
     def get_consensus(self, proposed_state: str) -> bool:
-        """Return True when > threshold of witnesses confirm the state hash."""
+        """Determines if a quorum is reached by verified regional observers."""
         if not WITNESS_ENFORCE:
             return True
         if not self.witnesses:
@@ -116,6 +117,7 @@ class QuorumWitness:
         for witness in self.witnesses:
             if witness.ping_and_verify(proposed_state):
                 votes += 1
+        # Swarm consensus threshold: > 50% of the active witness set
         ratio = votes / len(self.witnesses)
         if ratio > WITNESS_THRESHOLD:
             with self._lock:

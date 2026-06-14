@@ -10,7 +10,8 @@ PCR drift detected
   --> perform_rollback() (kexec attempt)
   --> LazarusRestore.auto_restore()
         1. Fetch golden_master from checkpoint / DHT
-        2. apply_state() — re-inject registry + quorum
+        2. kexec -l /boot/vmlinuz-verified
+        3. apply_state() — re-inject registry + quorum
         3. Resume compute
 ```
 
@@ -40,7 +41,10 @@ curl -X POST http://127.0.0.1:8999/lazarus/restore
 
 | 变量 | 默认值 | 用途 |
 |------|--------|------|
-| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | 隔离后自动恢复（`0` = 开发） |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Golden Master + kexec 原子恢复（`0` = 开发） |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | 恢复时 kexec（`0` = 开发） |
+| `UTAH_LAZARUS_KEXEC_KERNEL` | `/boot/vmlinuz-verified` | 已验证恢复内核 |
+| `UTAH_LAZARUS_KEXEC_INITRD` | `/boot/initramfs-verified` | 已验证 initramfs |
 | `UTAH_LAZARUS_CHECKPOINT_PATH` | `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Golden Master 检查点 |
 
 ## 相关文档

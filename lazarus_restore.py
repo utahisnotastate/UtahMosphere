@@ -6,12 +6,16 @@ Clean-room restoration after PCR drift quarantine — fetch Golden Master from D
 
 import json
 import os
+import subprocess
 import threading
 import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 LAZARUS_AUTO_RESTORE = os.environ.get("UTAH_LAZARUS_AUTO_RESTORE", "1") != "0"
+LAZARUS_KEXEC_ENFORCE = os.environ.get("UTAH_LAZARUS_KEXEC_ENFORCE", "1") != "0"
+KEXEC_KERNEL = os.environ.get("UTAH_LAZARUS_KEXEC_KERNEL", "/boot/vmlinuz-verified")
+KEXEC_INITRD = os.environ.get("UTAH_LAZARUS_KEXEC_INITRD", "/boot/initramfs-verified")
 CHECKPOINT_PATH = Path(
     os.environ.get(
         "UTAH_LAZARUS_CHECKPOINT_PATH",
@@ -86,19 +90,60 @@ class LazarusRestore:
         return LazarusRestore._build_golden_state(kernel_ref)
 
     @staticmethod
+    def _load_verified_kexec_image() -> bool:
+        """Load immutable recovery image via kexec -l (no reboot yet)."""
+        if not LAZARUS_KEXEC_ENFORCE:
+            return False
+        kernel = Path(KEXEC_KERNEL)
+        initrd = Path(KEXEC_INITRD)
+        if not kernel.is_file():
+            print(f"[Lazarus] Verified kernel not found: {kernel}")
+            return False
+        try:
+            cmd = ["kexec", "-l", str(kernel)]
+            if initrd.is_file():
+                cmd.append(f"--initrd={initrd}")
+            subprocess.run(cmd, check=True, capture_output=True, timeout=30)
+            print("[Lazarus] Verified recovery image loaded (kexec -l).")
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
+            print(f"[Lazarus] kexec load unavailable (dev/sim): {exc}")
+            return False
+
+    @staticmethod
+    def _execute_kexec_boot() -> bool:
+        """Atomic re-instantiation via kexec -e — bypasses BIOS/UEFI boot delay."""
+        if not LAZARUS_KEXEC_ENFORCE:
+            return False
+        try:
+            subprocess.run(["kexec", "-e"], check=True, capture_output=True, timeout=10)
+            print("[Lazarus] kexec boot into verified recovery image initiated.")
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
+            print(f"[Lazarus] kexec execute unavailable (dev/sim): {exc}")
+            return False
+
+    @staticmethod
+    def perform_kexec_instantiation() -> bool:
+        """Full kexec load + execute (used by drift rollback path)."""
+        return LazarusRestore._load_verified_kexec_image() and LazarusRestore._execute_kexec_boot()
+
+    @staticmethod
     def auto_restore(kernel_ref: Any) -> bool:
         if not LAZARUS_AUTO_RESTORE:
             print("[Lazarus] Auto-restore disabled (UTAH_LAZARUS_AUTO_RESTORE=0).")
             return False
         print("[Lazarus] Atomic State Restoration Initiated.")
         golden_state = LazarusRestore.get_golden_master(kernel_ref)
+        LazarusRestore._load_verified_kexec_image()
         ok = LazarusRestore.apply_state(kernel_ref, golden_state)
         if ok:
-            print("[Lazarus] State Restored. Resuming compute.")
+            print("[Lazarus] State Restored. Resuming compute from memory checkpoints.")
             if hasattr(kernel_ref, "ui_state"):
                 kernel_ref.ui_state["node_status"] = "Active [Lazarus Auto-Restored v32.0]"
                 kernel_ref.ui_state["cluster_health"] = "Resilient"
                 kernel_ref.trigger_flux_ui_render()
+            LazarusRestore._execute_kexec_boot()
         return ok
 
     @staticmethod
@@ -134,6 +179,9 @@ class LazarusRestore:
     def status() -> dict:
         return {
             "auto_restore": LAZARUS_AUTO_RESTORE,
+            "kexec_enforce": LAZARUS_KEXEC_ENFORCE,
+            "kexec_kernel": KEXEC_KERNEL,
+            "kexec_initrd": KEXEC_INITRD,
             "checkpoint_exists": CHECKPOINT_PATH.is_file(),
             "checkpoint_path": str(CHECKPOINT_PATH),
         }

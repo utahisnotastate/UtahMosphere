@@ -10,7 +10,8 @@ PCR drift detected
   --> perform_rollback() (kexec attempt)
   --> LazarusRestore.auto_restore()
         1. Fetch golden_master from checkpoint / DHT
-        2. apply_state() — re-inject registry + quorum
+        2. kexec -l /boot/vmlinuz-verified
+        3. apply_state() — re-inject registry + quorum
         3. Resume compute
 ```
 
@@ -40,7 +41,10 @@ curl -X POST http://127.0.0.1:8999/lazarus/restore
 
 | Muuttuja | Oletus | Tarkoitus |
 |----------|--------|-----------|
-| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Automaattinen palautus karanteenin jälkeen (`0` = kehitys) |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Golden Master + kexec-atomipalautus (`0` = kehitys) |
+| `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec palautuksen aikana (`0` = kehitys) |
+| `UTAH_LAZARUS_KEXEC_KERNEL` | `/boot/vmlinuz-verified` | Vahvistettu palautusydin |
+| `UTAH_LAZARUS_KEXEC_INITRD` | `/boot/initramfs-verified` | Vahvistettu initramfs |
 | `UTAH_LAZARUS_CHECKPOINT_PATH` | `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Golden Master -tarkistuspiste |
 
 ## Liittyvät

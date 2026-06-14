@@ -10,6 +10,7 @@ US-East Node (partitioned)     Witness Layer
         |-- state_hash ------------>|-- us-east witness
         |                           |-- eu-west witness
         |                           |-- oceania-apac witness
+        |                           |-- asia-east witness
         |<-- quorum confirmed ------|   (>51% must agree)
 ```
 
@@ -22,7 +23,7 @@ US-East Node (partitioned)     Witness Layer
 | `record_local_witness(hash)` | Kohalik vahekoht kui kaugühendus puudub |
 | `export_witnesses()` | Piirkondlik tunnistaja olek |
 
-Vaikimisi piirkonnad: `us-east`, `eu-west`, `oceania-apac`
+Vaikimisi piirkonnad: `us-east`, `eu-west`, `oceania-apac`, `asia-east`
 
 ## HTTP API
 

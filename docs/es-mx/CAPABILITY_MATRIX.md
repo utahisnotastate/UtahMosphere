@@ -33,8 +33,8 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 | Componente | Estado | Qué funciona hoy |
 |------------|--------|------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Implementado** | Vibe-Print sellado al PCR0 vía `tpm2_create` / `tpm2_unseal` |
-| **Testigos de quórum (`quorum_witness.py`)** | **Implementado** | Desempates EE.UU./UE/Oceanía |
-| **Restauración Lazarus (`lazarus_restore.py`)** | **Implementado** | Restauración auto tras cuarentena |
+| **Testigos de quórum (`quorum_witness.py`)** | **Implementado** | Desempates EE.UU./UE/Oceanía/Asia |
+| **Restauración Lazarus (`lazarus_restore.py`)** | **Implementado** | Golden Master + restauración kexec atómica |
 | **Delta de estado (`state_diff_engine.py`)** | **Implementado** | Deltas mesh entrelazados |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |

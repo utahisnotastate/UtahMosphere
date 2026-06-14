@@ -1,6 +1,6 @@
 # 多区域仲裁见证节点 (v32.0)
 
-**见证节点** 是轻量级区域观察者，仅保存蜂群共识的密码学哈希。当某区域（如 US-East）与骨干网失联时，**大洋洲** 与 **欧洲** 的见证节点充当决胜仲裁者——在无中心化控制的情况下维持蜂群完整性。
+**见证节点** 是轻量级区域观察者，仅保存蜂群共识的密码学哈希。当某区域（如 US-East）与骨干网失联时，**大洋洲**、**欧洲** 与 **亚洲** 的见证节点充当决胜仲裁者——在无中心化控制的情况下维持蜂群完整性。
 
 ## 架构
 
@@ -10,6 +10,7 @@ US-East Node (partitioned)     Witness Layer
         |-- state_hash ------------>|-- us-east witness
         |                           |-- eu-west witness
         |                           |-- oceania-apac witness
+        |                           |-- asia-east witness
         |<-- quorum confirmed ------|   (>51% must agree)
 ```
 
@@ -22,7 +23,7 @@ US-East Node (partitioned)     Witness Layer
 | `record_local_witness(hash)` | 远端不可达时的本地决胜 |
 | `export_witnesses()` | 区域见证状态导出 |
 
-默认区域：`us-east`、`eu-west`、`oceania-apac`
+默认区域：`us-east`、`eu-west`、`oceania-apac`、`asia-east`
 
 ## HTTP API
 
@@ -38,7 +39,7 @@ curl http://127.0.0.1:8999/witness/status
 |------|--------|------|
 | `UTAH_WITNESS_ENFORCE` | `1` | 强制见证仲裁（`0` = 开发） |
 | `UTAH_WITNESS_THRESHOLD` | `0.51` | 最低投票比例 |
-| `UTAH_WITNESS_NODES` | 3 个默认 | 逗号分隔的见证端点 |
+| `UTAH_WITNESS_NODES` | 4 个默认 | 逗号分隔的见证端点 |
 
 ## 相关文档
 

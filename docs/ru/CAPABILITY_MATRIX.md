@@ -33,8 +33,8 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 | Компонент | Статус | Что работает сегодня |
 |-----------|--------|----------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Реализовано** | Vibe-Print запечатан в PCR0 через `tpm2_create` / `tpm2_unseal` |
-| **Кворум-свидетели (`quorum_witness.py`)** | **Реализовано** | Арбитры США/ЕС/Океания |
-| **Восстановление Lazarus (`lazarus_restore.py`)** | **Реализовано** | Автовосстановление после карантина |
+| **Кворум-свидетели (`quorum_witness.py`)** | **Реализовано** | Арбитры США/ЕС/Океания/Азия |
+| **Восстановление Lazarus (`lazarus_restore.py`)** | **Реализовано** | Golden Master + атомный kexec |
 | **Дельта состояния (`state_diff_engine.py`)** | **Реализовано** | Запутанные mesh-дельты |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |

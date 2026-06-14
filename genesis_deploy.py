@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 UtahMosphere OS: Auto-Genesis Core Deployment [Omega-Release v25.0]
-Unified binary containing Kernel, Lazarus, Tycoon, and Swarm modules.
+Unified manifest: Kernel, Lazarus, Tycoon, Swarm, and Utah-Flux UI.
 """
 
 import os
@@ -10,54 +10,80 @@ import threading
 import subprocess
 import time
 
-# --- CONSOLIDATED MAPPINGS ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODULES = {
-    "KERNEL": "utahmosphere_os.py",
+    "KERNEL": "utahmosphere_master.py",
     "TYCOON": "utah_tycoon.py",
     "SWARM": "utah_swarm_protocol.py",
-    "UI": "flux_gui.py"
+    "UI": "flux_gui.py",
 }
+
+
+def _popen_module(name: str, extra_env: dict = None):
+    path = os.path.join(SCRIPT_DIR, MODULES[name])
+    env = os.environ.copy()
+    if extra_env:
+        env.update(extra_env)
+    return subprocess.Popen([sys.executable, path], cwd=SCRIPT_DIR, env=env)
+
 
 def deploy_sovereign_stack():
     print("[Genesis] Manifesting Sovereign Environment...")
-    
-    # 1. Initialize OS Directories
+
     utah_data_dir = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
-    os.makedirs(os.path.join(utah_data_dir, "containers"), exist_ok=True)
-    os.makedirs(os.path.join(utah_data_dir, "utahx_mesh"), exist_ok=True)
-    
-    # 2. Launch Financial Daemon
+    for sub in ("containers", "utahx_mesh", "s3", "lambda", "rds", "tycoon", "swarm"):
+        os.makedirs(os.path.join(utah_data_dir, sub), exist_ok=True)
+
     print("[Genesis] Starting Tycoon Financial Engine...")
-    subprocess.Popen([sys.executable, "-c", "import utah_tycoon; import time; time.sleep(1); print('Tycoon running...')"], 
-                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
-    # 3. Launch Swarm Router (simulated as background process)
+    subprocess.Popen(
+        [sys.executable, "-c", "import utah_tycoon; import time; time.sleep(86400)"],
+        cwd=SCRIPT_DIR,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
     print("[Genesis] Initializing Global Mesh Discovery...")
-    # Swarm needs the vibe hash from the ledger, which is handled inside utahmosphere_os.py anyway
-    
-    # 4. Launch Micro-Kernel Gateway
-    print("[Genesis] Priming Sovereign Kernel Ingress...")
-    kernel_path = os.path.join(os.getcwd(), "utahmosphere_os.py")
-    subprocess.Popen([sys.executable, kernel_path])
-    
-    # 5. Launch Flux GUI (optional, may fail in headless)
+    root_hash = "0" * 64
+    try:
+        from quantum_ledger import ledger_guard
+        if ledger_guard.ledger.get("root_vibe_hash"):
+            root_hash = ledger_guard.ledger["root_vibe_hash"]
+    except Exception:
+        pass
+    subprocess.Popen(
+        [sys.executable, "-c", f"import utah_swarm_protocol; utah_swarm_protocol.UtahSwarmNode('{root_hash}'); import time; time.sleep(86400)"],
+        cwd=SCRIPT_DIR,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+
+    print("[Genesis] Priming Golden Master Kernel Ingress...")
+    kernel = _popen_module("KERNEL")
+
     print("[Genesis] Activating Utah-Flux UI...")
-    gui_path = os.path.join(os.getcwd(), "flux_gui.py")
-    subprocess.Popen([sys.executable, gui_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
+    try:
+        gui = os.path.join(SCRIPT_DIR, MODULES["UI"])
+        subprocess.Popen(
+            [sys.executable, gui],
+            cwd=SCRIPT_DIR,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        print("[Genesis] Utah-Flux skipped (headless).")
+
     print("[Genesis] OMEGA-RELEASE MANIFESTED. Sovereign cluster active.")
+    return kernel
+
 
 if __name__ == "__main__":
-    # Check for root on Linux, or just proceed on other OS
-    if os.name != 'nt' and os.getuid() != 0:
-        print("CRITICAL: Auto-Genesis requires root hardware privileges.")
-        # sys.exit(1) # Allow for now in case of sudo-less env
-    
-    deploy_sovereign_stack()
-    # Keep main execution thread alive to hold the hardware state
+    if os.name != "nt" and hasattr(os, "getuid") and os.getuid() != 0:
+        print("[Genesis] Warning: root privileges recommended for production.")
+
+    proc = deploy_sovereign_stack()
     try:
-        while True:
-            time.sleep(3600)
+        proc.wait()
     except KeyboardInterrupt:
         print("[Genesis] Shutting down...")
+        proc.terminate()
         sys.exit(0)

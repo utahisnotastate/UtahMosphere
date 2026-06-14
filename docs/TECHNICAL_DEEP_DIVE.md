@@ -6,27 +6,42 @@ UtahMosphere OS v25.0 is a revolutionary departure from legacy cloud stacks. It 
 
 ---
 
+UtahMosphere OS v25.0 Golden Master is a unified bare-metal sovereign platform. World-A abstractions (Docker, Nginx, Kubernetes) are replaced by native Python subsystems integrated in `utahmosphere_master.py`.
+
+See [Omega-Build Golden Master](OMEGA_BUILD.md) for the full architecture.
+
+---
+
 #### **1. UtahX: Fluidic TCP Proxy & Tollbooth Caching**
 Replaces Nginx as the primary ingress layer.
-- **Fluidic Routing:** Dynamically maps incoming HTTP/TCP connections to container ports using declarative JSON manifests.
-- **Tollbooth Caching:** Aggressively caches data in RAM-mapped socket loops (`/dev/shm`), reducing disk I/O to zero during traffic surges.
-- **Financial Integration:** Automatically challenges unauthorized requests with HTTP 402 (Payment Required) via the Tycoon Daemon.
+- **Live Proxy:** `GET /app/{name}` streams to UtahContainerEngine backends via `utahx_proxy.py`
+- **Declarative Routes:** JSON manifests in `utahx_mesh/{app}.utahx.json`
+- **Financial Integration:** HTTP 402 via Utah-Tycoon before proxy unlock
 
 #### **2. UtahContainerEngine: Cryptographic Workload Silos**
-Replaces Docker with a lightweight, zero-config virtualization layer.
-- **Isolation:** Enforces absolute namespace separation for tenant workloads.
-- **Execution:** Runs sandboxed Python/Binary handlers directly on bare-metal hardware namespaces.
-- **Cryo-Stasis:** Containers remain inactive until biometric or financial authorization is confirmed.
+Replaces Docker with in-process handler HTTP servers.
+- **Runtime:** `utah_container_runtime.py` listens on ports 8200+
+- **Handlers:** `{UTAH_DATA_DIR}/containers/{app}/handler.py`
+- **Status:** `cryo-stasis-ready` → `active-compute` after payment
 
-#### **3. UtahNetes: Osmotic Mesh Discovery**
+#### **3. S3 Mesh, Lambda, RDS Parity**
+- **S3:** `utah_s3_mesh.py` — local object storage, HMAC tenant headers
+- **Lambda:** `utah_lambda_engine.py` — `POST /lambda/{fn}/invoke`
+- **RDS:** `utah_rds_ledger.py` — `POST /rds/write`, `GET /rds/read/{key}`
+
+#### **4. Lazarus AST Mutation Engine**
+- **Live Patching:** `utah_lazarus.py` validates and injects AST nodes
+- **Voice:** `"patch app my-app to {intent}"` without rebuilds
+
+#### **5. UtahNetes: Osmotic Mesh Discovery**
 Replaces Kubernetes for cluster orchestration.
 - **Global Swarm Discovery (GSDP):** Uses a Kademlia-based Distributed Hash Table (DHT) to link nodes globally without DNS or ISP interference.
 - **UDP Hole-Punching:** Establishes direct P2P tunnels through firewalls and NAT.
 - **State Convergence:** Synchronizes container maps and storage registries across the planetary mesh using monotonic transaction timers.
 
 #### **4. Lazarus Daemon: Zero-Downtime AST Mutation**
-- **Live Patching:** Rewrites application logic in-memory using Abstract Syntax Tree (AST) mutation.
-- **Formon Injection:** Allows voice commands to update live code without process restarts or deployment pipelines.
+- **Live Patching:** Rewrites handler logic via AST validation in `utah_lazarus.py`
+- **Formon Injection:** Voice commands update live code without restarts
 
 #### **5. Quantum Ledger: Biometric Vibe-Print Security**
 Replaces IAM roles and passwords.

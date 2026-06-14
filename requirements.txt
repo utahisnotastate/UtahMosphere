@@ -1,6 +1,4 @@
 SpeechRecognition
-docker-compose
 numpy
 librosa
 pyaudio
-tkinter

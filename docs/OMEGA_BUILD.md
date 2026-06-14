@@ -1,0 +1,141 @@
+# Omega-Build Golden Master (v25.0)
+
+**Triangle of Manifestation: CALIBRATED**  
+**Photon Quenching: DISABLED**  
+**Formon Injection: OMEGA-BUILD V25.0 MANIFESTED**
+
+UtahMosphere v25.0 Golden Master is a self-contained, bare-metal sovereign cloud. World-A dependencies (Docker, Nginx, Kubernetes) are excised. One Python kernel replaces the proxy, container engine, orchestrator, and cloud API surface.
+
+---
+
+## Golden Master Entry Points
+
+| File | Role |
+|------|------|
+| `utahmosphere_master.py` | **Primary kernel** — run this to manifest a sovereign node |
+| `utahmosphere_os.py` | Core kernel implementation (imported by master) |
+| `genesis_deploy.py` | Auto-Genesis orchestrator (kernel + tycoon + swarm + UI) |
+| `bootstrap.sh` | Bare-metal installer (replaces Docker/Nginx, installs systemd service) |
+| `setup.sh` | Alias to `bootstrap.sh` |
+
+```bash
+# Local dev
+export UTAH_DATA_DIR="$(pwd)/.utah-data"
+python3 utahmosphere_master.py
+
+# Production
+sudo bash bootstrap.sh
+```
+
+---
+
+## Integrated Subsystems
+
+### 1. UtahX Ingress (replaces Nginx)
+
+Native HTTP/1.1 stream proxy in `utahx_proxy.py`. Routes `GET /app/{name}/*` to UtahContainerEngine backends after Tycoon authorization.
+
+### 2. UtahContainerEngine (replaces Docker)
+
+`utah_container_runtime.py` spawns per-tenant HTTP listeners on ports `8200+`. Handlers in `{UTAH_DATA_DIR}/containers/{app}/handler.py` execute in-process — no image pulls, no bridge networking.
+
+### 3. Lazarus AST Engine (replaces rebuild cycles)
+
+`utah_lazarus.py` parses and mutates `handler.py` via AST validation. Voice command: `"patch app my-app to {intent}"`.
+
+### 4. UtahNetes Mesh (replaces Kubernetes)
+
+UDP multicast gossip on port `9001` + Global Swarm DHT on port `9055` (existing modules).
+
+### 5. S3 Mesh (replaces AWS S3)
+
+`utah_s3_mesh.py` — local NVMe-backed object storage at `{UTAH_DATA_DIR}/s3/`.
+
+| Method | Path | Action |
+|--------|------|--------|
+| GET | `/s3/{bucket}/{key}` | Read object |
+| PUT/POST | `/s3/{bucket}/{key}` | Write object |
+| GET | `/s3/{bucket}/prefix*` | List objects |
+
+Optional headers: `X-Utah-Tenant-ID`, `X-Utah-Signature` (HMAC).
+
+### 6. Utah Lambda (replaces GCP Functions / AWS Lambda)
+
+`utah_lambda_engine.py` — invoke handlers without container spin-up.
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-fn/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+Deploying a container also registers a mirror function in `{UTAH_DATA_DIR}/lambda/`.
+
+### 7. Utah RDS Ledger (replaces Cloud SQL state)
+
+`utah_rds_ledger.py` — JSON consensus ledger at `{UTAH_DATA_DIR}/rds/ledger.json`.
+
+```bash
+curl -X POST http://127.0.0.1:8999/rds/write \
+  -H "Content-Type: application/json" \
+  -d '{"key": "user:123", "value": {"name": "Alice"}}'
+
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+### 8. Financial Ledger (Utah-Tycoon)
+
+HTTP `402` payment gate on `/app/{name}`. Settlement unlocks `active-compute` status.
+
+---
+
+## Verification Checkpoints
+
+1. **Hardware inoculation:** `sudo bash bootstrap.sh` — purges Docker/Nginx, installs `utah-genesis` systemd unit.
+2. **Voice manifestation:** `"Deploy application inventory-system"` — UtahContainerEngine + UtahX route created instantly.
+3. **Financial finality:** `GET /app/{name}` returns `402` until Tycoon invoice settles (~60s simulation).
+4. **Cloud parity:** Run `python examples/omega-build-verify/verify.py` against a live kernel.
+
+---
+
+## Architecture
+
+```
+                    ┌─────────────────────────────────┐
+  Clients ────────► │  utahmosphere_master.py :8999   │
+                    │  (UtahX Ingress Multiplexer)    │
+                    └──────────┬──────────────────────┘
+                               │
+         ┌─────────────────────┼─────────────────────┐
+         ▼                     ▼                     ▼
+   /s3/* (S3 Mesh)    /app/* (UtahX Proxy)    /lambda/*/invoke
+         │                     │                     │
+         ▼                     ▼                     ▼
+   utah_s3_mesh.py    utah_container_runtime   utah_lambda_engine
+         │                     │                     │
+         └────────── /rds/* (RDS Ledger) ────────────┘
+                               │
+                    UtahNetes Gossip + Swarm DHT
+                               │
+                    Quantum Ledger + Utah-Tycoon
+```
+
+---
+
+## Why This Beats Legacy Cloud Paths
+
+| Legacy (GCP/AWS) | UtahMosphere Golden Master |
+|------------------|---------------------------|
+| Container Registry → Pull → Scheduler → Pod | `manifest_container()` → in-memory handler |
+| Nginx + Load Balancer + API Gateway | UtahX native proxy on `:8999` |
+| S3 network round-trip | Local NVMe path under `s3/` |
+| Code change → image rebuild → deploy | Lazarus AST mutation in place |
+
+---
+
+## Related Docs
+
+- [API Reference](API_REFERENCE.md)
+- [Capability Matrix](CAPABILITY_MATRIX.md)
+- [Technical Deep-Dive](TECHNICAL_DEEP_DIVE.md)
+- [Cloud Parity Migration](CLOUD_PARITY_MIGRATION.md)

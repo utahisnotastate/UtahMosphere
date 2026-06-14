@@ -2,6 +2,28 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [25.1] — Omega-Build Golden Master (2026-06)
+
+### Added
+- `utahmosphere_master.py` — Golden Master kernel entry point
+- `bootstrap.sh` — bare-metal Auto-Genesis installer (systemd + `utah-kernel`)
+- `utahx_proxy.py` — native HTTP proxy (replaces Nginx)
+- `utah_container_runtime.py` — UtahContainerEngine per-tenant servers
+- `utah_s3_mesh.py` — S3 parity (`GET/PUT/POST /s3/{bucket}/{key}`)
+- `utah_lambda_engine.py` — Lambda parity (`POST /lambda/{fn}/invoke`)
+- `utah_rds_ledger.py` — RDS parity (`/rds/read`, `/rds/write`)
+- `utah_lazarus.py` — AST-validated Lazarus mutation engine
+- `examples/omega-build-verify/` — end-to-end parity verification script
+- [Omega-Build Golden Master](OMEGA_BUILD.md) architecture document
+
+### Changed
+- `utahmosphere_os.py` — full HTTP multiplexer with S3/Lambda/RDS/UtahX proxy
+- `genesis_deploy.py` — launches Golden Master + tycoon + swarm + UI
+- `setup.sh` — delegates to `bootstrap.sh`
+- Container deploy now starts live HTTP listeners on ports 8200+
+- `/app/{name}` proxies to container backend after Tycoon settlement
+- [Capability Matrix](CAPABILITY_MATRIX.md) and [API Reference](API_REFERENCE.md) updated
+
 ## [25.0] — Documentation & API Polish (2026-06)
 
 ### Added

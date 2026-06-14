@@ -1,8 +1,10 @@
-# 🌌 UtahMosphere OS (v25.0 Omega-Genesis)
+# 🌌 UtahMosphere OS (v25.0 Omega-Genesis Golden Master)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a unified sovereign edge platform that runs on bare-metal hardware (Mini PC, Raspberry Pi, x86) and provides voice-driven deployment, biometric node ownership, and optional pay-per-access monetization.
+UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python-to-kernel logic gates — voice deploy, biometric security, S3/Lambda/RDS parity, and pay-per-access monetization.
+
+**Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
 ---
 
@@ -24,7 +26,8 @@ UtahMosphere OS is a unified sovereign edge platform that runs on bare-metal har
 
 ### Reference
 
-- [API Reference](docs/API_REFERENCE.md) — `/health`, `/status`, `/command`, `/app/{name}`
+- [Omega-Build Golden Master](docs/OMEGA_BUILD.md) — unified kernel architecture
+- [API Reference](docs/API_REFERENCE.md) — S3, Lambda, RDS, `/app` proxy, `/command`
 - [Capability Matrix](docs/CAPABILITY_MATRIX.md) — what works today vs. roadmap
 - [Local Development](docs/LOCAL_DEVELOPMENT.md) — Windows, macOS, Linux without root
 - [Operations Runbook](docs/OPERATIONS_RUNBOOK.md) — backup, recovery, monitoring
@@ -39,26 +42,29 @@ UtahMosphere OS is a unified sovereign edge platform that runs on bare-metal har
 
 ## 🚀 Quick Start
 
-### Linux (production)
+### Linux (production — Golden Master)
 
 ```bash
+sudo bash bootstrap.sh
+# or
 sudo bash setup.sh
-sudo python3 genesis_deploy.py
 ```
+
+Installs `utah-genesis` systemd service and `utah-kernel` binary.
 
 ### Local dev (any OS)
 
 ```bash
 export UTAH_DATA_DIR="$(pwd)/.utah-data"   # PowerShell: $env:UTAH_DATA_DIR = "$PWD\.utah-data"
 pip install -r requirements.txt
-python utahmosphere_os.py
+python3 utahmosphere_master.py
 ```
 
-Verify:
+Verify Omega-Build:
 
 ```bash
 curl http://127.0.0.1:8999/health
-python examples/voice-deploy-simulator/deploy.py hello
+python examples/omega-build-verify/verify.py
 ```
 
 ### Voice (optional)
@@ -91,16 +97,19 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features
+## 🛠 Features (Golden Master)
 
-- **UtahX** — Declarative proxy route manifests (JSON)
-- **UtahContainerEngine** — Tenant workspaces with `handler.py`
-- **UtahNetes** — LAN multicast gossip sync
-- **Lazarus Daemon** — Live handler patching (partial)
-- **Quantum Ledger** — Biometric vibe-print node claim
-- **Global Swarm** — UDP P2P peer table
-- **Utah-Tycoon** — HTTP 402 payment gate
-- **Utah-Flux** — Reactive Tkinter dashboard
+- **UtahX:** Native HTTP/1.1 stream proxy to containers (replaces Nginx)
+- **UtahContainerEngine:** In-process handler servers on ports 8200+ (replaces Docker)
+- **Lazarus AST Engine:** Live handler mutation without rebuilds
+- **S3 Mesh:** Local NVMe object storage at `/s3/{bucket}/{key}`
+- **Utah Lambda:** `POST /lambda/{fn}/invoke` serverless handlers
+- **RDS Ledger:** `POST /rds/write`, `GET /rds/read/{key}` key-value store
+- **UtahNetes:** LAN multicast gossip sync
+- **Quantum Ledger:** Biometric vibe-print node claim
+- **Global Swarm:** UDP P2P peer table
+- **Utah-Tycoon:** HTTP 402 payment gate + `active-compute` unlock
+- **Utah-Flux:** Reactive Tkinter dashboard
 
 ---
 

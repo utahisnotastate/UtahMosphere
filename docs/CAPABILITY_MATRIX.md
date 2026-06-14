@@ -1,6 +1,6 @@
 # Capability Matrix
 
-This matrix documents what UtahMosphere OS **v25.0** implements today versus what is described in marketing docs or planned for future releases. Use it to set accurate expectations during migration and development.
+UtahMosphere OS **v25.0 Golden Master** — implementation status as of Omega-Build.
 
 ---
 
@@ -8,13 +8,18 @@ This matrix documents what UtahMosphere OS **v25.0** implements today versus wha
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implemented** | Node liveness probe |
-| `/status` | GET | **Implemented** | UI state, tenant list, claim status |
-| `/command` | POST | **Implemented** | Voice intent execution (JSON body) |
-| `/app/{name}` | GET | **Implemented** | Tycoon-gated app access (402 until paid) |
-| `/s3/*` | * | Planned | Documented in migration guide; not routed yet |
-| `/lambda/*/invoke` | POST | Planned | Handler stubs created on deploy only |
-| `/rds/read/*`, `/rds/write` | * | Planned | Registry exists; HTTP routes not wired |
+| `/health` | GET | **Implemented** | Liveness + `build: golden-master` |
+| `/status` | GET | **Implemented** | UI state, tenants, claim status, S3 root |
+| `/command` | POST | **Implemented** | Voice intent execution |
+| `/app/{name}` | GET | **Implemented** | Tycoon 402 gate + UtahX proxy to container |
+| `/app/{name}/{path}` | GET | **Implemented** | Sub-path proxy to container backend |
+| `/s3/{bucket}/{key}` | GET | **Implemented** | Object read (local NVMe) |
+| `/s3/{bucket}/{key}` | PUT/POST | **Implemented** | Object write; optional HMAC headers |
+| `/s3/{bucket}/{prefix}*` | GET | **Implemented** | List objects |
+| `/lambda/{fn}/invoke` | POST | **Implemented** | Serverless handler invoke |
+| `/lambda/{fn}` | GET | **Implemented** | GET invoke with empty event |
+| `/rds/write` | POST | **Implemented** | Key-value write |
+| `/rds/read/{key}` | GET | **Implemented** | Key-value read |
 
 ---
 
@@ -22,25 +27,31 @@ This matrix documents what UtahMosphere OS **v25.0** implements today versus wha
 
 | Component | Status | What works today |
 |-----------|--------|------------------|
-| **Kernel (`utahmosphere_os.py`)** | Implemented | Registry, voice intents, UtahX route manifests, mesh gossip |
-| **Quantum Ledger** | Implemented | Root vibe claim, biometric hash verification, open mode before claim |
-| **Voice Bridge** | Implemented | Google STT + MFCC vibe-print extraction → `/command` |
-| **Utah-Tycoon** | Partial | Invoice generation, simulated 60s settlement, HTTP 402 gate |
-| **UtahNetes Gossip** | Partial | UDP multicast tenant sync on LAN |
-| **Global Swarm** | Partial | UDP peer table, ping keep-alive; full Kademlia lookup stubbed |
-| **Lazarus Daemon** | Partial | Appends patch comments to `handler.py` (not full AST rewrite) |
-| **Utah-Flux UI** | Implemented | Tkinter dashboard reading `flux_ui_manifest.json` |
-| **UtahX Proxy** | Partial | JSON route manifests written; no live TCP proxy process |
+| **Golden Master (`utahmosphere_master.py`)** | **Implemented** | Unified entry point |
+| **Kernel (`utahmosphere_os.py`)** | **Implemented** | Full HTTP multiplexer, registry, mesh |
+| **UtahX Proxy (`utahx_proxy.py`)** | **Implemented** | Live HTTP proxy to container ports |
+| **UtahContainerEngine (`utah_container_runtime.py`)** | **Implemented** | Per-tenant HTTP servers on 8200+ |
+| **Lazarus AST (`utah_lazarus.py`)** | **Implemented** | AST-validated handler mutation |
+| **S3 Mesh (`utah_s3_mesh.py`)** | **Implemented** | Local object storage + HMAC |
+| **Lambda Engine (`utah_lambda_engine.py`)** | **Implemented** | Handler invoke without images |
+| **RDS Ledger (`utah_rds_ledger.py`)** | **Implemented** | JSON key-value ledger |
+| **Quantum Ledger** | Implemented | Biometric claim + verification |
+| **Utah-Tycoon** | Partial | 402 gate; simulated 60s settlement |
+| **UtahNetes Gossip** | Partial | LAN multicast sync |
+| **Global Swarm** | Partial | UDP peer table; full Kademlia stubbed |
+| **Utah-Flux UI** | Implemented | Tkinter status dashboard |
+| **Auto-Genesis (`genesis_deploy.py`)** | **Implemented** | Multi-process orchestrator |
+| **Bootstrap (`bootstrap.sh`)** | **Implemented** | Bare-metal systemd install |
 
 ---
 
-## Voice Commands (Authorized)
+## Voice Commands
 
 | Command pattern | Status | Example |
 |-----------------|--------|---------|
 | Claim node | Implemented | `"Claim node"` |
 | Deploy application | Implemented | `"deploy application my-app"` |
-| Patch application | Partial | `"patch app my-app to add logging"` |
+| Patch application | **Implemented** | `"patch app my-app to add logging"` |
 | Status / grid | Implemented | `"status grid"` |
 
 ---
@@ -49,44 +60,21 @@ This matrix documents what UtahMosphere OS **v25.0** implements today versus wha
 
 | Method | Status | Platform |
 |--------|--------|----------|
-| `python3 utahmosphere_os.py` | Implemented | All (set `UTAH_DATA_DIR` locally) |
-| `python3 genesis_deploy.py` | Implemented | Linux preferred; Windows dev OK |
-| `sudo bash setup.sh` | Implemented | Linux (systemd service) |
-| `docker-compose up` | Implemented | Optional; uses host networking |
+| `python3 utahmosphere_master.py` | **Recommended** | All |
+| `python3 utahmosphere_os.py` | Implemented | All |
+| `python3 genesis_deploy.py` | Implemented | Linux / dev |
+| `sudo bash bootstrap.sh` | **Recommended prod** | Linux systemd |
+| `sudo bash setup.sh` | Implemented | Alias to bootstrap |
+| `docker-compose up` | Optional | Legacy convenience only |
 
 ---
 
-## Security Model
+## Roadmap (Remaining)
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Single root vibe holder | Implemented | First speaker to claim owns the node |
-| `authorized_nodes[]` field | Stub | Stored in ledger JSON; not enforced in code |
-| HMAC tenant signatures | Documented | Recipe provided; kernel enforcement partial |
-| Ed25519 signing | Planned | Docs reference; not implemented |
-| Default `UTAH_SECRET_VECTOR` | Implemented | Change in production (see [Access Control](ACCESS_CONTROL.md)) |
-
----
-
-## Docker / Nginx Relationship
-
-UtahMosphere's **primary runtime** is bare-metal Python. Docker and Nginx are **optional legacy paths**:
-
-- `docker-compose.yaml` — convenience wrapper for local trials
-- `nginx.conf` — reference config; UtahX JSON manifests are the sovereign path
-- `setup.sh` — purges Docker/Nginx on clean Linux installs (production sovereign nodes)
-
-For hybrid environments, keep Docker/Nginx alongside UtahMosphere during migration.
-
----
-
-## Roadmap (Not Yet Implemented)
-
-- S3-compatible object storage HTTP API
-- Lambda-style invoke HTTP API
-- RDS ledger read/write HTTP API
-- Git-based deploy voice command
-- Full AST mutation via Lazarus
 - Real Bitcoin mempool integration in Tycoon
+- Full Kademlia recursive lookup in Swarm
+- Ed25519 signing in Quantum Ledger
+- `authorized_nodes[]` enforcement
+- `genesis.iso` flash-drive installer image
 
-See [CHANGELOG](CHANGELOG.md) for version history.
+See [Omega-Build Golden Master](OMEGA_BUILD.md) and [CHANGELOG](CHANGELOG.md).

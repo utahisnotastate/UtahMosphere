@@ -10,6 +10,7 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 
 | Document | Best for |
 |----------|----------|
+| [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
 | [Capability Matrix](CAPABILITY_MATRIX.md) | Everyone — what works today vs. roadmap |
 | [API Reference](API_REFERENCE.md) | Developers and operators |
 | [Access Control Model](ACCESS_CONTROL.md) | Architects and security reviewers |
@@ -79,7 +80,7 @@ Small runnable scripts that exercise the live API:
 | [hello-world](../examples/hello-world/) | Deploy an app via `/command` |
 | [check-node-health](../examples/check-node-health/) | Health and status probes |
 | [paid-app-access](../examples/paid-app-access/) | Tycoon tollbooth settlement |
-| [voice-deploy-simulator](../examples/voice-deploy-simulator/) | Deploy without a microphone |
+| [omega-build-verify](../examples/omega-build-verify/) | Full S3/Lambda/RDS/container parity test |
 
 ### Starter Projects (`starter-projects/`)
 

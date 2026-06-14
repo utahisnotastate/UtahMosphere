@@ -16,7 +16,8 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master"
 }
 ```
 
@@ -131,17 +132,89 @@ Invoices auto-settle after ~60 seconds in the current simulation.
 
 ### Paid client — Response `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
+UtahX proxies the request to the UtahContainerEngine backend on the tenant port. Response body is the handler JSON output.
+
+```bash
+curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## PUT/POST /s3/{bucket}/{key}
+
+Write object to Utah S3 Mesh (local NVMe storage).
+
+**Headers (optional):**
+
+| Header | Description |
+|--------|-------------|
+| `X-Utah-Tenant-ID` | Tenant identifier |
+| `X-Utah-Signature` | HMAC-SHA256 of `{tenant_id}:{path}` |
 
 **Example:**
 
 ```bash
-curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
+curl -X PUT http://127.0.0.1:8999/s3/my-data/file.txt \
+  -H "Content-Type: text/plain" \
+  --data-binary "Hello Utah"
+```
+
+---
+
+## GET /s3/{bucket}/{key}
+
+Read object. Returns raw bytes. Use `GET /s3/{bucket}/prefix*` to list.
+
+```bash
+curl http://127.0.0.1:8999/s3/my-data/file.txt
+```
+
+---
+
+## POST /rds/write
+
+Write key-value record to Utah RDS Ledger.
+
+**Request body:**
+
+```json
+{"key": "user:123", "value": {"name": "Alice", "score": 9000}}
+```
+
+**Response `200`:**
+
+```json
+{"key": "user:123", "status": "written", "epoch": 1718280000.0}
+```
+
+---
+
+## GET /rds/read/{key}
+
+Read record by key.
+
+```bash
+curl http://127.0.0.1:8999/rds/read/user:123
+```
+
+---
+
+## POST /lambda/{function_name}/invoke
+
+Invoke Utah Lambda handler (no container image pull).
+
+**Request body:** JSON event passed to `handler(event, context)`
+
+```bash
+curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
+  -H "Content-Type: application/json" \
+  -d '{"name": "General 23"}'
+```
+
+**Response `200`:**
+
+```json
+{"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
 
 ---
@@ -171,7 +244,10 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 |------|---------|
 | `{UTAH_DATA_DIR}/secure_registry.json` | Tenants, UtahX routes, storage index |
 | `{UTAH_DATA_DIR}/flux_ui_manifest.json` | Utah-Flux UI state |
-| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Deployed handler stub |
+| `{UTAH_DATA_DIR}/containers/{app}/handler.py` | Container handler |
+| `{UTAH_DATA_DIR}/lambda/{fn}/handler.py` | Lambda handler |
+| `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh objects |
+| `{UTAH_DATA_DIR}/rds/ledger.json` | RDS key-value store |
 | `security/biometric_ledger.json` | Root vibe hash (local fallback if `/etc` not writable) |
 | `tycoon/settlement_ledger.json` | Invoice and payment state |
 

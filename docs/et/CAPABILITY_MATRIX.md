@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täielik.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on täielik.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täie
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | `build: omega-build-v31-federated-quorum` + täielik tõendamise hetktõmmis |
+| `/health` | GET | **Rakendatud** | `build: omega-build-v32-lazarus-self-healing` + täielik tõendamise hetktõmmis |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **Rakendatud** | Mitmeregiooni tunnistajad |
+| `/lazarus/status` | GET | **Rakendatud** | Lazarus kontrollpunkt |
+| `/lazarus/restore` | POST | **Rakendatud** | Golden Master taastamine |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
@@ -30,6 +33,9 @@ UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täie
 | Komponent | Olek | Mis täna töötab |
 |-----------|------|-----------------|
 | **TPM Locker (`tpm_lock.py`)** | **Rakendatud** | Vibe-Print pitstatud PCR0-sse `tpm2_create` / `tpm2_unseal` kaudu |
+| **Kvoorumi tunnistajad (`quorum_witness.py`)** | **Rakendatud** | USA/EL/Okeaania vahekohtunikud |
+| **Lazarus taastamine (`lazarus_restore.py`)** | **Rakendatud** | Automaatne taastamine pärast karantiini |
+| **Oleku-erinevus (`state_diff_engine.py`)** | **Rakendatud** | Põimunud mesh-deltad |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
@@ -41,7 +47,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täie
 | **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
 | **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
-| **Genesis ISO v31** | **Rakendatud** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **Rakendatud** | `utah_genesis_v32.iso` |
 | **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
@@ -52,7 +58,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täie
 |--------|------|
 | `python3 utahmosphere_master.py` | **Soovitatav** |
 | `sudo bash bootstrap.sh` | **Tootmine** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
+| `python3 genesis_iso_builder.py` | **v32 ISO** |
 
 ## Keskkond
 
@@ -69,7 +75,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suveräänne usaldusahel on täie
 
 ## Teekaart
 
-Kõik v28.0 teekaardi punktid on v31.0-s **rakendatud**.
+Kõik v28.0 teekaardi punktid on v32.0-s **rakendatud**.
 
 Tulevik: kaug-RA-TLS CA kinnitamine, riistvara quote registriteenus.
 

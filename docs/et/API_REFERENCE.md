@@ -16,15 +16,15 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "31.0",
-  "build": "omega-build-v31-federated-quorum",
+  "version": "32.0",
+  "build": "omega-build-v32-lazarus-self-healing",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v31_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
     "quorum": {"quorum_reached": 1, "pending": 0, "quarantined": 0, "total": 1, "threshold": 0.51, "enforce": true},
@@ -51,7 +51,7 @@ Väljasta RA-TLS TPM quote UtahNetes mesh-sõlmede kontrolliks.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v31-federated-quorum\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v32-lazarus-self-healing\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -118,6 +118,35 @@ Purge compromised hardware ID. Root vibe holder only.
 
 
 ---
+
+
+
+---
+
+## GET /witness/status
+
+Multi-region quorum witness status.
+
+```bash
+curl http://127.0.0.1:8999/witness/status
+```
+
+---
+
+## GET /lazarus/status
+
+Lazarus auto-restore checkpoint status.
+
+---
+
+## POST /lazarus/restore
+
+Trigger Golden Master restoration.
+
+```bash
+curl -X POST http://127.0.0.1:8999/lazarus/restore
+```
+
 
 ## GET /quorum/consensus
 
@@ -525,6 +554,9 @@ Tühista delegeeritud sõlm `authorized_nodes[]`-st. Ainult juur-vibe omanik. Ut
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 | `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden ledger |
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
+| `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum ledger |
+| `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus checkpoint |
+| `{UTAH_DATA_DIR}/quorum_witness.json` | Witness registry |
 | `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Quorum vote ledger |
 | `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry | | Arve ja makse olek |

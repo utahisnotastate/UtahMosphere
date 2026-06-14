@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | `build: omega-build-v31-federated-quorum` + kompleto na attestation snapshot |
+| `/health` | GET | **Ma implement** | `build: omega-build-v32-lazarus-self-healing` + kompleto na attestation snapshot |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **Implemented** | Multi-region witnesses |
+| `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint |
+| `/lazarus/restore` | POST | **Implemented** | Golden Master restore |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
@@ -30,6 +33,9 @@ UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Ma implement** | Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania tie-breakers |
+| **Lazarus Restore (`lazarus_restore.py`)** | **Implemented** | Auto-restore after quarantine |
+| **State-Diff (`state_diff_engine.py`)** | **Implemented** | Entangled mesh deltas |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
@@ -41,7 +47,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v31** | **Ma implement** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **Ma implement** | `utah_genesis_v32.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -52,7 +58,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain
 |--------|--------|
 | `python3 utahmosphere_master.py` | **Ma recommend** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
+| `python3 genesis_iso_builder.py` | **v32 ISO** |
 
 ## Environment
 
@@ -69,7 +75,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — kompleto na sovereign trust chain
 
 ## Roadmap
 
-Todu i v28.0 roadmap items **ma implement** gi v31.0.
+Todu i v28.0 roadmap items **ma implement** gi v32.0.
 
 Futuru: remote RA-TLS CA pinning, hardware quote registry service.
 

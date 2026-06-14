@@ -13,8 +13,8 @@ from pathlib import Path
 
 REPO_DIR = Path(__file__).resolve().parent
 ISO_STAGING = Path(os.environ.get("ISO_STAGING", "/tmp/utah_iso"))
-ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v31.iso"))
-ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V31")
+ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v32.iso"))
+ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V32")
 
 ALPINE_BASE = os.environ.get(
     "UTAH_ALPINE_NETBOOT_URL",
@@ -92,9 +92,9 @@ def stage_sovereign_stack(staging: Path):
     for py_file in REPO_DIR.glob("*.py"):
         shutil.copy2(py_file, staging / "utahmosphere" / py_file.name)
 
-    readme = """UtahMosphere Genesis ISO v31.0
+    readme = """UtahMosphere Genesis ISO v32.0
 ================================
-Federated quorum consensus, PCR drift healing with kexec rollback.
+Multi-region quorum witnesses, Lazarus auto-restore, entangled state-diff sync.
 Boot menu auto-runs bootstrap.sh via autoinstall= kernel parameter.
 Manual path: mount media and run: sudo bash bootstrap.sh
 Kernel manifests on port 8999 after reboot.

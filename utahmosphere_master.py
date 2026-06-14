@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere OS - Master Kernel v31.0 [Federated Quorum & PCR-Drift-Healing]
-Majority-quorum DHT consensus, kexec PCR rollback, sovereign trust swarm.
+UtahMosphere OS - Master Kernel v32.0 [Multi-Region Witnesses & Lazarus Auto-Restore]
+Quorum witnesses, entangled state-diff sync, Lazarus clean-room restoration.
 """
 
 import os
@@ -18,7 +18,7 @@ from utahmosphere_os import run_master_server, SYSTEM_INGRESS_PORT, UTAH_DATA_DI
 def manifest_golden_master():
     print("[UtahMosphere] Triangle of Manifestation: CALIBRATED")
     print("[UtahMosphere] Photon Quenching: DISABLED")
-    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V31.0 FINALIZED")
+    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V32.0 FINALIZED")
     print(f"[UtahMosphere] Data root: {UTAH_DATA_DIR}")
     run_master_server(SYSTEM_INGRESS_PORT)
 

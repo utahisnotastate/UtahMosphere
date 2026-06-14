@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. **v31.0 Federated Quorum** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **v32.0 Lazarus Self-Healing** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 
@@ -8,6 +8,9 @@ Välkommen till UtahMosphere OS dokumentation. **v31.0 Federated Quorum** — su
 
 | Dokument | Bäst för |
 |----------|----------|
+| [Kvorumvittnen](QUORUM_WITNESSES.md) | Flerregions ISP-avbrottsdomare |
+| [Lazarus autoåterställning](LAZARUS_RESTORE.md) | Renrums Golden Master-återställning |
+| [Tillståndsdiff-motor](STATE_DIFF_ENGINE.md) | Entanglad <1 KB mesh-synk |
 | [Kapacitetsmatris](CAPABILITY_MATRIX.md) | Alla — vad som fungerar idag vs. framtida arbete |
 | [API-referens](API_REFERENCE.md) | Utvecklare och operatörer |
 | [Guide för lokal utveckling](LOCAL_DEVELOPMENT.md) | Utvecklare på Windows, macOS eller Linux |
@@ -65,14 +68,14 @@ Välkommen till UtahMosphere OS dokumentation. **v31.0 Federated Quorum** — su
 
 ---
 
-## UtahMosphere OS v31.0
+## UtahMosphere OS v32.0
 
-- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v31-federated-quorum`
+- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v32-lazarus-self-healing`
 - **TPM Locker** — `tpm_lock.py` förseglar Vibe-Print till PCR0 vid claim
 - **RA-TLS mesh-attestering** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Röstdriftsättning** — Voice Bridge anropar automatiskt `GET /nonce` och signerar
 - **Mempool-failover** — `tycoon_failover.py` i 4 regioner (US, EU, global, Oceanien)
 - **Biometrisk claim** — kommandot «Claim node»; TPM-bunden vibe-verifiering
 - **Nodåterkallande** — `POST /admin/revoke-node` och Utah-Flux-panel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v31.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v32.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` med mempool-avveckling i 4 regioner

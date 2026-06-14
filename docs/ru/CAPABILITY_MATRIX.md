@@ -1,6 +1,6 @@
 # Матрица возможностей
 
-UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочка доверия завершена.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепочка доверия завершена.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочк
 
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
-| `/health` | GET | **Реализовано** | `build: omega-build-v31-federated-quorum` + полный снимок аттестации |
+| `/health` | GET | **Реализовано** | `build: omega-build-v32-lazarus-self-healing` + полный снимок аттестации |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **Реализовано** | Кворум-свидетели в нескольких регионах |
+| `/lazarus/status` | GET | **Реализовано** | Контрольная точка Lazarus |
+| `/lazarus/restore` | POST | **Реализовано** | Восстановление Golden Master |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
@@ -30,6 +33,9 @@ UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочк
 | Компонент | Статус | Что работает сегодня |
 |-----------|--------|----------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Реализовано** | Vibe-Print запечатан в PCR0 через `tpm2_create` / `tpm2_unseal` |
+| **Кворум-свидетели (`quorum_witness.py`)** | **Реализовано** | Арбитры США/ЕС/Океания |
+| **Восстановление Lazarus (`lazarus_restore.py`)** | **Реализовано** | Автовосстановление после карантина |
+| **Дельта состояния (`state_diff_engine.py`)** | **Реализовано** | Запутанные mesh-дельты |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
@@ -41,7 +47,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочк
 | **Voice Bridge Signed** | **Реализовано** | Автоматический nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Реализовано** | Безопасность mesh + голоса |
 | **UtahNetes + Swarm DHT** | **Реализовано** | RA-TLS + подписанный gossip |
-| **Genesis ISO v31** | **Реализовано** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **Реализовано** | `utah_genesis_v32.iso` |
 | **Полная облачная паритетность** | **Реализовано** | S3, Lambda, RDS, UtahX, контейнеры |
 
 ---
@@ -52,7 +58,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочк
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Рекомендуется** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
+| `python3 genesis_iso_builder.py` | **v32 ISO** |
 
 ## Переменные окружения
 
@@ -69,7 +75,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — суверенная цепочк
 
 ## Дорожная карта
 
-Все пункты дорожной карты v28.0 **реализованы** в v31.0.
+Все пункты дорожной карты v28.0 **реализованы** в v32.0.
 
 Будущее: удалённое закрепление RA-TLS CA, сервис реестра hardware quote.
 

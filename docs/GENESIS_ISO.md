@@ -1,17 +1,11 @@
-# Genesis ISO Installer (v31.0)
+# Genesis ISO Installer (v32.0)
 
-Build `utah_genesis_v31.iso` with federated quorum consensus, PCR drift healing, and kexec rollback.
+Build `utah_genesis_v32.iso` with multi-region quorum witnesses, Lazarus auto-restore, and entangled state-diff sync.
 
-## Build
-
-```bash
-python3 genesis_iso_builder.py
-```
-
-Output: `utah_genesis_v31.iso`
+Output: `utah_genesis_v32.iso`
 
 ## Related
 
-- [Federated Quorum Consensus](QUORUM_CONSENSUS.md)
-- [PCR Drift Detection](PCR_DRIFT.md)
-- [DHT Federation](DHT_FEDERATION.md)
+- [Quorum Witnesses](QUORUM_WITNESSES.md)
+- [Lazarus Auto-Restore](LAZARUS_RESTORE.md)
+- [State-Diff Engine](STATE_DIFF_ENGINE.md)

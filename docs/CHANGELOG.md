@@ -2,6 +2,23 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [32.0] — Multi-Region Witnesses & Lazarus Auto-Restore (2026-06)
+
+### Added
+- `quorum_witness.py` — multi-region witness quorum (US/EU/Oceania tie-breakers)
+- `lazarus_restore.py` — Golden Master auto-restore after PCR quarantine
+- `state_diff_engine.py` — entangled state-diff sync (<1KB mesh deltas)
+- `GET /witness/status`, `GET /lazarus/status`, `POST /lazarus/restore`
+- [Quorum Witnesses](QUORUM_WITNESSES.md), [Lazarus Restore](LAZARUS_RESTORE.md), [State-Diff Engine](STATE_DIFF_ENGINE.md)
+
+### Changed
+- `utah_mesh_engine.py` — registry_delta broadcast when bandwidth-efficient
+- `drift_detector.py` — triggers Lazarus auto-restore after kexec attempt
+- `emergency_quarantine()` — schedules Lazarus clean-room restoration
+- Genesis ISO: `utah_genesis_v32.iso`
+- Build: `omega-build-v32-lazarus-self-healing`
+- v31.0 roadmap complete; all locale docs updated
+
 ## [31.0] — Federated Quorum & PCR-Drift-Healing (2026-06)
 
 ### Added

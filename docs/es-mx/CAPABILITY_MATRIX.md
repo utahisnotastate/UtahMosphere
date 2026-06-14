@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana completa.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana completa.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana comp
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | `build: omega-build-v31-federated-quorum` + instantánea de attestation completa |
+| `/health` | GET | **Implementado** | `build: omega-build-v32-lazarus-self-healing` + instantánea de attestation completa |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **Implementado** | Testigos multi-región |
+| `/lazarus/status` | GET | **Implementado** | Punto de control Lazarus |
+| `/lazarus/restore` | POST | **Implementado** | Restauración Golden Master |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
@@ -30,6 +33,9 @@ UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana comp
 | Componente | Estado | Qué funciona hoy |
 |------------|--------|------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Implementado** | Vibe-Print sellado al PCR0 vía `tpm2_create` / `tpm2_unseal` |
+| **Testigos de quórum (`quorum_witness.py`)** | **Implementado** | Desempates EE.UU./UE/Oceanía |
+| **Restauración Lazarus (`lazarus_restore.py`)** | **Implementado** | Restauración auto tras cuarentena |
+| **Delta de estado (`state_diff_engine.py`)** | **Implementado** | Deltas mesh entrelazados |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
@@ -41,7 +47,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana comp
 | **Voice Bridge firmado** | **Implementado** | Nonce automático + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementado** | Seguridad de malla + voz |
 | **UtahNetes + Swarm DHT** | **Implementado** | RA-TLS + gossip firmado |
-| **Genesis ISO v31** | **Implementado** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **Implementado** | `utah_genesis_v32.iso` |
 | **Paridad cloud completa** | **Implementado** | S3, Lambda, RDS, UtahX, contenedores |
 
 ---
@@ -69,7 +75,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — cadena de confianza soberana comp
 
 ## Hoja de ruta
 
-Todos los elementos de la hoja de ruta v28.0 están **implementados** en v31.0.
+Todos los elementos de la hoja de ruta v28.0 están **implementados** en v32.0.
 
 Futuro: fijación de CA RA-TLS remota, servicio de registro de citas de hardware.
 

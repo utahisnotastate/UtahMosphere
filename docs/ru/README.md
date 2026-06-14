@@ -1,6 +1,6 @@
 # Портал документации UtahMosphere
 
-Добро пожаловать в центр документации UtahMosphere OS. **v31.0 Federated Quorum** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
+Добро пожаловать в центр документации UtahMosphere OS. **v32.0 Lazarus Self-Healing** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
 
 ---
 
@@ -8,6 +8,9 @@
 
 | Документ | Для кого |
 |----------|----------|
+| [Кворум-свидетели](QUORUM_WITNESSES.md) | Арбитры при региональных сбоях ISP |
+| [Автовосстановление Lazarus](LAZARUS_RESTORE.md) | Восстановление Golden Master в чистой комнате |
+| [Движок дельты состояния](STATE_DIFF_ENGINE.md) | Запутанная mesh-синхронизация <1 КБ |
 | [Матрица возможностей](CAPABILITY_MATRIX.md) | Все — что работает сегодня и будущая работа |
 | [Справочник API](API_REFERENCE.md) | Разработчики и операторы |
 | [Руководство по локальной разработке](LOCAL_DEVELOPMENT.md) | Разработчики на Windows, macOS или Linux |
@@ -77,22 +80,22 @@
 
 ---
 
-## Ключевые характеристики UtahMosphere OS v31.0
+## Ключевые характеристики UtahMosphere OS v32.0
 
-- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v31-federated-quorum`
+- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v32-lazarus-self-healing`
 - **TPM Locker** — `tpm_lock.py` запечатывает Vibe-Print в PCR0 при claim
 - **RA-TLS mesh-аттестация** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Голосовое развёртывание** — Voice Bridge автоматически вызывает `GET /nonce` и подписывает
 - **Failover mempool** — `tycoon_failover.py` в 4 регионах (US, EU, global, Океания)
 - **Биометрическое закрепление узла** — команда «Claim node»; TPM-привязанная проверка vibe
 - **Отзыв узлов** — `POST /admin/revoke-node` и панель Utah-Flux
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v31.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v32.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` с расчётом через mempool в 4 регионах
 
 ---
 
 ## Дополнительные материалы
 
-- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v31.0
+- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v32.0
 - [Справочник API](API_REFERENCE.md) — все конечные точки HTTP
 - [Техническое погружение](TECHNICAL_DEEP_DIVE.md) — архитектура платформы

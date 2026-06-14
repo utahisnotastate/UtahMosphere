@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v31.0 Federated Quorum** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 
@@ -8,6 +8,9 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v31.0 Federated Quo
 
 | Dokument | Sobib kõige paremini |
 |----------|----------------------|
+| [Kvoorumi tunnistajad](QUORUM_WITNESSES.md) | Mitmeregiooni ISP-katkestuse vahekohtunikud |
+| [Lazarus automaatne taastamine](LAZARUS_RESTORE.md) | Puhastoa Golden Master taastamine |
+| [Oleku-erinevuse mootor](STATE_DIFF_ENGINE.md) | Põimunud <1KB mesh-sünkroniseerimine |
 | [Võimekuste maatriks](CAPABILITY_MATRIX.md) | Kõigile — mis töötab täna vs tuleviku töö |
 | [API viide](API_REFERENCE.md) | Arendajatele ja operaatoritele |
 | [Kohaliku arenduse juhend](LOCAL_DEVELOPMENT.md) | Arendajatele Windowsis, macOS-is või Linuxis |
@@ -65,14 +68,14 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v31.0 Federated Quo
 
 ---
 
-## UtahMosphere OS v31.0
+## UtahMosphere OS v32.0
 
-- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v31-federated-quorum`
+- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v32-lazarus-self-healing`
 - **TPM Locker** — `tpm_lock.py` pitstab Vibe-Print PCR0-sse claim-il
 - **RA-TLS mesh-tõendamine** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Hääljuurutus** — Voice Bridge kutsub automaatselt `GET /nonce` ja allkirjastab
 - **Mempool varuühendus** — `tycoon_failover.py` neljas piirkonnas (USA, EL, globaalne, Okeaania)
 - **Biomeetriline claim** — käsk «Claim node»; TPM-iga seotud vibe kontroll
 - **Sõlme tühistamine** — `POST /admin/revoke-node` ja Utah-Flux paneel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v31.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v32.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4-piirkonnilise mempool arveldusega

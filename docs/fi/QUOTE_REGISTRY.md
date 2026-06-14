@@ -1,4 +1,4 @@
-# Laitteisto quote -rekisteri (v31.0)
+# Laitteisto quote -rekisteri (v32.0)
 
 **Laitteisto quote -rekisteri** on hajautettu totuuden lähde kelvollisille TPM-laitteiston sormenjäljille UtahMosphere-parvessa. Solmut eivät luota IP-osoitteisiin — ne luottavat **laitteisto quoteihin**, jotka Utah-Kernel Root CA on allekirjoittanut ja jotka on rekisteröity tähän tilastoon.
 
@@ -87,7 +87,7 @@ curl -X POST http://127.0.0.1:8999/registry/purge \
 |----------|--------|-----------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Rekisterin pysyvyys |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX-sisääntulo + CA-kiinnitys (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | Quoten allekirjoituksen juuri |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | Quoten allekirjoituksen juuri |
 | `UTAH_KERNEL_ROOT_CA_PATH` | `/etc/utahmosphere/security/utah_root_ca.pem` | PEM-julkinen avain CA-vahvistukseen |
 
 Ohita kaikki todentamiskerrokset kehityksessä:

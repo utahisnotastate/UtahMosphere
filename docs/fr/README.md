@@ -14,7 +14,10 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organis�
 | [Attestation RA-TLS du maillage](RA_TLS.md) | Vérification des citations TPM + épinglage CA pour les pairs du maillage |
 | [Attestation matérielle](ATTESTATION.md) | TPM PCR0 + scellement Vibe-Print |
 | [Installateur Genesis ISO](GENESIS_ISO.md) | Image de démarrage UEFI sur clé USB |
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v31.0 Infrastructure d'attestation à distance |
+| [Témoins de quorum](QUORUM_WITNESSES.md) | Arbitrage multi-régions en cas de panne ISP |
+| [Restauration Lazarus](LAZARUS_RESTORE.md) | Restauration Golden Master en salle blanche |
+| [Moteur de delta d'état](STATE_DIFF_ENGINE.md) | Sync mesh entrelacée <1 Ko |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v32.0 Infrastructure d'attestation à distance |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -84,7 +87,7 @@ Mini-projets complets à forker et étendre :
 
 ---
 
-## Fonctionnalités v31.0 Infrastructure d'attestation à distance
+## Fonctionnalités v32.0 Infrastructure d'attestation à distance
 
 - **Registre de citations (`quote_registry.py`) :** registre global des empreintes matérielles TPM ; enregistrement, purge et fusion sur le maillage
 - **Garde RA-TLS (`ra_tls_guard.py`) :** épinglage CA ; ingress UtahX ; vérification OID X.509
@@ -95,6 +98,6 @@ Mini-projets complets à forker et étendre :
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v31 :** `utah_genesis_v31.iso`
+- **Genesis ISO v32 :** `utah_genesis_v32.iso`
 
-Build `omega-build-v31-federated-quorum`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v32-lazarus-self-healing`. Entrée recommandée : `python3 utahmosphere_master.py`.

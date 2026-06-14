@@ -1,4 +1,4 @@
-# Riistvara tsitaadi register (v31.0)
+# Riistvara tsitaadi register (v32.0)
 
 **Riistvara tsitaadi register** on UtahMosphere parve jaotatud tõe allikas kehtivate TPM riistvara sõrmejälgede jaoks. Sõlmed ei usalda IP-aadresse — nad usaldavad **riistvara tsitaate**, mida allkirjastab Utah-Kernel juur-CA ja mis on selles registris.
 
@@ -49,7 +49,7 @@ Vaata [API viide](API_REFERENCE.md): `GET /registry/quotes`, `POST /registry/pur
 |---------|-----------|---------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Registri salvestus |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX sissepääs + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | Tsitaadi allkirjastamise juur |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | Tsitaadi allkirjastamise juur |
 
 Dev:
 

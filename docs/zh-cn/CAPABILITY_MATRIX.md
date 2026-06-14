@@ -1,6 +1,6 @@
 # 能力矩阵
 
-UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — 主权信任链已全部完成。
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
 
 | 端点 | 方法 | 状态 | 说明 |
 |------|------|------|------|
-| `/health` | GET | **已实现** | `build: omega-build-v31-federated-quorum` + 完整 attestation 快照 |
+| `/health` | GET | **已实现** | `build: omega-build-v32-lazarus-self-healing` + 完整 attestation 快照 |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **已实现** | 多区域见证节点 |
+| `/lazarus/status` | GET | **已实现** | Lazarus 检查点 |
+| `/lazarus/restore` | POST | **已实现** | Golden Master 恢复 |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **已实现** | RA-TLS TPM 引用，用于网格对等节点验证 |
@@ -36,7 +39,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
 | **签名语音桥** | **已实现** | 自动 nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **已实现** | 网格 + 语音安全 |
 | **UtahNetes + Swarm DHT** | **已实现** | RA-TLS + 签名 gossip |
-| **Genesis ISO v31** | **已实现** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **已实现** | `utah_genesis_v32.iso` |
 | **完整云 parity** | **已实现** | S3、Lambda、RDS、UtahX、容器 |
 
 ---
@@ -47,7 +50,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
 |------|------|
 | `python3 utahmosphere_master.py` | **推荐** |
 | `sudo bash bootstrap.sh` | **生产**（TPM + tpm2-tools） |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
+| `python3 genesis_iso_builder.py` | **v32 ISO** |
 
 ## 环境变量
 
@@ -64,7 +67,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — 主权信任链已全部完成。
 
 ## 路线图
 
-v28.0 路线图所有项目已在 v31.0 **实现**。
+v28.0 路线图所有项目已在 v32.0 **实现**。
 
 未来：远程 RA-TLS CA 固定、硬件引用注册服务。
 

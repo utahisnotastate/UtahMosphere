@@ -1,6 +1,6 @@
 # Capability Matrix
 
-UtahMosphere OS **v31.0 Federated Quorum & PCR-Drift-Healing** — majority-quorum DHT consensus, automated kexec rollback, sovereign trust swarm.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — multi-region quorum witnesses, entangled state-diff sync, Lazarus auto-restore.
 
 ---
 
@@ -8,20 +8,18 @@ UtahMosphere OS **v31.0 Federated Quorum & PCR-Drift-Healing** — majority-quor
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implemented** | `build: omega-build-v31-federated-quorum` + full attestation snapshot |
+| `/health` | GET | **Implemented** | `build: omega-build-v32-lazarus-self-healing` |
+| `/witness/status` | GET | **Implemented** | Multi-region witness quorum stats |
+| `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint + golden master |
+| `/lazarus/restore` | POST | **Implemented** | Trigger clean-room auto-restore |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum vote ledger |
-| `/dht/consensus` | GET | **Implemented** | Golden + quorum combined export |
+| `/dht/consensus` | GET | **Implemented** | Golden + quorum combined |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge |
-| `/attestation/quote` | GET | **Implemented** | RA-TLS TPM quote + `hardware_id` |
+| `/attestation/quote` | GET | **Implemented** | RA-TLS TPM quote |
 | `/registry/quotes` | GET | **Implemented** | Hardware quote registry |
-| `/registry/purge` | POST | **Implemented** | Purge compromised hardware |
-| `/nonce` | GET | **Implemented** | Voice anti-replay nonce |
-| `/status` | GET | **Implemented** | Quorum, PCR drift, RA-TLS stats |
-| `/command` | POST | **Implemented** | Claim anchors quorum + golden PCR |
-| `/admin/revoke-node` | POST | **Implemented** | Root-only revocation |
-| `/app/unlock` | POST | **Implemented** | 4-region mempool failover |
-| `/app/{name}` | GET | **Implemented** | Tycoon 402 + UtahX RA-TLS ingress |
-| `/s3/*`, `/lambda/*`, `/rds/*` | * | **Implemented** | Full cloud parity |
+| `/command` | POST | **Implemented** | Voice + claim + Lazarus checkpoint |
+| `/app/{name}` | GET | **Implemented** | Tycoon 402 + UtahX RA-TLS |
+| Full cloud parity | * | **Implemented** | S3, Lambda, RDS, containers |
 
 ---
 
@@ -29,38 +27,28 @@ UtahMosphere OS **v31.0 Federated Quorum & PCR-Drift-Healing** — majority-quor
 
 | Component | Status | What works today |
 |-----------|--------|------------------|
-| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote tally; `verify_against_quorum()` |
-| **PCR Drift (`drift_detector.py`)** | **Implemented** | PCR0 monitor; kexec `perform_rollback()` |
-| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Golden measurement ledger |
-| **Quote Registry (`quote_registry.py`)** | **Implemented** | Hardware quote register/purge |
-| **RA-TLS Guard + Attest** | **Implemented** | Quorum verify on mesh gossip |
-| **Swarm DHT** | **Implemented** | Challenge/response + quarantine notices |
-| **Genesis ISO v31** | **Implemented** | `utah_genesis_v31.iso` |
-| **Full cloud parity** | **Implemented** | S3, Lambda, RDS, UtahX, containers |
+| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania regional tie-breakers |
+| **Lazarus Auto-Restore (`lazarus_restore.py`)** | **Implemented** | Golden Master fetch + `apply_state()` |
+| **State-Diff Engine (`state_diff_engine.py`)** | **Implemented** | Entangled delta mesh sync (<1KB) |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ federated vote consensus |
+| **PCR Drift (`drift_detector.py`)** | **Implemented** | kexec rollback + Lazarus trigger |
+| **Genesis ISO v32** | **Implemented** | `utah_genesis_v32.iso` |
 
 ---
-
-## Deployment
-
-| Method | Status |
-|--------|--------|
-| `python3 utahmosphere_master.py` | **Recommended** |
-| `sudo bash bootstrap.sh` | **Prod** |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
 
 ## Environment
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum on peer quotes |
-| `UTAH_QUORUM_THRESHOLD` | `0.51` | Consensus ratio |
-| `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback on drift |
-| `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR0 drift monitor |
+| `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness quorum |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Auto-restore after quarantine |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Entangled delta mesh sync |
+| `UTAH_QUORUM_ENFORCE` | `1` | Majority quorum on quotes |
 
 ## Roadmap
 
-All v30.0 items **implemented** in v31.0 (federated quorum, kexec rollback).
+All v31.0 items **implemented** in v32.0 (witnesses, Lazarus restore, state-diff).
 
-Future: multi-region quorum witnesses, Lazarus kernel auto-restore.
+Future: multi-region quorum witnesses on dedicated hardware, Lazarus OTA channel.
 
-See [Quorum Consensus](QUORUM_CONSENSUS.md), [PCR Drift](PCR_DRIFT.md), [CHANGELOG](CHANGELOG.md).
+See [Quorum Witnesses](QUORUM_WITNESSES.md), [Lazarus Restore](LAZARUS_RESTORE.md), [State-Diff](STATE_DIFF_ENGINE.md), [CHANGELOG](CHANGELOG.md).

@@ -16,19 +16,19 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "31.0",
-  "build": "omega-build-v31-federated-quorum",
+  "version": "32.0",
+  "build": "omega-build-v32-lazarus-self-healing",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v31_root_ca", "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true}},
-    "quote_registry": {"active": 1, "purged": 0, "total": 1},
-    "quorum": {"quorum_reached": 1, "pending": 0, "quarantined": 0, "total": 1, "threshold": 0.51, "enforce": true},
-    "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
-    "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca"},
+    "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
+    "witness": {"witnesses": 3, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac"]},
+    "lazarus": {"auto_restore": true, "checkpoint_exists": true},
+    "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }
 ```
@@ -51,7 +51,7 @@ Issue an RA-TLS TPM quote for UtahNetes mesh peer verification.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v31-federated-quorum\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v32-lazarus-self-healing\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -109,6 +109,51 @@ Purge a compromised hardware ID from the global registry. Root vibe holder only.
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
 ```
+
+---
+
+## GET /witness/status
+
+Multi-region quorum witness status.
+
+```bash
+curl http://127.0.0.1:8999/witness/status
+```
+
+**Response `200`:**
+
+```json
+{
+  "witnesses": [{"region": "us-east", "endpoint": "https://witness-us...", "last_seen": null}],
+  "stats": {"witnesses": 3, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac"]}
+}
+```
+
+See [Quorum Witnesses](QUORUM_WITNESSES.md).
+
+---
+
+## GET /lazarus/status
+
+Lazarus auto-restore checkpoint and golden master snapshot.
+
+```bash
+curl http://127.0.0.1:8999/lazarus/status
+```
+
+---
+
+## POST /lazarus/restore
+
+Trigger clean-room Golden Master restoration.
+
+```bash
+curl -X POST http://127.0.0.1:8999/lazarus/restore
+```
+
+**Response `200`:** `{"status": "restored"}`
+
+See [Lazarus Auto-Restore](LAZARUS_RESTORE.md).
 
 ---
 
@@ -522,6 +567,7 @@ Revoke a delegated node from `authorized_nodes[]`. Root vibe holder only. Utah-F
 | `security/biometric_ledger.json` | Root vibe hash (local fallback if `/etc` not writable) |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 | `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden measurement ledger |
-| `{UTAH_DATA_DIR}/dht_quorum_registry.json` | Majority-quorum vote ledger |
+| `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus Golden Master checkpoint |
+| `{UTAH_DATA_DIR}/quorum_witness.json` | Multi-region witness registry |
 
 Default `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (falls back to local dirs on permission errors).

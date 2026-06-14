@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplett.
+UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja komplett.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplet
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | `build: omega-build-v31-federated-quorum` + fullständig attesteringsögonblicksbild |
+| `/health` | GET | **Implementerat** | `build: omega-build-v32-lazarus-self-healing` + fullständig attesteringsögonblicksbild |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
 | `/registry/purge` | POST |
+| `/witness/status` | GET | **Implementerat** | Flerregions vittnen |
+| `/lazarus/status` | GET | **Implementerat** | Lazarus-kontrollpunkt |
+| `/lazarus/restore` | POST | **Implementerat** | Golden Master-återställning |
 | `/quorum/consensus` | GET | **Implemented** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
 | `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
@@ -30,6 +33,9 @@ UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplet
 | Komponent | Status | Vad som fungerar idag |
 |-----------|--------|----------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Implementerat** | Vibe-Print förseglad till PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **Kvorumvittnen (`quorum_witness.py`)** | **Implementerat** | USA/EU/Oceanien-domare |
+| **Lazarus-återställning (`lazarus_restore.py`)** | **Implementerat** | Autoåterställning efter karantän |
+| **Tillståndsdiff (`state_diff_engine.py`)** | **Implementerat** | Entanglade mesh-deltor |
 | **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
 | **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
 | **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
@@ -41,7 +47,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplet
 | **Voice Bridge Signed** | **Implementerat** | Automatiskt nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementerat** | Mesh + röstsäkerhet |
 | **UtahNetes + Swarm DHT** | **Implementerat** | RA-TLS + signerad gossip |
-| **Genesis ISO v31** | **Implementerat** | `utah_genesis_v31.iso` |
+| **Genesis ISO v32** | **Implementerat** | `utah_genesis_v32.iso` |
 | **Full molnparitet** | **Implementerat** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -52,7 +58,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplet
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Rekommenderas** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v31 ISO** |
+| `python3 genesis_iso_builder.py` | **v32 ISO** |
 
 ## Miljö
 
@@ -69,7 +75,7 @@ UtahMosphere OS **v31.0 Federated Quorum** — suverän förtroendekedja komplet
 
 ## Roadmap
 
-Alla roadmap-poster för v28.0 är **implementerade** i v31.0.
+Alla roadmap-poster för v28.0 är **implementerade** i v32.0.
 
 Framtid: fjärr-RA-TLS CA-pinning, tjänst för hardware quote-register.
 

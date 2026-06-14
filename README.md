@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v31.0 Federated Quorum & PCR-Drift-Healing)
+# 🌌 UtahMosphere OS (v32.0 Lazarus Self-Healing)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v31.0 finalizes the **sovereign trust swarm**: **51%+ majority-quorum DHT consensus**, **automated PCR drift detection**, and **kexec rollback** to the last verified kernel — split-brain nodes cannot survive quorum mismatch.
+v32.0 delivers the **Autonomous Cloud OS**: **multi-region quorum witnesses**, **Lazarus kernel auto-restore**, and **entangled state-diff sync** — immune to regional outages, self-healing after PCR drift, and scalable to millions of nodes.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -106,7 +106,9 @@ docker-compose up -d
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning + registry check |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden measurement ledger |
 | `UTAH_QUORUM_ENFORCE` | `1` | 51%+ majority quorum on peer quotes |
-| `UTAH_QUORUM_THRESHOLD` | `0.51` | Consensus vote ratio |
+| `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness tie-breakers |
+| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Clean-room restore after quarantine |
+| `UTAH_STATE_DIFF_ENFORCE` | `1` | Entangled delta mesh sync |
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR0 drift monitor + quarantine |
 | `UTAH_PCR_ROLLBACK_ENFORCE` | `1` | kexec rollback on PCR drift |
 | `UTAH_MEMPOOL_NODES` | 4 defaults | Comma-separated mempool API bases for failover |
@@ -114,12 +116,12 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features (v31.0 Federated Quorum)
+## 🛠 Features (v32.0 Lazarus Self-Healing)
 
-- **Quorum Engine:** 51%+ majority vote consensus (`dht_consensus_engine.py`)
-- **PCR Rollback:** kexec to last verified kernel on drift (`drift_detector.py`)
-- **DHT Federation:** Golden measurement ledger + attestation challenges
-- **Full v30 stack:** RA-TLS guard, quote registry, TPM Locker, Oceania mempool, Genesis ISO
+- **Quorum Witnesses:** US/EU/Oceania regional tie-breakers (`quorum_witness.py`)
+- **Lazarus Auto-Restore:** Golden Master clean-room restoration (`lazarus_restore.py`)
+- **State-Diff Engine:** Entangled <1KB mesh deltas (`state_diff_engine.py`)
+- **Full v31 stack:** Federated quorum, PCR kexec rollback, RA-TLS, quote registry, Genesis ISO
 
 ---
 

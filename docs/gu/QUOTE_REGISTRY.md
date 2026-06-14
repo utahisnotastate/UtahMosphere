@@ -1,4 +1,4 @@
-# Registro di Hardware Quote (v31.0)
+# Registro di Hardware Quote (v32.0)
 
 I **Hardware Quote Registry** i fuente di veridåt distribuido para valid TPM hardware fingerprints gi i UtahMosphere swarm. Ti nódus ti siña confia IP addresses — siña confia **hardware quotes** signed by Utah-Kernel Root CA yan registered gi este na ledger.
 
@@ -49,7 +49,7 @@ Li'e [API Reference](API_REFERENCE.md): `GET /registry/quotes`, `POST /registry/
 |----------|---------|---------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Registry persistence |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v31_root_ca` | Quote signing root |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | Quote signing root |
 
 Dev:
 

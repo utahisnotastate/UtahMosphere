@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Omega-Build v31.0
-Federated quorum consensus, PCR drift healing with kexec rollback.
+UtahMosphere Operating System Kernel - Omega-Build v32.0
+Multi-region quorum witnesses, Lazarus auto-restore, entangled state-diff sync.
 """
 
 import os
@@ -39,6 +39,9 @@ try:
     from dht_quote_registry import dht_quote_registry
     from dht_consensus_engine import dht_consensus_engine
     from drift_detector import drift_detector
+    from quorum_witness import quorum_witness
+    from lazarus_restore import LazarusRestore
+    from state_diff_engine import encode_delta, apply_state_delta, state_hash, should_use_delta
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -54,6 +57,12 @@ except ImportError:
     dht_quote_registry = None
     dht_consensus_engine = None
     drift_detector = None
+    quorum_witness = None
+    LazarusRestore = None
+    encode_delta = None  # type: ignore
+    apply_state_delta = None  # type: ignore
+    state_hash = None  # type: ignore
+    should_use_delta = None  # type: ignore
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -73,7 +82,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v31.0 Federated Quorum]",
+            "node_status": "Active [Omega-Build v32.0 Lazarus Self-Healing]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -99,7 +108,7 @@ class UtahmosphereSovereignKernel:
         if drift_detector:
             drift_detector.monitor(self)
 
-        print(f"[{self.node_identity}] Omega-Build v31.0 federated-quorum kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v32.0 lazarus self-healing kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -128,12 +137,40 @@ class UtahmosphereSovereignKernel:
         )
         self._sync_authorized_nodes_to_registry()
 
+        if LazarusRestore:
+            LazarusRestore.save_checkpoint(self)
+
+    def get_golden_master(self) -> dict:
+        if LazarusRestore:
+            return LazarusRestore.get_golden_master(self)
+        return {"registry": dict(self.cluster_registry)}
+
+    def apply_state(self, golden_state: dict):
+        """Re-apply verified Golden Master state after Lazarus auto-restore."""
+        registry = golden_state.get("registry", {})
+        if registry:
+            self._apply_remote_registry(registry)
+        self.cluster_registry.pop("quarantined", None)
+        self.cluster_registry.pop("quarantine_reason", None)
+        if golden_state.get("quorum_consensus") and dht_consensus_engine:
+            dht_consensus_engine.merge_quorum_votes(golden_state["quorum_consensus"])
+        if golden_state.get("dht_golden_registry") and dht_quote_registry:
+            dht_quote_registry.merge_dht_consensus(golden_state["dht_golden_registry"])
+        if drift_detector:
+            drift_detector.anchor_golden()
+        self._save_registry_unlocked()
+        self.trigger_flux_ui_render()
+
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
             if dht_consensus_engine:
                 payload["quorum_consensus"] = dht_consensus_engine.export_consensus()
             if dht_quote_registry:
                 payload["dht_golden_registry"] = dht_quote_registry.export_golden()
+            if state_hash and quorum_witness:
+                sh = state_hash(self.cluster_registry)
+                payload["state_hash"] = sh
+                quorum_witness.record_local_witness(sh)
             if RATLSAttestation:
                 vibe = ledger_guard.ledger.get("root_vibe_hash") if ledger_guard else None
                 payload = RATLSAttestation.attach_to_message(payload, self.node_identity, vibe_hash=vibe)
@@ -159,8 +196,18 @@ class UtahmosphereSovereignKernel:
         if dht_consensus_engine and payload.get("quorum_consensus"):
             dht_consensus_engine.merge_quorum_votes(payload["quorum_consensus"])
         origin = payload.get("origin_node", "unknown")
+        sh = payload.get("state_hash", "")
+        if sh and quorum_witness and not quorum_witness.get_consensus(sh):
+            print(f"[Witness] Multi-region quorum rejected state sync from {origin}")
+            return
+        if payload.get("registry_delta") and apply_state_delta:
+            delta_pkg = payload["registry_delta"]
+            delta = delta_pkg.get("delta", {})
+            merged = apply_state_delta(self.cluster_registry, delta)
+            self._apply_remote_registry(merged)
+        else:
+            self._apply_remote_registry(registry)
         print(f"[Swarm Link] DHT state sync from {origin}")
-        self._apply_remote_registry(registry)
 
     def _on_swarm_attestation(self, payload: dict, source_hash: str, addr: tuple):
         ptype = payload.get("type")
@@ -242,6 +289,8 @@ class UtahmosphereSovereignKernel:
                 for peer_hash in list(self.swarm_router.routing_table.keys())[:8]:
                     self.swarm_router.route_payload_deterministic(peer_hash, notice)
         print(f"[Kernel] Emergency quarantine ({reason}). Stopped {stopped} container(s).")
+        if LazarusRestore:
+            LazarusRestore.schedule_auto_restore(self)
 
     def _sync_authorized_nodes_to_registry(self):
         if not ledger_guard:
@@ -278,6 +327,10 @@ class UtahmosphereSovereignKernel:
             snap["dht_federation"] = dht_quote_registry.stats()
         if drift_detector:
             snap["pcr_drift"] = drift_detector.status()
+        if quorum_witness:
+            snap["witness"] = quorum_witness.stats()
+        if LazarusRestore:
+            snap["lazarus"] = LazarusRestore.status()
         return snap
 
     def _register_hardware_quote(self, acoustic_hash: str):
@@ -324,6 +377,8 @@ class UtahmosphereSovereignKernel:
             dht_consensus_engine.export_consensus() if dht_consensus_engine else {}
         )
         self._save_registry_unlocked()
+        if LazarusRestore:
+            LazarusRestore.save_checkpoint(self)
         print(f"[RA-TLS] Hardware quote registered globally: {hw_id[:16]}...")
 
     def save_registry(self):
@@ -676,6 +731,16 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 self._json_response(404, {"error": "Hardware ID not found"})
             return
 
+        if path == "/lazarus/restore":
+            if LazarusRestore is None:
+                self._json_response(503, {"error": "Lazarus restore unavailable"})
+                return
+            ok = LazarusRestore.auto_restore(self.core_engine)
+            self._json_response(200 if ok else 503, {
+                "status": "restored" if ok else "restore_failed",
+            })
+            return
+
         if path == "/dht/challenge":
             data = json.loads(body.decode("utf-8")) if body else {}
             peer_hash = data.get("peer_hash", "")
@@ -721,8 +786,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "31.0",
-                "build": "omega-build-v31-federated-quorum",
+                "version": "32.0",
+                "build": "omega-build-v32-lazarus-self-healing",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -758,6 +823,26 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "consensus": dht_consensus_engine.export_consensus(),
                 "stats": dht_consensus_engine.stats(),
+            })
+            return
+
+        if path == "/witness/status":
+            if quorum_witness is None:
+                self._json_response(503, {"error": "Witness layer unavailable"})
+                return
+            self._json_response(200, {
+                "witnesses": quorum_witness.export_witnesses(),
+                "stats": quorum_witness.stats(),
+            })
+            return
+
+        if path == "/lazarus/status":
+            if LazarusRestore is None:
+                self._json_response(503, {"error": "Lazarus restore unavailable"})
+                return
+            self._json_response(200, {
+                "lazarus": LazarusRestore.status(),
+                "golden_master": self.core_engine.get_golden_master(),
             })
             return
 

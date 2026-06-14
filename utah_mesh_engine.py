@@ -23,6 +23,13 @@ try:
 except ImportError:
     RATLSAttestation = None  # type: ignore
 
+try:
+    from state_diff_engine import encode_delta, should_use_delta, state_hash
+except ImportError:
+    encode_delta = None  # type: ignore
+    should_use_delta = None  # type: ignore
+    state_hash = None  # type: ignore
+
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 MASTER_REGISTRY_FILE = os.path.join(UTAH_DATA_DIR, "master_registry.json")
 GOSSIP_PORT = 9001
@@ -48,6 +55,7 @@ class UtahNetesMesh:
         self._get_registry = get_registry
         self._apply_registry = apply_registry
         self._swarm_broadcast = swarm_broadcast
+        self._last_remote_registry: dict = {}
         self._stop = threading.Event()
         threading.Thread(target=self._mesh_sync_loop, daemon=True).start()
         threading.Thread(target=self._mesh_listener, daemon=True).start()
@@ -73,11 +81,23 @@ class UtahNetesMesh:
         while not self._stop.is_set():
             try:
                 registry = self._get_registry()
-                message = {
+                message: dict = {
                     "node": self.node_id,
-                    "registry": registry,
                     "type": "MESH_SYNC",
                 }
+                use_delta = (
+                    should_use_delta is not None
+                    and encode_delta is not None
+                    and should_use_delta(registry, self._last_remote_registry)
+                )
+                if use_delta:
+                    delta_pkg = encode_delta(registry, self._last_remote_registry)
+                    message["registry_delta"] = delta_pkg
+                    message["state_hash"] = delta_pkg.get("target_hash")
+                else:
+                    message["registry"] = registry
+                    if state_hash:
+                        message["state_hash"] = state_hash(registry)
                 if self._auth_guard and AuthGuard is not None:
                     message = self._auth_guard.sign_message(self.node_hash, message)
                 if RATLSAttestation is not None:
@@ -88,11 +108,16 @@ class UtahNetesMesh:
                 tx.sendto(payload, (MULTICAST_ADDR, GOSSIP_PORT))
                 self._persist_master_registry(registry)
                 if self._swarm_broadcast:
-                    self._swarm_broadcast({
+                    sync_payload: dict = {
                         "type": "LEDGER_SYNC",
-                        "registry": registry,
                         "origin_node": self.node_id,
-                    })
+                    }
+                    if use_delta:
+                        sync_payload["registry_delta"] = message.get("registry_delta")
+                        sync_payload["state_hash"] = message.get("state_hash")
+                    else:
+                        sync_payload["registry"] = registry
+                    self._swarm_broadcast(sync_payload)
             except Exception:
                 pass
             self._stop.wait(MESH_INTERVAL_SEC)
@@ -120,7 +145,16 @@ class UtahNetesMesh:
                     if self._auth_guard and not self._auth_guard.verify_message(message):
                         print(f"[UtahNetes] Rejected unsigned mesh sync from {remote}")
                         continue
-                    self._apply_registry(message.get("registry", {}))
+                    if message.get("registry_delta") and encode_delta is not None:
+                        from state_diff_engine import apply_state_delta
+                        delta = message["registry_delta"].get("delta", {})
+                        merged = apply_state_delta(self._last_remote_registry, delta)
+                        self._last_remote_registry = merged
+                        self._apply_registry(merged)
+                    else:
+                        reg = message.get("registry", {})
+                        self._last_remote_registry = dict(reg)
+                        self._apply_registry(reg)
             except Exception:
                 pass
 

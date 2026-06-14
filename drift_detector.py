@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UtahMosphere PCR Drift Detector (v31.0)
+UtahMosphere PCR Drift Detector (v32.0)
 Continuous TPM PCR0 monitoring; emergency quarantine + kexec rollback on drift.
 """
 
@@ -147,6 +147,11 @@ class PCRDriftDetector:
         if hasattr(kernel_ref, "emergency_quarantine"):
             kernel_ref.emergency_quarantine(reason="pcr_drift")
         self.perform_rollback()
+        try:
+            from lazarus_restore import LazarusRestore
+            LazarusRestore.schedule_auto_restore(kernel_ref, delay_sec=3.0)
+        except ImportError:
+            pass
 
     def check_once(self, on_drift: Optional[Callable[[], None]] = None) -> bool:
         current = self.read_current_pcr()

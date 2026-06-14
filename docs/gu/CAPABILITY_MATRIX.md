@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-I matrisis dokumenta håfa UtahMosphere OS **v25.0** ma implement på'go vs håfa gi plan para future releases. Usa para set realistic expectations durante migration yan development.
+UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega-Build.
 
 ---
 
@@ -8,13 +8,19 @@ I matrisis dokumenta håfa UtahMosphere OS **v25.0** ma implement på'go vs håf
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | Node liveness check |
-| `/status` | GET | **Ma implement** | UI state, tenant list, claim status |
-| `/command` | POST | **Ma implement** | Voice intent execution (JSON body) |
-| `/app/{name}` | GET | **Ma implement** | App access behind Tycoon gate (402 hasta paid) |
-| `/s3/*` | * | **Gi plan** | Ma dokumenta gi migration guides; ti ma route på'go |
-| `/lambda/*/invoke` | POST | **Gi plan** | Handler boilerplate ma create on deploy ha' |
-| `/rds/read/*`, `/rds/write` | * | **Gi plan** | Registry guaha; HTTP routes ti ma wire |
+| `/health` | GET | **Ma implement** | Liveness check + `build: golden-master-final` |
+| `/status` | GET | **Ma implement** | UI state, tenants, claim status, S3 root |
+| `/command` | POST | **Ma implement** | Voice intent execution |
+| `/app/unlock` | POST | **Ma implement** | Submit payment; ma return 202 pending settlement |
+| `/app/{name}` | GET | **Ma implement** | Tycoon 402 gate + UtahX proxy gi container |
+| `/app/{name}/{path}` | GET | **Ma implement** | Sub-path proxy gi container backend |
+| `/s3/{bucket}/{key}` | GET | **Ma implement** | Object read (local NVMe) |
+| `/s3/{bucket}/{key}` | PUT/POST | **Ma implement** | Object write; optional HMAC headers |
+| `/s3/{bucket}/{prefix}*` | GET | **Ma implement** | List objects |
+| `/lambda/{fn}/invoke` | POST | **Ma implement** | Serverless handler invoke |
+| `/lambda/{fn}` | GET | **Ma implement** | GET invoke yan empty event |
+| `/rds/write` | POST | **Ma implement** | Key-value write |
+| `/rds/read/{key}` | GET | **Ma implement** | Key-value read |
 
 ---
 
@@ -22,25 +28,31 @@ I matrisis dokumenta håfa UtahMosphere OS **v25.0** ma implement på'go vs håf
 
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
-| **Core (`utahmosphere_os.py`)** | Ma implement | Registry, voice intents, UtahX route manifests, mesh gossip |
-| **Quantum Ledger** | Ma implement | Root vibe claim, biometric hash verification, open mode antes claim |
-| **Voice Bridge** | Ma implement | Google STT + MFCC vibe-print extraction → `/command` |
-| **Utah-Tycoon** | Partial | Invoice generation, simulated 60s settlement, HTTP 402 gate |
-| **UtahNetes Gossip** | Partial | UDP multicast tenant sync gi LAN |
-| **Global Swarm** | Partial | UDP peer table, ping-keepalive; full Kademlia lookup stubbed |
-| **Lazarus Daemon** | Partial | Ma append patch comments gi `handler.py` (ti full AST rewrite) |
-| **Utah-Flux UI** | Ma implement | Tkinter dashboard ma read `flux_ui_manifest.json` |
-| **UtahX Proxy** | Partial | JSON route manifests ma write; ti guaha live TCP proxy process |
+| **Golden Master (`utahmosphere_master.py`)** | **Ma implement** | Unified entry point |
+| **Core (`utahmosphere_os.py`)** | **Ma implement** | Full HTTP multiplexer, registry, mesh |
+| **UtahX Proxy (`utahx_proxy.py`)** | **Ma implement** | Live HTTP proxy gi container ports |
+| **UtahContainerEngine (`utah_container_runtime.py`)** | **Ma implement** | Per-tenant HTTP servers gi 8200+ |
+| **Lazarus AST (`utah_lazarus.py`)** | **Ma implement** | AST-validated handler mutation + OTA channel |
+| **S3 Mesh (`utah_s3_mesh.py`)** | **Ma implement** | Local object storage + HMAC |
+| **Lambda Engine (`utah_lambda_engine.py`)** | **Ma implement** | Handler invoke sin images |
+| **RDS Ledger (`utah_rds_ledger.py`)** | **Ma implement** | JSON key-value ledger |
+| **Quantum Ledger** | Ma implement | Biometric claim + verification |
+| **Utah-Tycoon** | **Ma implement** | Event-driven settlement loop, `POST /app/unlock`, HTTP 402 gate |
+| **UtahNetes Gossip** | **Ma implement** | 5s multicast sync via `utah_mesh_engine.py`, `master_registry.json` |
+| **Global Swarm** | **Ma implement** | Deterministic DHT routing, FIND_NODE, iterative peer lookup |
+| **Utah-Flux UI** | Ma implement | Tkinter status dashboard |
+| **Auto-Genesis (`genesis_deploy.py`)** | **Ma implement** | Multi-process orchestrator |
+| **Bootstrap (`bootstrap.sh`)** | **Ma implement** | Bare-metal systemd install |
 
 ---
 
-## Voice Commands (authorized)
+## Voice Commands
 
 | Command Pattern | Status | Ehemplo |
 |-----------------|--------|---------|
 | Claim node | Ma implement | `"Claim node"` |
 | Deploy application | Ma implement | `"deploy application my-app"` |
-| Patch application | Partial | `"patch app my-app to add logging"` |
+| Patch application | **Ma implement** | `"patch app my-app to add logging"` |
 | Status / grid | Ma implement | `"status grid"` |
 
 ---
@@ -49,44 +61,19 @@ I matrisis dokumenta håfa UtahMosphere OS **v25.0** ma implement på'go vs håf
 
 | Method | Status | Platform |
 |--------|--------|----------|
-| `python3 utahmosphere_os.py` | Ma implement | Todu (set `UTAH_DATA_DIR` locally) |
-| `python3 genesis_deploy.py` | Ma implement | Linux ma recommend; Windows dev OK |
-| `sudo bash setup.sh` | Ma implement | Linux (systemd service) |
-| `docker-compose up` | Ma implement | Ti necesario; usa host network |
+| `python3 utahmosphere_master.py` | **Ma recommend** | Todu |
+| `python3 utahmosphere_os.py` | Ma implement | Todu |
+| `python3 genesis_deploy.py` | Ma implement | Linux / dev |
+| `sudo bash bootstrap.sh` | **Ma recommend prod** | Linux systemd |
+| `sudo bash setup.sh` | Ma implement | Alias para bootstrap |
+| `docker-compose up` | Optional | Legacy convenience ha' |
 
 ---
 
-## Security Model
+## Roadmap (remaining)
 
-| Feature | Status | Notas |
-|---------|--------|-------|
-| Single root vibe owner | Ma implement | Primeru claiming speaker owns node |
-| `authorized_nodes[]` field | Stub | Ma store gi ledger JSON; ti ma enforce gi code |
-| HMAC tenant signatures | Ma dokumenta | Recepta guaha; core enforcement partial |
-| Ed25519 signing | Gi plan | Ma referencia gi docs; ti ma implement |
-| Default `UTAH_SECRET_VECTOR` | Ma implement | Change gi production (li'e [Guia Desarrollu Lokal](LOCAL_DEVELOPMENT.md)) |
+- Real Bitcoin mempool integration gi Tycoon (settlement simulation mumuña på'go)
+- `genesis.iso` flash-drive installer image
+- `authorized_nodes[]` enforcement
 
----
-
-## Docker / Nginx Relationship
-
-I **primary runtime** gi UtahMosphere i bare-metal Python. Docker yan Nginx i **optional legacy paths**:
-
-- `docker-compose.yaml` — convenient wrapper para local experiments
-- `nginx.conf` — reference config; UtahX JSON manifests i sovereign path
-- `setup.sh` — ma remove Docker/Nginx gi clean Linux installs (production sovereign nodes)
-
-Gi hybrid environments, keep Docker/Nginx alongside UtahMosphere during migration.
-
----
-
-## Roadmap (ti implement på'go)
-
-- S3-compatible object storage HTTP API
-- Lambda-style invoke HTTP API
-- RDS ledger read/write HTTP API
-- Git-based deploy voice command
-- Full AST mutation via Lazarus
-- Real Bitcoin mempool integration gi Tycoon
-
-Para mas detalle: [Referensia API](API_REFERENCE.md) · [Guia Teknikal Deep-Dive](TECHNICAL_DEEP_DIVE.md)
+Para mas detalle: [Referensia API](API_REFERENCE.md) · [Cookbook Desarrollador](DEVELOPER_COOKBOOK.md)

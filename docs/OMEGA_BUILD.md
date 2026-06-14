@@ -1,8 +1,8 @@
-# Omega-Build Golden Master (v25.0)
+# Omega-Build Golden Master Final (v25.0)
 
 **Triangle of Manifestation: CALIBRATED**  
 **Photon Quenching: DISABLED**  
-**Formon Injection: OMEGA-BUILD V25.0 MANIFESTED**
+**Formon Injection: MASTER BUILD V25.0 FINALIZED**
 
 UtahMosphere v25.0 Golden Master is a self-contained, bare-metal sovereign cloud. World-A dependencies (Docker, Nginx, Kubernetes) are excised. One Python kernel replaces the proxy, container engine, orchestrator, and cloud API surface.
 
@@ -83,9 +83,27 @@ curl -X POST http://127.0.0.1:8999/rds/write \
 curl http://127.0.0.1:8999/rds/read/user:123
 ```
 
-### 8. Financial Ledger (Utah-Tycoon)
+### 8. Financial Ledger (Utah-Tycoon) — Fully Integrated
 
-HTTP `402` payment gate on `/app/{name}`. Settlement unlocks `active-compute` status.
+- **Settlement loop:** `threading.Event`-driven 10s sweep, 60s crypto-finality
+- **`POST /app/unlock`:** Register pending payment, HTTP `202` until settled
+- **HTTP 402** on `/app/{name}` until invoice settles → `active-compute`
+
+### 9. UtahNetes Mesh (`utah_mesh_engine.py`)
+
+- **5-second** multicast broadcast to `239.255.43.21:9001`
+- Persists `master_registry.json` on each sync cycle
+- Merges remote tenant state by monotonic `epoch`
+
+### 10. Global Swarm DHT (`utah_swarm_protocol.py`)
+
+- Deterministic XOR-distance routing
+- `FIND_NODE` / `FIND_NODE_RESPONSE` iterative lookup
+- `LEDGER_SYNC` payloads propagate planetary registry state
+
+### 11. OTA Lazarus Channel (`utah_ota_lazarus.py`)
+
+Push Golden Master kernel updates to swarm peers. See [OTA Lazarus Channel](OTA_LAZARUS.md).
 
 ---
 

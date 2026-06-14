@@ -17,7 +17,7 @@ Liveness probe for load balancers and monitoring.
   "status": "healthy",
   "node": "my-hostname",
   "version": "25.0",
-  "build": "golden-master"
+  "build": "golden-master-final"
 }
 ```
 
@@ -45,7 +45,9 @@ Operational snapshot: UI state, deployed tenants, and whether the node has been 
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -216,6 +218,37 @@ curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
 ```json
 {"result": {"message": "Hello General 23 from Utah Lambda!"}}
 ```
+
+---
+
+## POST /app/unlock
+
+Submit a payment unlock request. Tycoon registers a pending transaction and returns HTTP `202` until cryptographic settlement (~60s).
+
+**Request body:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Response `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+After settlement, `GET /app/{app_name}` with the same `X-Client-ID` proxies to the container.
 
 ---
 

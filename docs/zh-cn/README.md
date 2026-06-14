@@ -1,6 +1,6 @@
 # UtahMosphere 文档门户
 
-欢迎来到 UtahMosphere OS 文档中心。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
+欢迎来到 UtahMosphere OS 文档中心。**Golden Master Final v25.0**：统一裸机内核，Utah-Tycoon、UtahNetes 与 Global Swarm 已全面就绪。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
 
 ---
 
@@ -79,4 +79,4 @@
 
 ## 关于 UtahMosphere OS
 
-UtahMosphere OS v25.0 是主权边缘 Python 平台，默认 HTTP 入口端口为 **8999**。内核入口：`utahmosphere_os.py`。
+UtahMosphere OS v25.0 Golden Master Final 是主权边缘 Python 平台，默认 HTTP 入口端口为 **8999**。推荐入口：`utahmosphere_master.py`。

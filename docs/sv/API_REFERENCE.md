@@ -16,7 +16,8 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -30,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants och om noden har claimats.
+Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants, claim-status, `swarm_peers` och Tycoon-statistik.
 
 **Svar `200`:**
 
@@ -44,7 +45,9 @@ Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants och om noden har cla
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -143,6 +146,37 @@ Fakturor avvecklas automatiskt efter ~60 sekunder i nuvarande simulering.
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+Skicka en begäran om betalningsupplåsning. Tycoon registrerar en väntande transaktion och returnerar HTTP `202` tills kryptografisk avveckling (~60 s).
+
+**Request body:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Svar `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+Efter avveckling proxar `GET /app/{app_name}` med samma `X-Client-ID` till containern.
 
 ---
 

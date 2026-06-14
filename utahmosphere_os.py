@@ -13,7 +13,6 @@ import time
 import hmac
 import hashlib
 import socket
-import struct
 import threading
 import http.server
 import socketserver
@@ -23,10 +22,11 @@ from typing import Dict, Any, Optional
 
 from utah_lazarus import LazarusEngine
 from utah_s3_mesh import get_object, put_object, verify_signature, list_objects, S3_ROOT
-from utah_rds_ledger import read as rds_read, write as rds_write, delete as rds_delete
+from utah_rds_ledger import read as rds_read, write as rds_write
 from utah_lambda_engine import invoke as lambda_invoke, register_function
 from utah_container_runtime import start_container_server
 from utahx_proxy import proxy_request
+from utah_mesh_engine import UtahNetesMesh, derive_node_hash, MASTER_REGISTRY_FILE
 
 try:
     from quantum_ledger import ledger_guard
@@ -46,8 +46,6 @@ RDS_ROOT = os.path.join(UTAH_DATA_DIR, "rds")
 SYSTEM_STATE_LOG = os.path.join(UTAH_DATA_DIR, "secure_registry.json")
 
 SYSTEM_INGRESS_PORT = 8999
-UTAHNETES_GOSSIP_PORT = 9001
-MULTICAST_MESH_ADDR = "239.255.43.21"
 
 
 class UtahmosphereSovereignKernel:
@@ -58,11 +56,13 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Golden Master v25.0]",
+            "node_status": "Active [Golden Master Final v25.0]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
             "mutation_count": 0,
+            "swarm_peers": 0,
+            "tycoon_pending": 0,
         }
 
         self._bootstrap_sovereign_paths()
@@ -70,18 +70,63 @@ class UtahmosphereSovereignKernel:
 
         self.root_vibe = None
         self.swarm_router = None
-        if ledger_guard:
-            self.root_vibe = ledger_guard.ledger.get("root_vibe_hash")
-            if not self.root_vibe:
-                print("[Warning] Node unclaimed. Awaiting Biological Signature.")
-            else:
-                self.swarm_router = UtahSwarmNode(self.root_vibe)
+        self.mesh_engine = None
+        self._init_swarm_and_mesh()
 
-        threading.Thread(target=self._utahnetes_mesh_listener, daemon=True).start()
-        threading.Thread(target=self._utahnetes_mesh_broadcaster, daemon=True).start()
+        if tycoon_engine:
+            tycoon_engine.register_settlement_callback(self._on_tycoon_settlement)
+
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] UtahMosphere Golden Master Kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Golden Master Final kernel online. World-A excised.")
+
+    def _node_hash(self) -> str:
+        if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
+            return ledger_guard.ledger["root_vibe_hash"]
+        return derive_node_hash(self.node_identity)
+
+    def _init_swarm_and_mesh(self):
+        if UtahSwarmNode is None:
+            return
+        node_hash = self._node_hash()
+        self.root_vibe = node_hash if ledger_guard and ledger_guard.ledger.get("root_vibe_hash") else None
+        self.swarm_router = UtahSwarmNode(node_hash, on_ledger_sync=self._on_swarm_ledger_sync)
+        self.mesh_engine = UtahNetesMesh(
+            node_id=self.node_identity,
+            get_registry=lambda: self.cluster_registry,
+            apply_registry=self._apply_remote_registry,
+            swarm_broadcast=self._broadcast_to_swarm,
+        )
+
+    def _broadcast_to_swarm(self, payload: dict):
+        if self.swarm_router:
+            with self.swarm_router._lock:
+                for peer_hash in list(self.swarm_router.routing_table.keys())[:8]:
+                    self.swarm_router.route_payload_deterministic(peer_hash, payload)
+
+    def _on_swarm_ledger_sync(self, payload: dict):
+        registry = payload.get("registry", {})
+        origin = payload.get("origin_node", "unknown")
+        print(f"[Swarm Link] DHT state sync from {origin}")
+        self._apply_remote_registry(registry)
+
+    def _apply_remote_registry(self, remote: dict):
+        if not remote:
+            return
+        for key, val in remote.get("tenants", {}).items():
+            local = self.cluster_registry.get("tenants", {}).get(key, {})
+            if key not in self.cluster_registry.get("tenants", {}) or val.get("epoch", 0) > local.get("epoch", 0):
+                self.cluster_registry.setdefault("tenants", {})[key] = val
+        self._save_registry_unlocked()
+        if self.swarm_router:
+            self.ui_state["swarm_peers"] = self.swarm_router.peer_count()
+
+    def _on_tycoon_settlement(self, tx_id: str, record: dict):
+        app_name = record.get("app_target")
+        if app_name:
+            self.activate_tenant(app_name)
+            print(f"[Tycoon] Tenant {app_name} → active-compute after settlement {tx_id[:8]}")
+        self.trigger_flux_ui_render()
 
     def _bootstrap_sovereign_paths(self):
         for path in [UTAH_DATA_DIR, UTAHX_CONF_ROOT, CONTAINER_DATA_DIR, LAMBDA_ROOT, RDS_ROOT, S3_ROOT]:
@@ -131,8 +176,8 @@ class UtahmosphereSovereignKernel:
             if "claim node" in transcript:
                 response = ledger_guard.anchor_root_vibe(acoustic_hash)
                 if "mapped" in response and UtahSwarmNode:
-                    self.swarm_router = UtahSwarmNode(acoustic_hash)
                     self.root_vibe = acoustic_hash
+                    self.swarm_router = UtahSwarmNode(acoustic_hash, on_ledger_sync=self._on_swarm_ledger_sync)
                 return response
 
             if not ledger_guard.verify_vibe_signature(acoustic_hash, transcript):
@@ -223,45 +268,6 @@ class UtahmosphereSovereignKernel:
         self.cluster_registry.setdefault("utahx_routes", {})[app_name] = manifest
         self._save_registry_unlocked()
 
-    def _utahnetes_mesh_broadcaster(self):
-        tx_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        tx_socket.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
-        while True:
-            try:
-                payload = json.dumps({"node": self.node_identity, "registry": self.cluster_registry}).encode()
-                tx_socket.sendto(payload, (MULTICAST_MESH_ADDR, UTAHNETES_GOSSIP_PORT))
-                if self.swarm_router:
-                    with self.swarm_router._lock:
-                        neighbors = list(self.swarm_router.routing_table.keys())
-                    for neighbor in neighbors:
-                        self.swarm_router.send_encrypted_payload(
-                            neighbor,
-                            {"type": "LEDGER_SYNC", "registry": self.cluster_registry, "origin_node": self.node_identity},
-                        )
-            except Exception:
-                pass
-            time.sleep(10)
-
-    def _utahnetes_mesh_listener(self):
-        rx_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        rx_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        rx_socket.bind(("", UTAHNETES_GOSSIP_PORT))
-        mreq = struct.pack("4sl", socket.inet_aton(MULTICAST_MESH_ADDR), socket.INADDR_ANY)
-        rx_socket.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-        while True:
-            try:
-                data, _ = rx_socket.recvfrom(65535)
-                message = json.loads(data.decode("utf-8"))
-                remote_node = message.get("node")
-                if remote_node and remote_node != self.node_identity:
-                    for key, val in message["registry"].get("tenants", {}).items():
-                        local = self.cluster_registry["tenants"].get(key, {})
-                        if key not in self.cluster_registry["tenants"] or val.get("epoch", 0) > local.get("epoch", 0):
-                            self.cluster_registry["tenants"][key] = val
-                    self._save_registry_unlocked()
-            except Exception:
-                pass
-
     def _initiate_predictive_janitor(self):
         while True:
             time.sleep(60)
@@ -328,6 +334,31 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._handle_s3_post(path, body)
             return
 
+        if path == "/app/unlock":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            app_name = data.get("app_name") or data.get("app", "")
+            client_id = data.get("client_id") or self.client_address[0]
+            if not app_name:
+                self._json_response(400, {"error": "app_name required"})
+                return
+            if tycoon_engine is None:
+                self._json_response(503, {"error": "Tycoon engine unavailable"})
+                return
+            result = tycoon_engine.submit_unlock_request(
+                app_name, client_id, data.get("payment_tx"), data.get("amount_sats", 5000)
+            )
+            self.send_response(202)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "status": "pending",
+                "message": "Payment required. Awaiting ledger consensus.",
+                "tx_id": result["tx_id"],
+                "payment_address": result["invoice"]["payment_address"],
+                "amount_sats": result["invoice"]["amount_sats"],
+            }).encode())
+            return
+
         self.send_response(404)
         self.end_headers()
 
@@ -361,16 +392,21 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
                 "version": "25.0",
-                "build": "golden-master",
+                "build": "golden-master-final",
             })
             return
 
         if path == "/status":
+            tycoon_stats = tycoon_engine.get_stats() if tycoon_engine else {}
+            swarm_peers = self.core_engine.swarm_router.peer_count() if self.core_engine.swarm_router else 0
             self._json_response(200, {
                 "ui_state": self.core_engine.ui_state,
                 "tenants": list(self.core_engine.cluster_registry.get("tenants", {}).keys()),
                 "claimed": self.core_engine.root_vibe is not None,
                 "s3_root": S3_ROOT,
+                "master_registry": MASTER_REGISTRY_FILE,
+                "swarm_peers": swarm_peers,
+                "tycoon": tycoon_stats,
             })
             return
 
@@ -402,6 +438,12 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             sub_path = "/" + "/".join(parts[3:]) if len(parts) > 3 else "/"
 
             if tycoon_engine is not None and not tycoon_engine.check_access_authorization(app_name, client_id):
+                if app_name not in self.core_engine.cluster_registry.get("tenants", {}):
+                    self.send_response(404)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"error": "Application not manifested"}).encode())
+                    return
                 invoice = tycoon_engine.generate_tollbooth_invoice(app_name, client_id, amount_sats=5000)
                 self.send_response(402)
                 self.send_header("Content-Type", "application/json")

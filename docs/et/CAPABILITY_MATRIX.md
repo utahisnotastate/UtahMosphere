@@ -11,6 +11,7 @@ See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus
 | `/health` | GET | **Rakendatud** | Sõlme elusoleku päring |
 | `/status` | GET | **Rakendatud** | UI olek, rentnikute nimekiri, claim olek |
 | `/command` | POST | **Rakendatud** | Hääle intenti käivitus (JSON keha) |
+| `/app/unlock` | POST | **Rakendatud** | Esita makse; tagastab 202 kuni arveldus |
 | `/app/{name}` | GET | **Rakendatud** | Tycoon-ga kaitstud rakenduse juurdepääs (402 kuni makstud) |
 | `/s3/*` | * | Planeeritud | Dokumenteeritud migratsiooni juhendis; pole veel marsruutitud |
 | `/lambda/*/invoke` | POST | Planeeritud | Handler stubid luuakse ainult juurutamisel |
@@ -25,9 +26,9 @@ See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus
 | **Tuum (`utahmosphere_os.py`)** | Rakendatud | Register, hääle intentid, UtahX marsruudi manifestid, võrgu gossip |
 | **Quantum Ledger** | Rakendatud | Juur-vibe claim, biomeetriline räsi kontroll, avatud režiim enne claim-i |
 | **Voice Bridge** | Rakendatud | Google STT + MFCC vibe-print eraldamine → `/command` |
-| **Utah-Tycoon** | Osaliselt | Arve genereerimine, simuleeritud 60s arveldus, HTTP 402 värav |
-| **UtahNetes Gossip** | Osaliselt | UDP multicast rentniku sünk LAN-is |
-| **Global Swarm** | Osaliselt | UDP peer tabel, ping keep-alive; täielik Kademlia lookup stubitud |
+| **Utah-Tycoon** | **Rakendatud** | Sündmuspõhine arveldusloop, `POST /app/unlock`, HTTP 402 värav |
+| **UtahNetes Gossip** | **Rakendatud** | 5s multicast sünk `utah_mesh_engine.py` kaudu, `master_registry.json` |
+| **Global Swarm** | **Rakendatud** | Deterministiline DHT marsruutimine, FIND_NODE, iteratiivne peer otsing |
 | **Lazarus Daemon** | Osaliselt | Lisab patch kommentaarid `handler.py`-sse (mitte täielik AST ümberkirjutus) |
 | **Utah-Flux UI** | Rakendatud | Tkinter armatuurlaud, loeb `flux_ui_manifest.json` |
 | **UtahX Proxy** | Osaliselt | JSON marsruudi manifestid kirjutatakse; reaalajas TCP proksi protsessi pole |

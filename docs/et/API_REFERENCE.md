@@ -16,7 +16,8 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -30,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operatiivne hetktõmmis: UI olek, juurutatud rentnikud ja kas sõlm on claim-itud.
+Operatiivne hetktõmmis: UI olek, juurutatud rentnikud, claim olek, `swarm_peers` ja Tycoon statistika.
 
 **Vastus `200`:**
 
@@ -44,7 +45,9 @@ Operatiivne hetktõmmis: UI olek, juurutatud rentnikud ja kas sõlm on claim-itu
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -143,6 +146,37 @@ Arved lahenduvad praeguses simulatsioonis automaatselt ~60 sekundi pärast.
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+Esita makse avamise taotlus. Tycoon registreerib ootel tehingu ja tagastab HTTP `202` kuni krüptograafilise arvelduseni (~60 s).
+
+**Päringu keha:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Vastus `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+Pärast arveldust suunab `GET /app/{app_name}` sama `X-Client-ID`-ga konteinerisse.
 
 ---
 

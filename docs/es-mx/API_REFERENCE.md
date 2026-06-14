@@ -16,7 +16,8 @@ Sonda de disponibilidad para balanceadores de carga y monitoreo.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -44,7 +45,9 @@ Instantánea operativa: estado de la UI, inquilinos desplegados y si el nodo ha 
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -131,18 +134,42 @@ Las facturas se liquidan automáticamente después de ~60 segundos en la simulac
 
 ### Cliente con pago — Respuesta `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
-```
-
-**Ejemplo:**
+UtahX reenvía la solicitud al backend UtahContainerEngine en el puerto del inquilino. El cuerpo de la respuesta es la salida JSON del handler.
 
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+Enviar una solicitud de desbloqueo por pago. Tycoon registra una transacción pendiente y devuelve HTTP `202` hasta la liquidación criptográfica (~60 s).
+
+**Cuerpo de la solicitud:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Respuesta `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+Tras la liquidación, `GET /app/{app_name}` con el mismo `X-Client-ID` reenvía al contenedor.
 
 ---
 

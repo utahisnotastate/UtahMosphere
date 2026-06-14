@@ -1,6 +1,6 @@
 # Capability Matrix
 
-UtahMosphere OS **v25.0 Golden Master** — implementation status as of Omega-Build.
+UtahMosphere OS **v25.0 Golden Master Final** — implementation status as of Omega-Genesis.
 
 ---
 
@@ -8,9 +8,10 @@ UtahMosphere OS **v25.0 Golden Master** — implementation status as of Omega-Bu
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implemented** | Liveness + `build: golden-master` |
+| `/health` | GET | **Implemented** | Liveness + `build: golden-master-final` |
 | `/status` | GET | **Implemented** | UI state, tenants, claim status, S3 root |
 | `/command` | POST | **Implemented** | Voice intent execution |
+| `/app/unlock` | POST | **Implemented** | Submit payment; returns 202 pending settlement |
 | `/app/{name}` | GET | **Implemented** | Tycoon 402 gate + UtahX proxy to container |
 | `/app/{name}/{path}` | GET | **Implemented** | Sub-path proxy to container backend |
 | `/s3/{bucket}/{key}` | GET | **Implemented** | Object read (local NVMe) |
@@ -31,14 +32,14 @@ UtahMosphere OS **v25.0 Golden Master** — implementation status as of Omega-Bu
 | **Kernel (`utahmosphere_os.py`)** | **Implemented** | Full HTTP multiplexer, registry, mesh |
 | **UtahX Proxy (`utahx_proxy.py`)** | **Implemented** | Live HTTP proxy to container ports |
 | **UtahContainerEngine (`utah_container_runtime.py`)** | **Implemented** | Per-tenant HTTP servers on 8200+ |
-| **Lazarus AST (`utah_lazarus.py`)** | **Implemented** | AST-validated handler mutation |
+| **Lazarus AST (`utah_lazarus.py`)** | **Implemented** | AST-validated handler mutation + OTA channel |
 | **S3 Mesh (`utah_s3_mesh.py`)** | **Implemented** | Local object storage + HMAC |
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Implemented** | Handler invoke without images |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Implemented** | JSON key-value ledger |
 | **Quantum Ledger** | Implemented | Biometric claim + verification |
-| **Utah-Tycoon** | Partial | 402 gate; simulated 60s settlement |
-| **UtahNetes Gossip** | Partial | LAN multicast sync |
-| **Global Swarm** | Partial | UDP peer table; full Kademlia stubbed |
+| **Utah-Tycoon** | **Implemented** | Event-driven settlement loop, `POST /app/unlock`, HTTP 402 gate |
+| **UtahNetes Gossip** | **Implemented** | 5s multicast sync via `utah_mesh_engine.py`, `master_registry.json` |
+| **Global Swarm** | **Implemented** | Deterministic DHT routing, FIND_NODE, iterative peer lookup |
 | **Utah-Flux UI** | Implemented | Tkinter status dashboard |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Implemented** | Multi-process orchestrator |
 | **Bootstrap (`bootstrap.sh`)** | **Implemented** | Bare-metal systemd install |
@@ -71,10 +72,8 @@ UtahMosphere OS **v25.0 Golden Master** — implementation status as of Omega-Bu
 
 ## Roadmap (Remaining)
 
-- Real Bitcoin mempool integration in Tycoon
-- Full Kademlia recursive lookup in Swarm
-- Ed25519 signing in Quantum Ledger
-- `authorized_nodes[]` enforcement
+- Real Bitcoin mempool integration in Tycoon (settlement simulation works today)
 - `genesis.iso` flash-drive installer image
+- `authorized_nodes[]` enforcement
 
-See [Omega-Build Golden Master](OMEGA_BUILD.md) and [CHANGELOG](CHANGELOG.md).
+See [Omega-Build Golden Master](OMEGA_BUILD.md), [OTA Lazarus Channel](OTA_LAZARUS.md), and [CHANGELOG](CHANGELOG.md).

@@ -4,9 +4,11 @@
 import json
 import sys
 import time
+import socket
 import urllib.request
 import urllib.error
 
+socket.setdefaulttimeout(15)
 BASE = "http://127.0.0.1:8999"
 
 
@@ -62,6 +64,11 @@ def main():
     # Lambda invoke
     code, data = post("/lambda/omega-test/invoke", {"name": "General 23"})
     print(f"Lambda: {data}")
+
+    # Tycoon unlock (payment gate)
+    code, body = post("/app/unlock", {"app": "omega-test"})
+    msg = body.get("message", body) if isinstance(body, dict) else str(body)
+    print(f"Unlock: {code} {str(msg)[:80]}")
 
     print("=== Verification complete ===")
 

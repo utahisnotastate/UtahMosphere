@@ -1,6 +1,6 @@
 # Portail de documentation UtahMosphere
 
-Bienvenue sur le hub de documentation d'UtahMosphere OS v25.0 — cloud souverain edge Python, port **8999**. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+Bienvenue sur le hub de documentation d'UtahMosphere OS v25.0 — cloud souverain edge Python, port **8999**. **Golden Master Final v25.0** : noyau unifié bare-metal avec Utah-Tycoon, UtahNetes et Global Swarm entièrement opérationnels. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
 
 ---
 
@@ -79,4 +79,4 @@ Mini-projets complets à forker et étendre :
 
 ## À propos de cette documentation
 
-Cette section de documentation est entièrement en français. UtahMosphere OS v25.0 est un cloud souverain edge basé sur Python, accessible par défaut sur le port **8999**.
+Cette section de documentation est entièrement en français. UtahMosphere OS v25.0 Golden Master Final est un cloud souverain edge basé sur Python, accessible par défaut sur le port **8999**.

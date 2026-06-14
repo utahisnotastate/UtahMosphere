@@ -11,6 +11,7 @@ Tämä matriisi dokumentoi, mitä UtahMosphere OS **v25.0** toteuttaa tänään 
 | `/health` | GET | **Toteutettu** | Solmun elvytystarkistus |
 | `/status` | GET | **Toteutettu** | UI-tila, vuokralaisluettelo, claim-tila |
 | `/command` | POST | **Toteutettu** | Ääni-intentin suoritus (JSON-runko) |
+| `/app/unlock` | POST | **Toteutettu** | Lähetä maksu; palauttaa 202 odotettavaan selvitykseen |
 | `/app/{name}` | GET | **Toteutettu** | Tycoon-portin takana oleva sovelluspääsy (402 kunnes maksettu) |
 | `/s3/*` | * | Suunniteltu | Dokumentoitu migraatiooppaassa; ei vielä reititetty |
 | `/lambda/*/invoke` | POST | Suunniteltu | Käsittelijäpohjat luodaan vain käyttöönotossa |
@@ -25,9 +26,9 @@ Tämä matriisi dokumentoi, mitä UtahMosphere OS **v25.0** toteuttaa tänään 
 | **Ydin (`utahmosphere_os.py`)** | Toteutettu | Rekisteri, ääni-intentit, UtahX-reittimanifestit, mesh-gossip |
 | **Quantum Ledger** | Toteutettu | Juuri-vibe-claim, biometrinen hash-vahvistus, avoin tila ennen claimia |
 | **Voice Bridge** | Toteutettu | Google STT + MFCC vibe-print -poiminta → `/command` |
-| **Utah-Tycoon** | Osittainen | Laskujen luonti, simuloitu 60 s selvitys, HTTP 402 -portti |
-| **UtahNetes Gossip** | Osittainen | UDP-multicast-vuokralaissynkronointi LANissa |
-| **Global Swarm** | Osittainen | UDP-vertaistaulukko, ping-pidä-elossa; täysi Kademlia-haku stubattu |
+| **Utah-Tycoon** | **Toteutettu** | Tapahtumapohainen selvityssilmukka, `POST /app/unlock`, HTTP 402 -portti |
+| **UtahNetes Gossip** | **Toteutettu** | 5 s multicast-synkronointi `utah_mesh_engine.py`:n kautta, `master_registry.json` |
+| **Global Swarm** | **Toteutettu** | Deterministinen DHT-reititys, FIND_NODE, iteratiivinen vertaishaku |
 | **Lazarus Daemon** | Osittainen | Liittää korjauskommentteja `handler.py`:hen (ei täyttä AST-uudelleenkirjoitusta) |
 | **Utah-Flux UI** | Toteutettu | Tkinter-hallintapaneeli lukee `flux_ui_manifest.json` |
 | **UtahX Proxy** | Osittainen | JSON-reittimanifestit kirjoitetaan; ei live TCP-välityspalvelinprosessia |

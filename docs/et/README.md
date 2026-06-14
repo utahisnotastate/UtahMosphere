@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **Golden Master Final v25.0** — ühtne bare-metal tuum, kus Utah-Tycoon, UtahNetes ja Global Swarm on täielikult integreeritud. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 

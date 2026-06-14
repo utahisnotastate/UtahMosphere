@@ -125,7 +125,7 @@ Template: [python-http-service](../../templates/python-http-service/)
 
 ## Patch App via API
 
-**Status:** Partial (appends Lazarus comments)
+**Status:** **Implemented** (AST-validated mutation via `utah_lazarus.py`)
 
 ```python
 def patch_app(app_name: str, intent: str, acoustic_hash: str = "0" * 64):

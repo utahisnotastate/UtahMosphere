@@ -16,7 +16,8 @@ Chek si mumuña para load balancers yan monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -44,7 +45,9 @@ Retratu operasion: UI state, deployed tenants, yan claimed status.
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -131,18 +134,42 @@ Invoices ma settle automaticamente ~60 seconds gi current simulation.
 
 ### Client ma pago — Response `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
-```
-
-**Ehemplo:**
+UtahX ma proxy i request gi UtahContainerEngine backend gi tenant port. I response body i handler JSON output.
 
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+Submit payment unlock request. Tycoon ma register pending transaction ya ma return HTTP `202` hasta cryptographic settlement (~60s).
+
+**Request body:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Response `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+Después settlement, `GET /app/{app_name}` yan i mismo `X-Client-ID` ma proxy gi container.
 
 ---
 

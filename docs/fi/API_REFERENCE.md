@@ -16,7 +16,8 @@ Elvytystarkistus kuormantasaajille ja seurannalle.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -30,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset ja onko solmu claimattu.
+Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset, claim-tila, `swarm_peers` ja Tycoon-tilastot.
 
 **Vastaus `200`:**
 
@@ -44,7 +45,9 @@ Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset ja onko solm
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -143,6 +146,37 @@ Laskut selvitetään automaattisesti ~60 sekunnin kuluttua nykyisessä simulaati
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+Lähetä maksun avauspyyntö. Tycoon rekisteröi odottavan tapahtuman ja palauttaa HTTP `202` kunnes kryptografinen selvitys (~60 s).
+
+**Pyynnön runko:**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**Vastaus `202`:**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+Selvityksen jälkeen `GET /app/{app_name}` samalla `X-Client-ID`:llä välittää konttiin.
 
 ---
 

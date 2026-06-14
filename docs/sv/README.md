@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **Golden Master Final v25.0** — enhetlig bare-metal-kärna med Utah-Tycoon, UtahNetes och Global Swarm fullt integrerade. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 

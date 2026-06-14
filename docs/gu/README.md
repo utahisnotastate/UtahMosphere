@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. **Golden Master Final v25.0** — unifikådo na bare-metal kernel yan Utah-Tycoon, UtahNetes, yan Global Swarm må'pos implement. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -79,8 +79,8 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## UtahMosphere OS v25.0
+## UtahMosphere OS v25.0 Golden Master Final
 
-Suveranu edge Python platform — port `8999`, voice deploy, biometric claim, HTTP 402.
+Suveranu edge Python platform — port `8999`, voice deploy, biometric claim, HTTP 402, `POST /app/unlock`.
 
 **Mas dokumentu:** [Referensia API](API_REFERENCE.md) · [Matrisis Kapasidad](CAPABILITY_MATRIX.md)

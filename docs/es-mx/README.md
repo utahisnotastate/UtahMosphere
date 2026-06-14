@@ -1,6 +1,6 @@
 # Portal de documentación UtahMosphere
 
-Bienvenido al centro de documentación de UtahMosphere OS v25.0 — plataforma soberana edge Python, puerto **8999**. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
+Bienvenido al centro de documentación de UtahMosphere OS v25.0 — plataforma soberana edge Python, puerto **8999**. **Golden Master Final v25.0**: núcleo unificado bare-metal con Utah-Tycoon, UtahNetes y Global Swarm totalmente operativos. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
 
 ---
 
@@ -79,4 +79,4 @@ Mini-proyectos completos para bifurcar y extender:
 
 ## Acerca de esta documentación
 
-Esta sección de documentación está completamente en español de México. UtahMosphere OS v25.0 es una plataforma soberana edge basada en Python, accesible por defecto en el puerto **8999**.
+Esta sección de documentación está completamente en español de México. UtahMosphere OS v25.0 Golden Master Final es una plataforma soberana edge basada en Python, accesible por defecto en el puerto **8999**.

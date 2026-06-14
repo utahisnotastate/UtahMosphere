@@ -11,6 +11,7 @@ Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämf
 | `/health` | GET | **Implementerat** | Nod-liveness-probe |
 | `/status` | GET | **Implementerat** | UI-tillstånd, tenant-lista, claim-status |
 | `/command` | POST | **Implementerat** | Röstintent-exekvering (JSON-body) |
+| `/app/unlock` | POST | **Implementerat** | Skicka betalning; returnerar 202 tills avveckling |
 | `/app/{name}` | GET | **Implementerat** | Tycoon-gated appåtkomst (402 tills betald) |
 | `/s3/*` | * | Planerat | Dokumenterat i migreringsguiden; ännu inte routat |
 | `/lambda/*/invoke` | POST | Planerat | Handler-stubs skapas endast vid driftsättning |
@@ -25,9 +26,9 @@ Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämf
 | **Kärna (`utahmosphere_os.py`)** | Implementerat | Register, röstintents, UtahX-routemanifest, mesh-gossip |
 | **Quantum Ledger** | Implementerat | Rot-vibe-claim, biometrisk hash-verifiering, öppet läge före claim |
 | **Voice Bridge** | Implementerat | Google STT + MFCC vibe-print-extraktion → `/command` |
-| **Utah-Tycoon** | Delvis | Fakturagenerering, simulerad 60s avveckling, HTTP 402-gate |
-| **UtahNetes Gossip** | Delvis | UDP-multicast tenant-synk på LAN |
-| **Global Swarm** | Delvis | UDP-peertabell, ping keep-alive; full Kademlia-sökning stubbad |
+| **Utah-Tycoon** | **Implementerat** | Händelsedriven avvecklingsloop, `POST /app/unlock`, HTTP 402-grind |
+| **UtahNetes Gossip** | **Implementerat** | 5s multicast-synk via `utah_mesh_engine.py`, `master_registry.json` |
+| **Global Swarm** | **Implementerat** | Deterministisk DHT-routing, FIND_NODE, iterativ peer-sökning |
 | **Lazarus Daemon** | Delvis | Lägger till patch-kommentarer i `handler.py` (inte full AST-omskrivning) |
 | **Utah-Flux UI** | Implementerat | Tkinter-panel läser `flux_ui_manifest.json` |
 | **UtahX Proxy** | Delvis | JSON-routemanifest skrivs; ingen live TCP-proxyprocess |

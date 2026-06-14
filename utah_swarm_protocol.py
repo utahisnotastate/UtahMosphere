@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Global Swarm Protocol - Production WAN Build v23.0
-Bypasses DNS and ISP bottlenecks via Vibe-Print Kademlia DHT routing.
-Establishes encrypted, location-agnostic peer-to-peer UDP tunnels globally.
+UtahMosphere Global Swarm Protocol - Golden Master v25.0
+Deterministic Kademlia-style DHT routing with iterative peer lookup.
 """
 
 import os
-import sys
 import json
 import time
 import socket
 import threading
 import hashlib
-from typing import Dict, List, Any
+from typing import Dict, Any, Optional, List, Callable
 
-# --- SWARM CONFIGURATION ---
+UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
+
+
 def _resolve_swarm_dir() -> str:
-    primary = os.path.join(
-        os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere"), "swarm"
-    )
+    primary = os.path.join(UTAH_DATA_DIR, "swarm")
     try:
         os.makedirs(primary, exist_ok=True)
         return primary
@@ -30,16 +28,18 @@ def _resolve_swarm_dir() -> str:
 
 UTAH_SWARM_DIR = _resolve_swarm_dir()
 ROUTING_TABLE_FILE = os.path.join(UTAH_SWARM_DIR, "dht_routing.json")
-SWARM_PORT = 9055  # Dynamic UDP listening port for global hole-punching
+SWARM_PORT = 9055
+K_BUCKET_SIZE = 8
+
 
 class UtahSwarmNode:
-    def __init__(self, vibe_print_hash: str):
-        self.node_hash = vibe_print_hash
+    def __init__(self, node_hash: str, on_ledger_sync: Optional[Callable[[dict], None]] = None):
+        self.node_hash = node_hash.zfill(64)[:64]
         self.routing_table: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
+        self._on_ledger_sync = on_ledger_sync
         self._bootstrap_swarm_paths()
-        
-        # Open the sovereign UDP socket
+
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -47,17 +47,15 @@ class UtahSwarmNode:
         except Exception as e:
             print(f"[Swarm Engine] Socket binding failed: {e}")
             self.sock = None
-        
-        print(f"[Swarm Engine] Global Node Initialized. Local ID: {self.node_hash[:16]}...")
-        
-        # Start background threads for DHT maintenance and packet listening
+
+        print(f"[Swarm Engine] DHT Node Online. ID: {self.node_hash[:16]}...")
+
         if self.sock:
             threading.Thread(target=self._listen_for_swarm_packets, daemon=True).start()
             threading.Thread(target=self._ping_nearest_neighbors, daemon=True).start()
 
     def _bootstrap_swarm_paths(self):
         os.makedirs(UTAH_SWARM_DIR, exist_ok=True)
-
         if os.path.exists(ROUTING_TABLE_FILE):
             try:
                 with open(ROUTING_TABLE_FILE, "r") as f:
@@ -75,90 +73,136 @@ class UtahSwarmNode:
         except PermissionError:
             pass
 
-    def _xor_distance(self, hash1: str, hash2: str) -> int:
-        """Calculates the logical distance between two nodes in the Swarm."""
-        return int(hash1, 16) ^ int(hash2, 16)
+    @staticmethod
+    def _xor_distance(hash1: str, hash2: str) -> int:
+        h1 = hash1.zfill(64)[:64]
+        h2 = hash2.zfill(64)[:64]
+        return int(h1, 16) ^ int(h2, 16)
 
     def introduce_peer(self, peer_hash: str, ip: str, port: int):
-        """Adds a discovered peer to the local routing table."""
+        peer_hash = peer_hash.zfill(64)[:64]
         with self._lock:
             self.routing_table[peer_hash] = {
                 "ip": ip,
                 "port": port,
                 "last_seen": time.time(),
-                "distance": self._xor_distance(self.node_hash, peer_hash)
+                "distance": self._xor_distance(self.node_hash, peer_hash),
             }
+            if len(self.routing_table) > 256:
+                farthest = max(self.routing_table, key=lambda k: self.routing_table[k]["distance"])
+                del self.routing_table[farthest]
             self._save_routing_table()
 
-    def send_encrypted_payload(self, target_hash: str, payload: dict) -> bool:
-        """Routes a packet to the specific node ID, regardless of its physical IP."""
-        if not self.sock: return False
-        target_info = self.routing_table.get(target_hash)
-        if not target_info:
-            print(f"[Swarm Route Failure] Target {target_hash[:8]} not in routing table.")
-            # In a full Kademlia implementation, we would recursively query neighbors here.
+    def find_closest_peers(self, target_hash: str, count: int = K_BUCKET_SIZE) -> List[dict]:
+        target_hash = target_hash.zfill(64)[:64]
+        with self._lock:
+            peers = sorted(
+                self.routing_table.values(),
+                key=lambda p: self._xor_distance(target_hash, hashlib.sha256(f"{p['ip']}:{p['port']}".encode()).hexdigest()),
+            )
+        return peers[:count]
+
+    def route_payload_deterministic(self, target_hash: str, payload: dict) -> bool:
+        """Iterative DHT routing: send to closest known peer toward target."""
+        if not self.sock:
             return False
-            
+        target_hash = target_hash.zfill(64)[:64]
+
+        with self._lock:
+            if target_hash in self.routing_table:
+                target_info = self.routing_table[target_hash]
+                return self._send_to(target_info["ip"], target_info["port"], payload)
+
+        closest = self.find_closest_peers(target_hash, count=3)
+        if not closest:
+            self._broadcast_find_node(target_hash)
+            return False
+
+        sent = False
+        for peer in closest:
+            if self._send_to(peer["ip"], peer["port"], {"type": "FIND_NODE", "target": target_hash, "payload": payload}):
+                sent = True
+        return sent
+
+    def send_encrypted_payload(self, target_hash: str, payload: dict) -> bool:
+        return self.route_payload_deterministic(target_hash, payload)
+
+    def _send_to(self, ip: str, port: int, inner_payload: dict) -> bool:
+        if not self.sock:
+            return False
         data = json.dumps({
             "source_hash": self.node_hash,
             "timestamp": time.time(),
-            "payload": payload
-        }).encode('utf-8')
-        
+            "payload": inner_payload,
+        }).encode("utf-8")
         try:
-            self.sock.sendto(data, (target_info["ip"], target_info["port"]))
+            self.sock.sendto(data, (ip, port))
             return True
-        except Exception as e:
-            print(f"[Swarm Tx Error] Firewall anomaly detected: {e}")
+        except Exception:
             return False
 
+    def _broadcast_find_node(self, target_hash: str):
+        with self._lock:
+            for info in list(self.routing_table.values())[:K_BUCKET_SIZE]:
+                self._send_to(info["ip"], info["port"], {"type": "FIND_NODE", "target": target_hash})
+
     def _listen_for_swarm_packets(self):
-        """Asynchronous listener for incoming P2P connections and UDP hole-punching."""
         while True:
             try:
                 data, addr = self.sock.recvfrom(65535)
-                packet = json.loads(data.decode('utf-8'))
-                
+                packet = json.loads(data.decode("utf-8"))
                 source_hash = packet.get("source_hash")
-                if source_hash and source_hash != self.node_hash:
-                    # Dynamically update the routing table with the new incoming IP
-                    # This achieves automatic NAT traversal (UDP Hole Punching)
-                    self.introduce_peer(source_hash, addr[0], addr[1])
-                    
-                    payload = packet.get("payload", {})
-                    # If this is a state-sync request, forward it to the OS Kernel
-                    if payload.get("type") == "LEDGER_SYNC":
-                        self._process_ledger_sync(payload)
-                        
-            except Exception as e:
+                if not source_hash or source_hash == self.node_hash:
+                    continue
+
+                self.introduce_peer(source_hash, addr[0], addr[1])
+                payload = packet.get("payload", {})
+
+                if payload.get("type") == "PING":
+                    continue
+
+                if payload.get("type") == "FIND_NODE":
+                    target = payload.get("target", "")
+                    closest = self.find_closest_peers(target, count=3)
+                    self._send_to(addr[0], addr[1], {
+                        "type": "FIND_NODE_RESPONSE",
+                        "target": target,
+                        "peers": [{"ip": p["ip"], "port": p["port"]} for p in closest],
+                    })
+                    inner = payload.get("payload")
+                    if inner:
+                        self.route_payload_deterministic(target, inner)
+                    continue
+
+                if payload.get("type") == "FIND_NODE_RESPONSE":
+                    for peer in payload.get("peers", []):
+                        ph = hashlib.sha256(f"{peer['ip']}:{peer['port']}".encode()).hexdigest()
+                        self.introduce_peer(ph, peer["ip"], peer["port"])
+                    continue
+
+                if payload.get("type") == "LEDGER_SYNC" and self._on_ledger_sync:
+                    self._on_ledger_sync(payload)
+
+            except Exception:
                 pass
 
-    def _process_ledger_sync(self, payload: dict):
-        """Hooks into the UtahMosphere Kernel to apply global state mutations."""
-        # This passes the verified data block into the main Quantum Ledger OS
-        print(f"[Swarm Link] Telepathic state sync received from {payload.get('origin_node', 'Unknown')}.")
-        # Implementation delegated to utahmosphere_os.py integration loop.
-
     def _ping_nearest_neighbors(self):
-        """Continuously probes the swarm to maintain active NAT pathways (Keep-Alive)."""
         while True:
             time.sleep(30)
-            if not self.sock: continue
-            stale_peers = []
+            if not self.sock:
+                continue
+            stale = []
             with self._lock:
                 for peer_hash, info in self.routing_table.items():
-                    if time.time() - info["last_seen"] > 300: # 5 minutes
-                        stale_peers.append(peer_hash)
+                    if time.time() - info["last_seen"] > 300:
+                        stale.append(peer_hash)
                     else:
-                        # Send a lightweight ping to keep the UDP port mapping alive on the ISP router
-                        ping_data = json.dumps({"source_hash": self.node_hash, "payload": {"type": "PING"}}).encode('utf-8')
-                        try:
-                            self.sock.sendto(ping_data, (info["ip"], info["port"]))
-                        except Exception:
-                            pass
-                
-                # Prune dead nodes from the logic map
-                for peer in stale_peers:
+                        self._send_to(info["ip"], info["port"], {"type": "PING"})
+                for peer in stale:
                     del self.routing_table[peer]
-                if stale_peers:
+                if stale:
                     self._save_routing_table()
+
+    def peer_count(self) -> int:
+        with self._lock:
+            return len(self.routing_table)

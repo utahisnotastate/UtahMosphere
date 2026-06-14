@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-Esta matriz documenta lo que UtahMosphere OS **v25.0** implementa hoy frente a lo descrito en documentación de marketing o planificado para versiones futuras. Úsala para fijar expectativas realistas durante migración y desarrollo.
+UtahMosphere OS **v25.0 Golden Master Final** — estado de implementación según Omega-Build.
 
 ---
 
@@ -8,13 +8,19 @@ Esta matriz documenta lo que UtahMosphere OS **v25.0** implementa hoy frente a l
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | Sonda de disponibilidad del nodo |
-| `/status` | GET | **Implementado** | Estado UI, lista de inquilinos, estado de claim |
-| `/command` | POST | **Implementado** | Ejecución de intención de voz (cuerpo JSON) |
-| `/app/{name}` | GET | **Implementado** | Acceso a app protegido por Tycoon (402 hasta pagar) |
-| `/s3/*` | * | Planificado | Documentado en guía de migración; aún no enrutado |
-| `/lambda/*/invoke` | POST | Planificado | Stubs de handler creados solo al desplegar |
-| `/rds/read/*`, `/rds/write` | * | Planificado | Registro existe; rutas HTTP no conectadas |
+| `/health` | GET | **Implementado** | Sonda de disponibilidad + `build: golden-master-final` |
+| `/status` | GET | **Implementado** | Estado UI, inquilinos, claim, raíz S3 |
+| `/command` | POST | **Implementado** | Ejecución de intención de voz |
+| `/app/unlock` | POST | **Implementado** | Enviar pago; devuelve 202 pendiente de liquidación |
+| `/app/{name}` | GET | **Implementado** | Puerta Tycoon 402 + proxy UtahX al contenedor |
+| `/app/{name}/{path}` | GET | **Implementado** | Proxy de subruta al backend del contenedor |
+| `/s3/{bucket}/{key}` | GET | **Implementado** | Lectura de objeto (NVMe local) |
+| `/s3/{bucket}/{key}` | PUT/POST | **Implementado** | Escritura de objeto; encabezados HMAC opcionales |
+| `/s3/{bucket}/{prefix}*` | GET | **Implementado** | Listar objetos |
+| `/lambda/{fn}/invoke` | POST | **Implementado** | Invocación de handler serverless |
+| `/lambda/{fn}` | GET | **Implementado** | Invocación GET con evento vacío |
+| `/rds/write` | POST | **Implementado** | Escritura clave-valor |
+| `/rds/read/{key}` | GET | **Implementado** | Lectura clave-valor |
 
 ---
 
@@ -22,25 +28,31 @@ Esta matriz documenta lo que UtahMosphere OS **v25.0** implementa hoy frente a l
 
 | Componente | Estado | Qué funciona hoy |
 |------------|--------|------------------|
-| **Kernel (`utahmosphere_os.py`)** | Implementado | Registro, intenciones de voz, manifiestos de rutas UtahX, gossip de malla |
-| **Quantum Ledger** | Implementado | Claim vibe raíz, verificación de hash biométrico, modo abierto antes del claim |
-| **Voice Bridge** | Implementado | Google STT + extracción vibe-print MFCC → `/command` |
-| **Utah-Tycoon** | Parcial | Generación de facturas, liquidación simulada 60 s, puerta HTTP 402 |
-| **Gossip UtahNetes** | Parcial | Sincronización de inquilinos por multidifusión UDP en LAN |
-| **Global Swarm** | Parcial | Tabla de pares UDP, keep-alive ping; búsqueda Kademlia completa en stub |
-| **Lazarus Daemon** | Parcial | Agrega comentarios de parche a `handler.py` (no reescritura AST completa) |
-| **UI Utah-Flux** | Implementado | Tablero Tkinter leyendo `flux_ui_manifest.json` |
-| **Proxy UtahX** | Parcial | Manifiestos de rutas JSON escritos; sin proceso proxy TCP en vivo |
+| **Golden Master (`utahmosphere_master.py`)** | **Implementado** | Punto de entrada unificado |
+| **Kernel (`utahmosphere_os.py`)** | **Implementado** | Multiplexor HTTP completo, registro, malla |
+| **Proxy UtahX (`utahx_proxy.py`)** | **Implementado** | Proxy HTTP en vivo a puertos de contenedor |
+| **UtahContainerEngine (`utah_container_runtime.py`)** | **Implementado** | Servidores HTTP por inquilino en 8200+ |
+| **Lazarus AST (`utah_lazarus.py`)** | **Implementado** | Mutación de handler validada AST + canal OTA |
+| **S3 Mesh (`utah_s3_mesh.py`)** | **Implementado** | Almacenamiento de objetos local + HMAC |
+| **Lambda Engine (`utah_lambda_engine.py`)** | **Implementado** | Invocación de handler sin imágenes |
+| **RDS Ledger (`utah_rds_ledger.py`)** | **Implementado** | Registro clave-valor JSON |
+| **Quantum Ledger** | Implementado | Claim biométrico + verificación |
+| **Utah-Tycoon** | **Implementado** | Bucle de liquidación orientado a eventos, `POST /app/unlock`, puerta HTTP 402 |
+| **Gossip UtahNetes** | **Implementado** | Sincronización multidifusión 5 s vía `utah_mesh_engine.py`, `master_registry.json` |
+| **Global Swarm** | **Implementado** | Enrutamiento DHT determinista, FIND_NODE, búsqueda iterativa de pares |
+| **UI Utah-Flux** | Implementado | Tablero Tkinter de estado |
+| **Auto-Genesis (`genesis_deploy.py`)** | **Implementado** | Orquestador multiproceso |
+| **Bootstrap (`bootstrap.sh`)** | **Implementado** | Instalación bare-metal systemd |
 
 ---
 
-## Comandos de voz (autorizados)
+## Comandos de voz
 
 | Patrón de comando | Estado | Ejemplo |
 |-------------------|--------|---------|
 | Reclamar nodo | Implementado | `"Claim node"` |
 | Desplegar aplicación | Implementado | `"deploy application my-app"` |
-| Parchear aplicación | Parcial | `"patch app my-app to add logging"` |
+| Parchear aplicación | **Implementado** | `"patch app my-app to add logging"` |
 | Estado / grid | Implementado | `"status grid"` |
 
 ---
@@ -49,44 +61,19 @@ Esta matriz documenta lo que UtahMosphere OS **v25.0** implementa hoy frente a l
 
 | Método | Estado | Plataforma |
 |--------|--------|------------|
-| `python3 utahmosphere_os.py` | Implementado | Todas (configura `UTAH_DATA_DIR` localmente) |
-| `python3 genesis_deploy.py` | Implementado | Linux preferido; desarrollo en Windows OK |
-| `sudo bash setup.sh` | Implementado | Linux (servicio systemd) |
-| `docker-compose up` | Implementado | Opcional; usa red del host |
+| `python3 utahmosphere_master.py` | **Recomendado** | Todas |
+| `python3 utahmosphere_os.py` | Implementado | Todas |
+| `python3 genesis_deploy.py` | Implementado | Linux / dev |
+| `sudo bash bootstrap.sh` | **Recomendado prod** | Linux systemd |
+| `sudo bash setup.sh` | Implementado | Alias de bootstrap |
+| `docker-compose up` | Opcional | Solo conveniencia heredada |
 
 ---
 
-## Modelo de seguridad
+## Hoja de ruta (pendiente)
 
-| Característica | Estado | Notas |
-|----------------|--------|-------|
-| Titular vibe raíz único | Implementado | El primer hablante en reclamar es dueño del nodo |
-| Campo `authorized_nodes[]` | Stub | Almacenado en ledger JSON; no aplicado en código |
-| Firmas HMAC de inquilino | Documentado | Receta provista; aplicación parcial en kernel |
-| Firma Ed25519 | Planificado | Referenciado en docs; no implementado |
-| `UTAH_SECRET_VECTOR` predeterminado | Implementado | Cámbialo en producción (consulta [Referencia de API](API_REFERENCE.md)) |
+- Integración real del mempool Bitcoin en Tycoon (la simulación de liquidación funciona hoy)
+- Imagen de instalación `genesis.iso` en memoria USB
+- Aplicación del campo `authorized_nodes[]`
 
----
-
-## Relación Docker / Nginx
-
-El **runtime principal** de UtahMosphere es Python bare-metal. Docker y Nginx son **rutas heredadas opcionales**:
-
-- `docker-compose.yaml` — envoltorio de conveniencia para pruebas locales
-- `nginx.conf` — configuración de referencia; los manifiestos JSON UtahX son la ruta soberana
-- `setup.sh` — purga Docker/Nginx en instalaciones Linux limpias (nodos soberanos de producción)
-
-Para entornos híbridos, mantén Docker/Nginx junto a UtahMosphere durante la migración.
-
----
-
-## Hoja de ruta (aún no implementado)
-
-- API HTTP de almacenamiento de objetos compatible con S3
-- API HTTP de invocación estilo Lambda
-- API HTTP de lectura/escritura del ledger RDS
-- Comando de voz de despliegue basado en Git
-- Mutación AST completa vía Lazarus
-- Integración real de mempool Bitcoin en Tycoon
-
-Consulta la [Matriz de capacidades](CAPABILITY_MATRIX.md) y el [Portal de documentación](README.md) para más detalles.
+Consulta la [Referencia de API](API_REFERENCE.md) y el [Recetario del desarrollador](DEVELOPER_COOKBOOK.md) para detalles de implementación actuales.

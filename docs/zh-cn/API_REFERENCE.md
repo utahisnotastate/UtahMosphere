@@ -16,7 +16,8 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0"
+  "version": "25.0",
+  "build": "golden-master-final"
 }
 ```
 
@@ -44,7 +45,9 @@ curl http://127.0.0.1:8999/health
     "mutation_count": 0
   },
   "tenants": ["my-app"],
-  "claimed": true
+  "claimed": true,
+  "swarm_peers": 2,
+  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
 }
 ```
 
@@ -131,18 +134,42 @@ curl -X POST http://127.0.0.1:8999/command \
 
 ### 已付款客户端 — 响应 `200`
 
-```json
-{
-  "status": "Unlocked",
-  "message": "Container hello executing."
-}
-```
-
-**示例：**
+UtahX 将请求代理至租户端口的 UtahContainerEngine 后端。响应体为 handler 的 JSON 输出。
 
 ```bash
 curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 ```
+
+---
+
+## POST /app/unlock
+
+提交支付解锁请求。Tycoon 登记待处理交易，在加密结算完成前（约 60 秒）返回 HTTP `202`。
+
+**请求体：**
+
+```json
+{
+  "app_name": "hello",
+  "client_id": "demo-client",
+  "payment_tx": "optional-tx-hint",
+  "amount_sats": 5000
+}
+```
+
+**响应 `202`：**
+
+```json
+{
+  "status": "pending",
+  "message": "Payment required. Awaiting ledger consensus.",
+  "tx_id": "tx_abc123",
+  "payment_address": "bc1q_utah_ephemeral_...",
+  "amount_sats": 5000
+}
+```
+
+结算完成后，使用相同 `X-Client-ID` 调用 `GET /app/{app_name}` 将代理至容器。
 
 ---
 

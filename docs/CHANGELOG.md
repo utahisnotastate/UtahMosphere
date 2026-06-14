@@ -2,6 +2,21 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [25.2] — Golden Master Final (2026-06)
+
+### Added
+- `utah_mesh_engine.py` — UtahNetes 5s multicast + `master_registry.json`
+- `utah_ota_lazarus.py` — OTA Lazarus channel for swarm kernel push
+- `POST /app/unlock` — Tycoon payment unlock with HTTP 202
+- Deterministic DHT routing: FIND_NODE, iterative peer lookup in Swarm
+- Tycoon `threading.Event` settlement loop with tenant activation callbacks
+
+### Changed
+- Utah-Tycoon, UtahNetes, Global Swarm: **Partial → Implemented**
+- `utahmosphere_master.py` — Golden Master Final entry point
+- `genesis_deploy.py` — module pre-warm + `threading.Event().wait()`
+- All locale CAPABILITY_MATRIX and API_REFERENCE docs updated
+
 ## [25.1] — Omega-Build Golden Master (2026-06)
 
 ### Added

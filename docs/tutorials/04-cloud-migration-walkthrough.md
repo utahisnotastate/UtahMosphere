@@ -8,7 +8,7 @@
 
 ## Before You Start
 
-Read the [Capability Matrix](../CAPABILITY_MATRIX.md). Not all cloud-parity APIs are implemented in v25.0. This tutorial focuses on **what works today** and **how to prepare** for full parity.
+Read the [Capability Matrix](../CAPABILITY_MATRIX.md). Golden Master Final v25.0 implements S3, Lambda, RDS, UtahX, and Tycoon parity. This tutorial maps cloud workloads to those endpoints.
 
 ---
 
@@ -16,11 +16,11 @@ Read the [Capability Matrix](../CAPABILITY_MATRIX.md). Not all cloud-parity APIs
 
 | Cloud Service | UtahMosphere Target | v25.0 Status |
 |---------------|---------------------|--------------|
-| AWS S3 | Utah S3 Mesh | Planned (endpoint docs ready) |
-| AWS Lambda | Utah Lambda / ContainerEngine | Handler stubs on deploy |
-| AWS RDS | Utah RDS Ledger | Planned |
+| AWS S3 | Utah S3 Mesh | **Implemented** — `/s3/{bucket}/{key}` |
+| AWS Lambda | Utah Lambda / ContainerEngine | **Implemented** — `/lambda/{fn}/invoke` |
+| AWS RDS | Utah RDS Ledger | **Implemented** — `/rds/read`, `/rds/write` |
 | App Engine / Web Apps | Voice/API deploy | **Implemented** via `/command` |
-| API Gateway | UtahX + kernel `:8999` | Partial |
+| API Gateway | UtahX + kernel `:8999` | **Implemented** — `/app/{name}` proxy + 402 gate |
 
 ---
 

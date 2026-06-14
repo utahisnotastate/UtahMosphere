@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v25.0 Omega-Genesis Golden Master)
+# 🌌 UtahMosphere OS (v25.0 Golden Master Final)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python-to-kernel logic gates — voice deploy, biometric security, S3/Lambda/RDS parity, and pay-per-access monetization.
+UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Final Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python socket-level event loops — voice deploy, biometric security, S3/Lambda/RDS parity, Tycoon settlement, UtahNetes mesh gossip, and deterministic Swarm DHT routing.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -26,8 +26,9 @@ UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Ma
 
 ### Reference
 
-- [Omega-Build Golden Master](docs/OMEGA_BUILD.md) — unified kernel architecture
-- [API Reference](docs/API_REFERENCE.md) — S3, Lambda, RDS, `/app` proxy, `/command`
+- [Omega-Build Golden Master Final](docs/OMEGA_BUILD.md) — unified kernel architecture
+- [OTA Lazarus Channel](docs/OTA_LAZARUS.md) — over-the-air swarm kernel updates
+- [API Reference](docs/API_REFERENCE.md) — S3, Lambda, RDS, `/app` proxy, `/app/unlock`, `/command`
 - [Capability Matrix](docs/CAPABILITY_MATRIX.md) — what works today vs. roadmap
 - [Local Development](docs/LOCAL_DEVELOPMENT.md) — Windows, macOS, Linux without root
 - [Operations Runbook](docs/OPERATIONS_RUNBOOK.md) — backup, recovery, monitoring
@@ -97,7 +98,7 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features (Golden Master)
+## 🛠 Features (Golden Master Final)
 
 - **UtahX:** Native HTTP/1.1 stream proxy to containers (replaces Nginx)
 - **UtahContainerEngine:** In-process handler servers on ports 8200+ (replaces Docker)
@@ -105,10 +106,11 @@ docker-compose up -d
 - **S3 Mesh:** Local NVMe object storage at `/s3/{bucket}/{key}`
 - **Utah Lambda:** `POST /lambda/{fn}/invoke` serverless handlers
 - **RDS Ledger:** `POST /rds/write`, `GET /rds/read/{key}` key-value store
-- **UtahNetes:** LAN multicast gossip sync
+- **Utah-Tycoon:** `POST /app/unlock` + HTTP 402 gate → `active-compute` after ~60s settlement
+- **UtahNetes Mesh:** 5s multicast gossip + `master_registry.json` sync (`utah_mesh_engine.py`)
+- **Global Swarm DHT:** Deterministic XOR routing, `FIND_NODE` peer lookup (`utah_swarm_protocol.py`)
+- **OTA Lazarus:** Push kernel updates to swarm nodes (`utah_ota_lazarus.py`)
 - **Quantum Ledger:** Biometric vibe-print node claim
-- **Global Swarm:** UDP P2P peer table
-- **Utah-Tycoon:** HTTP 402 payment gate + `active-compute` unlock
 - **Utah-Flux:** Reactive Tkinter dashboard
 
 ---

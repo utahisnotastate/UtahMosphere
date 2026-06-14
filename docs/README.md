@@ -11,7 +11,7 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
-| [Capability Matrix](CAPABILITY_MATRIX.md) | Everyone — what works today vs. roadmap |
+| [OTA Lazarus Channel](OTA_LAZARUS.md) | Over-the-air swarm kernel updates |
 | [API Reference](API_REFERENCE.md) | Developers and operators |
 | [Access Control Model](ACCESS_CONTROL.md) | Architects and security reviewers |
 | [Local Development Guide](LOCAL_DEVELOPMENT.md) | Developers on Windows, macOS, or Linux |

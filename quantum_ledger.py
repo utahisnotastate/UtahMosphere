@@ -15,8 +15,10 @@ from ledger_auth import AuthGuard
 
 try:
     from tpm_lock import TPMLocker
+    from quote_registry import quote_registry
 except ImportError:
     TPMLocker = None  # type: ignore
+    quote_registry = None  # type: ignore
 
 def _resolve_security_dir() -> str:
     primary = "/etc/utahmosphere/security"
@@ -77,6 +79,17 @@ class QuantumLedgerGuard:
             self.ledger["root_vibe_storage"] = "tpm_pcr0"
         else:
             self.ledger["root_vibe_storage"] = "ledger_json"
+        try:
+            from attestation_guard import HardwareAttestation
+            from ra_tls_guard import RATLSGuard
+            pcr = ""
+            if HardwareAttestation:
+                raw = HardwareAttestation.read_pcr0() or ""
+                import hashlib
+                pcr = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+            self.ledger["hardware_id"] = RATLSGuard.derive_hardware_id(acoustic_hash, pcr)
+        except Exception:
+            pass
         self._save_ledger()
         return "Biological resonance mapped. Hardware locked to General 23."
 

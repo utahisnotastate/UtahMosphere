@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v28.0 TPM-Hardened Attested)
+# 🌌 UtahMosphere OS (v29.0 Remote Attestation Infrastructure)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v28.0 completes the hardware trust chain: **TPM-locked Vibe-Print**, **4-region Oceania mempool failover**, and **RA-TLS mesh attestation** — cryptographically locked to your silicon worldwide.
+v29.0 completes **global swarm trust**: **Hardware Quote Registry**, **RA-TLS CA pinning**, and **biometric-to-TPM binding** — every node verifies every other node remotely via TPM-signed quotes.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -103,17 +103,18 @@ docker-compose up -d
 | `UTAH_ATTESTATION_ENFORCE` | `1` | TPM PCR0 bootstrap gate |
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Seal Vibe-Print to TPM on claim |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes on mesh sync |
+| `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning + registry check |
 | `UTAH_MEMPOOL_NODES` | 4 defaults | Comma-separated mempool API bases for failover |
 | `UTAH_FLUX_ACOUSTIC_HASH` | — | Root hash for Utah-Flux revocation panel |
 
 ---
 
-## 🛠 Features (v28.0 TPM-Hardened)
+## 🛠 Features (v29.0 Remote Attested)
 
-- **TPM Locker:** Vibe-Print sealed to PCR0 (`tpm_lock.py`)
-- **RA-TLS:** Mesh peer TPM quote verification (`ra_tls_attest.py`)
-- **Oceania Mempool:** 4-region failover including APAC endpoint
-- **Full v27 stack:** Attestation, nonce signing, AuthGuard, revocation UI, Genesis ISO
+- **Quote Registry:** Global hardware fingerprint ledger (`quote_registry.py`)
+- **RA-TLS Guard:** CA pinning + UtahX ingress (`ra_tls_guard.py`)
+- **Biometric-to-TPM:** Claim registers hardware quote in global registry
+- **Full v28 stack:** TPM Locker, RA-TLS mesh, Oceania mempool, nonce signing, AuthGuard, Genesis ISO
 
 ---
 

@@ -16,15 +16,16 @@ Elvytystarkistus kuormantasaajille ja seurannalle.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "28.0",
-  "build": "omega-build-v28-attested",
+  "version": "29.0",
+  "build": "omega-build-v29-remote-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1}
   }
 }
 ```
@@ -45,11 +46,65 @@ Myöntää RA-TLS TPM quoten UtahNetes mesh-solmujen vahvistukseen.
 
 ```json
 {
+  "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
-    "signature": "hmac-sha256-hex"
+    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "signature": "hmac-sha256-hex",
+    "ca_signature": "optional-rsa-hex"
   }
 }
+```
+
+Katso [RA-TLS mesh-todentaminen](RA_TLS.md) ja [Laitteisto quote -rekisteri](QUOTE_REGISTRY.md).
+
+---
+
+## GET /registry/quotes
+
+Vie globaali laitteisto quote -rekisteri (aktiiviset ja poistetut merkinnät).
+
+**Vastaus `200`:**
+
+```json
+{
+  "nodes": {
+    "abc123...": {
+      "public_quote": "{\"body\":\"...\",\"signature\":\"...\"}",
+      "vibe_hash": "64-char-sha256",
+      "pcr_digest": "...",
+      "node_id": "my-host",
+      "status": "active",
+      "registered_at": 1718323200.0
+    }
+  },
+  "stats": {"active": 1, "purged": 0, "total": 1}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/registry/quotes
+```
+
+---
+
+## POST /registry/purge
+
+Poista vaarantunut laitetunniste globaalista rekisteristä. Vain juuri-vibe-omistaja.
+
+**Pyynnön runko:**
+
+```json
+{
+  "hardware_id": "sha256-hardware-fingerprint",
+  "acoustic_hash": "root-vibe-hash-64chars",
+  "reason": "firmware tamper"
+}
+```
+
+**Vastaus `200`:**
+
+```json
+{"status": "purged", "hardware_id": "abc123..."}
 ```
 
 ---
@@ -194,6 +249,10 @@ Pääsy käyttöön otettuun vuokralaiss sovellukseen. Utah-Tycoon-maksuvaltuutu
 | Otsikko | Kuvaus |
 |---------|--------|
 | `X-Client-ID` | Valinnainen asiakastunniste (oletus: asiakkaan IP) |
+| `X-Utah-Hardware-ID` | RA-TLS-laitteiston sormenjälki (sisääntulon todentaminen) |
+| `X-Utah-RATLS-Quote` | JSON RA-TLS quote -payload |
+
+Kun `UTAH_RA_TLS_GUARD_ENFORCE=1`, puuttuvat tai virheelliset todentamisotsikot palauttavat **403** ennen välitystä.
 
 ### Maksamaton asiakas — Vastaus `402 Payment Required`
 
@@ -380,6 +439,6 @@ Peruuta delegoitu solmu `authorized_nodes[]`-listasta. Vain juuri-vibe-omistaja.
 | `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh -objektit |
 | `{UTAH_DATA_DIR}/rds/ledger.json` | RDS avain-arvo -tallennus |
 | `security/biometric_ledger.json` | Juuri-vibe-hash (paikallinen varmuuskopio jos `/etc` ei kirjoitettavissa) |
-| `tycoon/settlement_ledger.json` | Lasku- ja maksutila |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Globaali laitteisto quote -rekisteri |
 
 Oletus `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (varmuuskopio paikallisiin hakemistoihin oikeusvirheissä).

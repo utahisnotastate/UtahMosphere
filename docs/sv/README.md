@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. **v28.0 TPM-Hardened Attested** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **v29.0 Remote Attestation Infrastructure** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 
@@ -65,14 +65,14 @@ Välkommen till UtahMosphere OS dokumentation. **v28.0 TPM-Hardened Attested** �
 
 ---
 
-## UtahMosphere OS v28.0
+## UtahMosphere OS v29.0
 
-- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v28-attested`
+- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v29-remote-attested`
 - **TPM Locker** — `tpm_lock.py` förseglar Vibe-Print till PCR0 vid claim
 - **RA-TLS mesh-attestering** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Röstdriftsättning** — Voice Bridge anropar automatiskt `GET /nonce` och signerar
 - **Mempool-failover** — `tycoon_failover.py` i 4 regioner (US, EU, global, Oceanien)
 - **Biometrisk claim** — kommandot «Claim node»; TPM-bunden vibe-verifiering
 - **Nodåterkallande** — `POST /admin/revoke-node` och Utah-Flux-panel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v29.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` med mempool-avveckling i 4 regioner

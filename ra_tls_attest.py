@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere RA-TLS Attestation (v28.0)
-TPM quote verification before UtahNetes mesh gossip is accepted.
+UtahMosphere RA-TLS Attestation (v29.0)
+TPM quote verification + global quote registry before UtahNetes mesh gossip is accepted.
 """
 
 import hashlib
@@ -22,9 +22,18 @@ except ImportError:
 RA_TLS_ENFORCE = os.environ.get("UTAH_RA_TLS_ENFORCE", "1") != "0"
 KERNEL_ROOT_CA = os.environ.get(
     "UTAH_KERNEL_ROOT_CA",
-    "utahmosphere_omega_build_v28_root_ca",
+    "utahmosphere_omega_build_v29_root_ca",
 ).encode("utf-8")
+BUILD_ID = os.environ.get("UTAH_BUILD_ID", "omega-build-v29-remote-attested")
 QUOTE_STORE = Path(os.environ.get("UTAH_RA_TLS_QUOTE_DIR", "/etc/utahmosphere/security/ra_tls"))
+
+try:
+    from quote_registry import quote_registry
+    from ra_tls_guard import RATLSGuard, ra_tls_guard
+except ImportError:
+    quote_registry = None  # type: ignore
+    RATLSGuard = None  # type: ignore
+    ra_tls_guard = None  # type: ignore
 
 
 class RATLSAttestation:
@@ -33,16 +42,26 @@ class RATLSAttestation:
     EXTENSION_KEY = "ra_tls_quote"
 
     @staticmethod
-    def generate_quote(node_id: str, build_id: str = "omega-build-v28-attested") -> Dict[str, str]:
+    def generate_quote(
+        node_id: str,
+        build_id: str = BUILD_ID,
+        vibe_hash: Optional[str] = None,
+        hardware_id: Optional[str] = None,
+    ) -> Dict[str, str]:
         pcr_digest = ""
         if HardwareAttestation:
             pcr = HardwareAttestation.read_pcr0() or ""
             pcr_digest = hashlib.sha256(pcr.encode("utf-8")).hexdigest()
 
+        if RATLSGuard and vibe_hash and not hardware_id:
+            hardware_id = RATLSGuard.derive_hardware_id(vibe_hash, pcr_digest, node_id)
+
         quote_body = json.dumps({
             "node_id": node_id,
+            "hardware_id": hardware_id,
             "build": build_id,
             "pcr0_digest": pcr_digest,
+            "vibe_hash": vibe_hash,
             "kernel_root": KERNEL_ROOT_CA.decode("utf-8"),
         }, sort_keys=True, separators=(",", ":"))
 
@@ -53,6 +72,8 @@ class RATLSAttestation:
         ).hexdigest()
 
         quote = {"body": quote_body, "signature": signature}
+        if ra_tls_guard:
+            quote["ca_signature"] = ra_tls_guard.sign_hardware_quote(quote_body)
 
         if TPMLocker and TPMLocker._tpm_available():
             try:
@@ -102,6 +123,11 @@ class RATLSAttestation:
             return False
         if parsed.get("kernel_root") != KERNEL_ROOT_CA.decode("utf-8"):
             return False
+        hw_id = parsed.get("hardware_id")
+        if quote_registry and hw_id and not quote_registry.is_valid_hardware(hw_id):
+            return False
+        if ra_tls_guard and not ra_tls_guard.verify_quote_payload(quote, hw_id):
+            return False
         if HardwareAttestation and parsed.get("pcr0_digest"):
             current_pcr = HardwareAttestation.read_pcr0() or ""
             current_digest = hashlib.sha256(current_pcr.encode("utf-8")).hexdigest()
@@ -117,14 +143,24 @@ class RATLSAttestation:
         return RATLSAttestation.verify_peer_quote(quote)
 
     @staticmethod
-    def attach_to_message(message: dict, node_id: str) -> dict:
+    def attach_to_message(message: dict, node_id: str, vibe_hash: Optional[str] = None) -> dict:
         enriched = dict(message)
-        enriched[RATLSAttestation.EXTENSION_KEY] = RATLSAttestation.generate_quote(node_id)
+        enriched[RATLSAttestation.EXTENSION_KEY] = RATLSAttestation.generate_quote(
+            node_id, vibe_hash=vibe_hash
+        )
+        if quote_registry:
+            enriched["quote_registry"] = quote_registry.export_nodes()
         return enriched
 
     @staticmethod
     def status() -> dict:
-        return {
+        base = {
             "enforce": RA_TLS_ENFORCE,
             "kernel_root_ca": KERNEL_ROOT_CA.decode("utf-8"),
+            "build": BUILD_ID,
         }
+        if quote_registry:
+            base["registry"] = quote_registry.stats()
+        if ra_tls_guard:
+            base["guard"] = RATLSGuard.status()
+        return base

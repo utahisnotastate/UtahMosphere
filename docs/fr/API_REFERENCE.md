@@ -16,15 +16,16 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "28.0",
-  "build": "omega-build-v28-attested",
+  "version": "29.0",
+  "build": "omega-build-v29-remote-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1}
   }
 }
 ```
@@ -45,11 +46,65 @@ curl http://127.0.0.1:8999/health
 
 ```json
 {
+  "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
-    "signature": "hmac-sha256-hex"
+    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "signature": "hmac-sha256-hex",
+    "ca_signature": "optional-rsa-hex"
   }
 }
+```
+
+Voir [Attestation RA-TLS du maillage](RA_TLS.md) et [Registre des citations matérielles](QUOTE_REGISTRY.md).
+
+---
+
+## GET /registry/quotes
+
+Exporter le registre global des citations matérielles (entrées actives et purgées).
+
+**Réponse `200` :**
+
+```json
+{
+  "nodes": {
+    "abc123...": {
+      "public_quote": "{\"body\":\"...\",\"signature\":\"...\"}",
+      "vibe_hash": "64-char-sha256",
+      "pcr_digest": "...",
+      "node_id": "my-host",
+      "status": "active",
+      "registered_at": 1718323200.0
+    }
+  },
+  "stats": {"active": 1, "purged": 0, "total": 1}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/registry/quotes
+```
+
+---
+
+## POST /registry/purge
+
+Purger un identifiant matériel compromis du registre global. Titulaire vibe racine uniquement.
+
+**Corps de la requête :**
+
+```json
+{
+  "hardware_id": "sha256-hardware-fingerprint",
+  "acoustic_hash": "root-vibe-hash-64chars",
+  "reason": "firmware tamper"
+}
+```
+
+**Réponse `200` :**
+
+```json
+{"status": "purged", "hardware_id": "abc123..."}
 ```
 
 ---
@@ -194,6 +249,10 @@ Accéder à une application locataire déployée. Protégé par l'autorisation d
 | En-tête | Description |
 |---------|-------------|
 | `X-Client-ID` | Identifiant client optionnel (par défaut : IP du client) |
+| `X-Utah-Hardware-ID` | Empreinte matérielle RA-TLS (attestation d'ingress) |
+| `X-Utah-RATLS-Quote` | Charge utile JSON de citation RA-TLS |
+
+Lorsque `UTAH_RA_TLS_GUARD_ENFORCE=1`, des en-têtes d'attestation manquants ou invalides renvoient **403** avant le proxy.
 
 ### Client non payé — Réponse `402 Payment Required`
 
@@ -380,6 +439,6 @@ Révoquer un nœud délégué de `authorized_nodes[]`. Titulaire vibe racine uni
 | `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | Objets S3 Mesh |
 | `{UTAH_DATA_DIR}/rds/ledger.json` | Magasin clé-valeur RDS |
 | `security/biometric_ledger.json` | Hash vibe racine (repli local si `/etc` non inscriptible) |
-| `tycoon/settlement_ledger.json` | État des factures et paiements |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Registre global des citations matérielles |
 
 `UTAH_DATA_DIR` par défaut : `/var/lib/utahmosphere` (repli vers des répertoires locaux en cas d'erreur de permission).

@@ -39,9 +39,11 @@ class UtahNetesMesh:
         swarm_broadcast: Optional[Callable[[dict], None]] = None,
         auth_guard: Optional["AuthGuard"] = None,
         node_hash: Optional[str] = None,
+        vibe_hash: Optional[str] = None,
     ):
         self.node_id = node_id
         self.node_hash = node_hash or node_id
+        self._vibe_hash = vibe_hash
         self._auth_guard = auth_guard
         self._get_registry = get_registry
         self._apply_registry = apply_registry
@@ -79,7 +81,9 @@ class UtahNetesMesh:
                 if self._auth_guard and AuthGuard is not None:
                     message = self._auth_guard.sign_message(self.node_hash, message)
                 if RATLSAttestation is not None:
-                    message = RATLSAttestation.attach_to_message(message, self.node_id)
+                    message = RATLSAttestation.attach_to_message(
+                        message, self.node_id, vibe_hash=self._vibe_hash
+                    )
                 payload = json.dumps(message).encode("utf-8")
                 tx.sendto(payload, (MULTICAST_ADDR, GOSSIP_PORT))
                 self._persist_master_registry(registry)

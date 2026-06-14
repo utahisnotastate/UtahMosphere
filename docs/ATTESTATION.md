@@ -1,6 +1,6 @@
-# Hardware Attestation (v28.0)
+# Hardware Attestation (v29.0)
 
-TPM 2.0 PCR0 verification plus **TPM-locked Vibe-Print sealing** anchor hardware root-of-trust from Genesis boot through voice command authorization.
+TPM 2.0 PCR0 verification, **TPM-locked Vibe-Print sealing**, and **global hardware quote registration** anchor hardware root-of-trust from Genesis boot through mesh RA-TLS.
 
 ## Bootstrap Gate
 
@@ -22,9 +22,20 @@ python3 -c "from tpm_lock import TPMLocker; print(TPMLocker.unseal_vibe_print())
 
 If PCR0 changes (kernel tamper, hardware swap), unseal fails and voice commands are rejected.
 
+## Biometric-to-TPM Binding (v29.0)
+
+On claim, the kernel closes the loop:
+
+1. Capture acoustic MFCCs → vibe-print hash
+2. Seal to TPM PCR0
+3. Derive `hardware_id` and sign RA-TLS hardware quote
+4. `quote_registry.register_node()` — push to global swarm ledger
+
+See [Hardware Quote Registry](QUOTE_REGISTRY.md).
+
 ## RA-TLS Mesh Quotes
 
-See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer verification quotes.
+See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer verification quotes with `hardware_id`.
 
 ## Kernel `/health` Attestation Snapshot
 
@@ -41,8 +52,10 @@ See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer v
   },
   "ra_tls": {
     "enforce": true,
-    "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"
-  }
+    "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca",
+    "registry": {"active": 1, "purged": 0, "total": 1}
+  },
+  "quote_registry": {"active": 1, "purged": 0, "total": 1}
 }
 ```
 
@@ -53,6 +66,7 @@ See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer v
 | `UTAH_ATTESTATION_ENFORCE` | `1` | Bootstrap TPM gate |
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | TPM seal on claim |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Mesh quote enforcement |
+| `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 
 Dev skip all TPM layers:
 
@@ -60,6 +74,7 @@ Dev skip all TPM layers:
 export UTAH_ATTESTATION_ENFORCE=0
 export UTAH_TPM_LOCK_ENFORCE=0
 export UTAH_RA_TLS_ENFORCE=0
+export UTAH_RA_TLS_GUARD_ENFORCE=0
 ```
 
 ## Prerequisites
@@ -70,6 +85,7 @@ sudo apt-get install -y tpm2-tools
 
 ## Related
 
+- [Quote Registry](QUOTE_REGISTRY.md)
 - [RA-TLS](RA_TLS.md)
 - [Genesis ISO](GENESIS_ISO.md)
 - [Access Control](ACCESS_CONTROL.md)

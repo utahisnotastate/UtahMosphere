@@ -16,15 +16,16 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "28.0",
-  "build": "omega-build-v28-attested",
+  "version": "29.0",
+  "build": "omega-build-v29-remote-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1}
   }
 }
 ```
@@ -45,12 +46,67 @@ Utfärdar en RA-TLS TPM quote för verifiering av UtahNetes mesh-noder.
 
 ```json
 {
+  "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
-    "signature": "hmac-sha256-hex"
+    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "signature": "hmac-sha256-hex",
+    "ca_signature": "optional-rsa-hex"
   }
 }
 ```
+
+
+
+---
+
+## GET /registry/quotes
+
+Export global hardware quote registry.
+
+**Response `200`:**
+
+```json
+{
+  "nodes": {
+    "abc123...": {
+      "public_quote": "{\"body\":\"...\",\"signature\":\"...\"}",
+      "vibe_hash": "64-char-sha256",
+      "pcr_digest": "...",
+      "node_id": "my-host",
+      "status": "active",
+      "registered_at": 1718323200.0
+    }
+  },
+  "stats": {"active": 1, "purged": 0, "total": 1}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/registry/quotes
+```
+
+---
+
+## POST /registry/purge
+
+Purge compromised hardware ID. Root vibe holder only.
+
+**Request body:**
+
+```json
+{
+  "hardware_id": "sha256-hardware-fingerprint",
+  "acoustic_hash": "root-vibe-hash-64chars",
+  "reason": "firmware tamper"
+}
+```
+
+**Response `200`:**
+
+```json
+{"status": "purged", "hardware_id": "abc123..."}
+```
+
 
 ---
 
@@ -194,6 +250,10 @@ payload = get_signed_payload("deploy application hello", acoustic_hash)
 | Header | Beskrivning |
 |--------|-------------|
 | `X-Client-ID` | Valfri klientidentifierare (standard: klient-IP) |
+| `X-Utah-Hardware-ID` | RA-TLS hardware fingerprint (ingress attestation) |
+| `X-Utah-RATLS-Quote` | JSON RA-TLS quote payload |
+
+When `UTAH_RA_TLS_GUARD_ENFORCE=1`, missing or invalid attestation headers return **403** before proxy.
 
 ### Obetald klient — Svar `402 Payment Required`
 
@@ -380,6 +440,7 @@ Efter avveckling proxar `GET /app/{app_name}` med samma `X-Client-ID` till conta
 | `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh-objekt |
 | `{UTAH_DATA_DIR}/rds/ledger.json` | RDS nyckel-värde-lagring |
 | `security/biometric_ledger.json` | Rot-vibe-hash (lokal fallback om `/etc` inte skrivbar) |
-| `tycoon/settlement_ledger.json` | Faktura- och betalningstillstånd |
+| `tycoon/settlement_ledger.json` |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry | | Faktura- och betalningstillstånd |
 
 Standard `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (fallback till lokala kataloger vid behörighetsfel).

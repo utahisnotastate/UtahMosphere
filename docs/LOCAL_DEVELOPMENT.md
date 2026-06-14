@@ -78,6 +78,28 @@ Requires a display (Tkinter). Skips gracefully in headless environments.
 
 ---
 
+## Skip Attestation (Dev)
+
+On Linux/macOS without TPM:
+
+```bash
+export UTAH_ATTESTATION_ENFORCE=0
+export UTAH_TPM_LOCK_ENFORCE=0
+export UTAH_RA_TLS_ENFORCE=0
+export UTAH_RA_TLS_GUARD_ENFORCE=0
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:UTAH_ATTESTATION_ENFORCE = "0"
+$env:UTAH_TPM_LOCK_ENFORCE = "0"
+$env:UTAH_RA_TLS_ENFORCE = "0"
+$env:UTAH_RA_TLS_GUARD_ENFORCE = "0"
+```
+
+---
+
 ## Directory Layout (Local)
 
 When `UTAH_DATA_DIR` is set to `./.utah-data`:

@@ -16,15 +16,16 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "28.0",
-  "build": "omega-build-v28-attested",
+  "version": "29.0",
+  "build": "omega-build-v29-remote-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1}
   }
 }
 ```
@@ -45,14 +46,66 @@ Issue an RA-TLS TPM quote for UtahNetes mesh peer verification.
 
 ```json
 {
+  "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
-    "signature": "hmac-sha256-hex"
+    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "signature": "hmac-sha256-hex",
+    "ca_signature": "optional-rsa-hex"
   }
 }
 ```
 
-See [RA-TLS Mesh Attestation](RA_TLS.md).
+See [RA-TLS Mesh Attestation](RA_TLS.md) and [Hardware Quote Registry](QUOTE_REGISTRY.md).
+
+---
+
+## GET /registry/quotes
+
+Export the global hardware quote registry (active and purged entries).
+
+**Response `200`:**
+
+```json
+{
+  "nodes": {
+    "abc123...": {
+      "public_quote": "{\"body\":\"...\",\"signature\":\"...\"}",
+      "vibe_hash": "64-char-sha256",
+      "pcr_digest": "...",
+      "node_id": "my-host",
+      "status": "active",
+      "registered_at": 1718323200.0
+    }
+  },
+  "stats": {"active": 1, "purged": 0, "total": 1}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/registry/quotes
+```
+
+---
+
+## POST /registry/purge
+
+Purge a compromised hardware ID from the global registry. Root vibe holder only.
+
+**Request body:**
+
+```json
+{
+  "hardware_id": "sha256-hardware-fingerprint",
+  "acoustic_hash": "root-vibe-hash-64chars",
+  "reason": "firmware tamper"
+}
+```
+
+**Response `200`:**
+
+```json
+{"status": "purged", "hardware_id": "abc123..."}
+```
 
 ---
 
@@ -196,6 +249,10 @@ Access a deployed tenant application. Gated by Utah-Tycoon payment authorization
 | Header | Description |
 |--------|-------------|
 | `X-Client-ID` | Optional client identifier (defaults to client IP) |
+| `X-Utah-Hardware-ID` | RA-TLS hardware fingerprint (ingress attestation) |
+| `X-Utah-RATLS-Quote` | JSON RA-TLS quote payload |
+
+When `UTAH_RA_TLS_GUARD_ENFORCE=1`, missing or invalid attestation headers return **403** before proxy.
 
 ### Unpaid client — Response `402 Payment Required`
 
@@ -382,6 +439,6 @@ Revoke a delegated node from `authorized_nodes[]`. Root vibe holder only. Utah-F
 | `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | S3 Mesh objects |
 | `{UTAH_DATA_DIR}/rds/ledger.json` | RDS key-value store |
 | `security/biometric_ledger.json` | Root vibe hash (local fallback if `/etc` not writable) |
-| `tycoon/settlement_ledger.json` | Invoice and payment state |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 
 Default `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (falls back to local dirs on permission errors).

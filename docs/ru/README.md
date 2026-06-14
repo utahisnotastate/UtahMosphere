@@ -1,6 +1,6 @@
 # Портал документации UtahMosphere
 
-Добро пожаловать в центр документации UtahMosphere OS. **v28.0 TPM-Hardened Attested** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
+Добро пожаловать в центр документации UtahMosphere OS. **v29.0 Remote Attestation Infrastructure** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
 
 ---
 
@@ -77,22 +77,22 @@
 
 ---
 
-## Ключевые характеристики UtahMosphere OS v28.0
+## Ключевые характеристики UtahMosphere OS v29.0
 
-- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v28-attested`
+- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v29-remote-attested`
 - **TPM Locker** — `tpm_lock.py` запечатывает Vibe-Print в PCR0 при claim
 - **RA-TLS mesh-аттестация** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Голосовое развёртывание** — Voice Bridge автоматически вызывает `GET /nonce` и подписывает
 - **Failover mempool** — `tycoon_failover.py` в 4 регионах (US, EU, global, Океания)
 - **Биометрическое закрепление узла** — команда «Claim node»; TPM-привязанная проверка vibe
 - **Отзыв узлов** — `POST /admin/revoke-node` и панель Utah-Flux
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v29.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` с расчётом через mempool в 4 регионах
 
 ---
 
 ## Дополнительные материалы
 
-- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v28.0
+- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v29.0
 - [Справочник API](API_REFERENCE.md) — все конечные точки HTTP
 - [Техническое погружение](TECHNICAL_DEEP_DIVE.md) — архитектура платформы

@@ -1,6 +1,8 @@
 # Portail de documentation UtahMosphere
 
-Bienvenue sur le hub de documentation d'UtahMosphere OS **v28.0 TPM-Hardened Attested** — plateforme souveraine edge bare-metal unifiée, port **8999**. La v28.0 complète la chaîne de confiance souveraine : **verrouillage TPM Vibe-Print**, **attestation RA-TLS du maillage**, **basculement mempool 4 régions** et **signature automatique des nonces vocaux** — du silicium à l'essaim mondial. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+
+**Autres langues :** chaque locale est un site entièrement séparé (une langue par page). Consultez [Langues de la documentation](../LANGUAGES.md).
 
 ---
 
@@ -8,7 +10,11 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS **v28.0 TPM-Hardened Att
 
 | Document | Idéal pour |
 |----------|------------|
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v28.0 TPM-Hardened Attested vs. travaux futurs |
+| [Registre des citations matérielles](QUOTE_REGISTRY.md) | Registre global des empreintes matérielles TPM |
+| [Attestation RA-TLS du maillage](RA_TLS.md) | Vérification des citations TPM + épinglage CA pour les pairs du maillage |
+| [Attestation matérielle](ATTESTATION.md) | TPM PCR0 + scellement Vibe-Print |
+| [Installateur Genesis ISO](GENESIS_ISO.md) | Image de démarrage UEFI sur clé USB |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v29.0 Infrastructure d'attestation à distance |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -78,15 +84,17 @@ Mini-projets complets à forker et étendre :
 
 ---
 
-## Fonctionnalités v28.0 TPM-Hardened Attested
+## Fonctionnalités v29.0 Infrastructure d'attestation à distance
 
+- **Registre de citations (`quote_registry.py`) :** registre global des empreintes matérielles TPM ; enregistrement, purge et fusion sur le maillage
+- **Garde RA-TLS (`ra_tls_guard.py`) :** épinglage CA ; ingress UtahX ; vérification OID X.509
+- **RA-TLS (`ra_tls_attest.py`) :** citations TPM sur gossip du maillage ; réplication du registre
 - **TPM Locker :** Vibe-Print scellé au PCR0 via `tpm2_create` / `tpm2_unseal` (`tpm_lock.py`)
-- **RA-TLS :** citations TPM sur gossip du maillage ; vérification des pairs avant sync (`ra_tls_attest.py`)
 - **Basculement mempool :** basculement US / EU / global / Océanie sur 4 régions (`tycoon_failover.py`)
 - **Attestation matérielle :** porte PCR0 TPM 2.0 (`attestation_guard.py`) dans bootstrap
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v28 :** `utah_genesis_v28.iso`
+- **Genesis ISO v29 :** `utah_genesis_v29.iso`
 
-Build `omega-build-v28-attested`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v29-remote-attested`. Entrée recommandée : `python3 utahmosphere_master.py`.

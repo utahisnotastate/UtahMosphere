@@ -11,7 +11,8 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
-| [RA-TLS Mesh Attestation](RA_TLS.md) | TPM quote verification for mesh peers |
+| [Hardware Quote Registry](QUOTE_REGISTRY.md) | Global TPM hardware fingerprint ledger |
+| [RA-TLS Mesh Attestation](RA_TLS.md) | TPM quote verification + CA pinning for mesh peers |
 | [Hardware Attestation](ATTESTATION.md) | TPM PCR0 + Vibe-Print sealing |
 | [Genesis ISO Installer](GENESIS_ISO.md) | Flash-drive UEFI boot image |
 | [OTA Lazarus Channel](OTA_LAZARUS.md) | Over-the-air swarm kernel updates |

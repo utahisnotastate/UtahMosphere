@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v28.0 TPM-Hardened Attested** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v29.0 Remote Attestation Infrastructure** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 
@@ -65,14 +65,14 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v28.0 TPM-Hardened 
 
 ---
 
-## UtahMosphere OS v28.0
+## UtahMosphere OS v29.0
 
-- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v28-attested`
+- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v29-remote-attested`
 - **TPM Locker** — `tpm_lock.py` pitstab Vibe-Print PCR0-sse claim-il
 - **RA-TLS mesh-tõendamine** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Hääljuurutus** — Voice Bridge kutsub automaatselt `GET /nonce` ja allkirjastab
 - **Mempool varuühendus** — `tycoon_failover.py` neljas piirkonnas (USA, EL, globaalne, Okeaania)
 - **Biomeetriline claim** — käsk «Claim node»; TPM-iga seotud vibe kontroll
 - **Sõlme tühistamine** — `POST /admin/revoke-node` ja Utah-Flux paneel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v29.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4-piirkonnilise mempool arveldusega

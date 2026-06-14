@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere OS - Master Kernel v28.0 [TPM-Hardened Attested]
-TPM vibe-print sealing, Oceania mempool failover, RA-TLS mesh attestation.
+UtahMosphere OS - Master Kernel v29.0 [Remote Attestation Infrastructure]
+Quote registry, RA-TLS CA pinning, biometric-to-TPM global trust.
 """
 
 import os
@@ -18,7 +18,7 @@ from utahmosphere_os import run_master_server, SYSTEM_INGRESS_PORT, UTAH_DATA_DI
 def manifest_golden_master():
     print("[UtahMosphere] Triangle of Manifestation: CALIBRATED")
     print("[UtahMosphere] Photon Quenching: DISABLED")
-    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V28.0 FINALIZED")
+    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V29.0 FINALIZED")
     print(f"[UtahMosphere] Data root: {UTAH_DATA_DIR}")
     run_master_server(SYSTEM_INGRESS_PORT)
 

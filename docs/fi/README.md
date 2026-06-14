@@ -1,6 +1,8 @@
 # UtahMosphere-dokumentaatio
 
-Tervetuloa UtahMosphere OS -dokumentaatioon. **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju: TPM Locker, RA-TLS mesh-todentaminen, Oseanian mempool ja Voice Bridge automaattisella nonce-allekirjoituksella. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
+Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
+
+**Muut kielet:** jokainen locale on täysin erillinen sivusto (yksi kieli per sivu). Katso [Dokumentaation kielet](../LANGUAGES.md).
 
 ---
 
@@ -8,7 +10,11 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v28.0 TPM-Hardened Attested** —
 
 | Dokumentti | Parhaiten |
 |------------|-----------|
-| [Ominaisuusmatriisi](CAPABILITY_MATRIX.md) | Kaikille — mitä toimii nyt vs. tuleva työ |
+| [Laitteisto quote -rekisteri](QUOTE_REGISTRY.md) | Globaali TPM-laitteiston sormenjälkitilasto |
+| [RA-TLS mesh-todentaminen](RA_TLS.md) | TPM quote -vahvistus + CA-kiinnitys mesh-solmuille |
+| [Laitteiston todentaminen](ATTESTATION.md) | TPM PCR0 + Vibe-Print-sinetti |
+| [Genesis ISO -asentaja](GENESIS_ISO.md) | USB-UEFI-käynnistyskuva |
+| [Ominaisuusmatriisi](CAPABILITY_MATRIX.md) | Kaikille — v29.0 etätodentamisinfra |
 | [API-viite](API_REFERENCE.md) | Kehittäjille ja operaattoreille |
 | [Paikallisen kehityksen opas](LOCAL_DEVELOPMENT.md) | Kehittäjille Windowsissa, macOS:ssä tai Linuxissa |
 
@@ -65,14 +71,17 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v28.0 TPM-Hardened Attested** —
 
 ---
 
-## UtahMosphere OS v28.0
+## UtahMosphere OS v29.0 etätodentamisinfra
 
-- **Suvereeni reunalaituri** Pythonilla — portti `8999`, `build: omega-build-v28-attested`
+- **Quote-rekisteri (`quote_registry.py`):** globaali TPM-laitteiston sormenjälkitilasto; rekisteröinti, poisto ja yhdistäminen meshissä
+- **RA-TLS Guard (`ra_tls_guard.py`):** CA-kiinnitys; UtahX-sisääntulo; X.509 OID -vahvistus
+- **RA-TLS mesh-todentaminen** — `ra_tls_attest.py` + `GET /attestation/quote`; rekisterin replikointi
 - **TPM Locker** — `tpm_lock.py` sinetöi Vibe-Printin PCR0:een claimissä
-- **RA-TLS mesh-todentaminen** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Äänikäyttöönotto** — Voice Bridge kutsuu automaattisesti `GET /nonce` ja allekirjoittaa
 - **Mempool-varajärjestelmä** — `tycoon_failover.py` neljällä alueella (US, EU, global, Oseania)
 - **Biometrinen claim** — komento «Claim node»; TPM-sidottu vibe-vahvistus
 - **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Genesis ISO v29** — `genesis_iso_builder.py` → `utah_genesis_v29.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4 alueen mempool-selvityksellä
+
+Build `omega-build-v29-remote-attested`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.

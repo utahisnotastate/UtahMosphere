@@ -2,6 +2,24 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [29.0] — Remote Attestation Infrastructure (2026-06)
+
+### Added
+- `ra_tls_guard.py` — CA pinning, X.509 TPM quote OID `1.3.6.1.4.1.99999`, UtahX ingress guard
+- `quote_registry.py` — distributed hardware quote registry with purge and mesh merge
+- `GET /registry/quotes` — export registered hardware fingerprints
+- `POST /registry/purge` — quarantine compromised hardware (root vibe only)
+- Biometric-to-TPM binding: claim registers hardware quote globally
+- [Hardware Quote Registry](QUOTE_REGISTRY.md) documentation
+
+### Changed
+- `ra_tls_attest.py` — v29 build, `hardware_id`, registry replication on mesh gossip
+- `utahx_proxy.py` — RA-TLS header verification before proxy
+- `utah_mesh_engine.py` — vibe-bound quotes on mesh sync
+- Genesis ISO: `utah_genesis_v29.iso`
+- Build: `omega-build-v29-remote-attested`
+- v28.0 roadmap complete (remote CA pinning + quote registry); all locale docs updated
+
 ## [28.0] — TPM-Hardened Attested (2026-06)
 
 ### Added

@@ -1,6 +1,6 @@
 # Ominaisuusmatriisi
 
-UtahMosphere OS **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju on valmis.
+UtahMosphere OS **v29.0 Etätodentamisinfra** — suvereenit luottamusankkurit: globaali laitteisto quote -rekisteri, RA-TLS CA -kiinnitys, biometrinen TPM-sidonta.
 
 ---
 
@@ -8,14 +8,16 @@ UtahMosphere OS **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju on 
 
 | Päätepiste | Metodi | Tila | Huomiot |
 |------------|--------|------|---------|
-| `/health` | GET | **Toteutettu** | `build: omega-build-v28-attested` + täydellinen todentamistilannekuva |
-| `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote mesh-solmujen vahvistukseen |
+| `/health` | GET | **Toteutettu** | `build: omega-build-v29-remote-attested` + täydellinen todentamistilannekuva |
+| `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote + `hardware_id` |
+| `/registry/quotes` | GET | **Toteutettu** | Globaalin laitteisto quote -rekisterin vienti |
+| `/registry/purge` | POST | **Toteutettu** | Vaarantuneen laitteiston poisto (juuri-vibe) |
 | `/nonce` | GET | **Toteutettu** | Äänikomennon uudelleentoiston eston nonce |
-| `/status` | GET | **Toteutettu** | TPM lock, RA-TLS, Oseanian mempool-alueet |
-| `/command` | POST | **Toteutettu** | Ääni + nonce + TPM-sidottu vibe-vahvistus |
+| `/status` | GET | **Toteutettu** | TPM lock, RA-TLS guard, quote-rekisterin tilastot |
+| `/command` | POST | **Toteutettu** | Ääni + nonce + TPM-sidottu vibe + rekisterin push claimissä |
 | `/admin/revoke-node` | POST | **Toteutettu** | Vain juuri — solmun peruutus |
 | `/app/unlock` | POST | **Toteutettu** | 4 alueen mempool-varajärjestelmän selvitys |
-| `/app/{name}` | GET | **Toteutettu** | Tycoon 402 + UtahX-välitys |
+| `/app/{name}` | GET | **Toteutettu** | Tycoon 402 + UtahX-välitys RA-TLS-sisääntulolla |
 | `/s3/*`, `/lambda/*`, `/rds/*` | * | **Toteutettu** | Täysi pilvipariteetti |
 
 ---
@@ -24,14 +26,16 @@ UtahMosphere OS **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju on 
 
 | Komponentti | Tila | Mitä toimii tänään |
 |-------------|------|-------------------|
+| **Quote-rekisteri (`quote_registry.py`)** | **Toteutettu** | Laitteisto quote -rekisteröinti, poisto, yhdistäminen, pysyvyys |
+| **RA-TLS Guard (`ra_tls_guard.py`)** | **Toteutettu** | CA-kiinnitys; UtahX-sisääntulo; X.509 OID -vahvistus |
+| **RA-TLS (`ra_tls_attest.py`)** | **Toteutettu** | TPM quote mesh-gossipissa; rekisterin replikointi |
 | **TPM Locker (`tpm_lock.py`)** | **Toteutettu** | Vibe-Print sinetöity PCR0:een `tpm2_create` / `tpm2_unseal` -kautta |
-| **RA-TLS (`ra_tls_attest.py`)** | **Toteutettu** | TPM quote mesh-gossipissa; solmun vahvistus ennen synkronointia |
 | **Mempool-varajärjestelmä (`tycoon_failover.py`)** | **Toteutettu** | US / EU / global / **Oseania** 4 alueen varajärjestelmä |
 | **Laitteiston todentaminen (`attestation_guard.py`)** | **Toteutettu** | Bootstrap PCR0-portti |
 | **Voice Bridge Signed** | **Toteutettu** | Automaattinen nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Toteutettu** | Mesh + ääniturvallisuus |
-| **UtahNetes + Swarm DHT** | **Toteutettu** | RA-TLS + allekirjoitettu gossip |
-| **Genesis ISO v28** | **Toteutettu** | `utah_genesis_v28.iso` |
+| **UtahNetes + Swarm DHT** | **Toteutettu** | RA-TLS + allekirjoitettu gossip + rekisterin yhdistäminen |
+| **Genesis ISO v29** | **Toteutettu** | `utah_genesis_v29.iso` |
 | **Täysi pilvipariteetti** | **Toteutettu** | S3, Lambda, RDS, UtahX, kontit |
 
 ---
@@ -42,7 +46,7 @@ UtahMosphere OS **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju on 
 |-----------|------|
 | `python3 utahmosphere_master.py` | **Suositeltu** |
 | `sudo bash bootstrap.sh` | **Tuotanto** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v28 ISO** |
+| `python3 genesis_iso_builder.py` | **v29 ISO** |
 
 ## Ympäristö
 
@@ -50,12 +54,13 @@ UtahMosphere OS **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju on 
 |----------|--------|-----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Vaadi TPM-sinetti claimissä |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Vaadi RA-TLS quote meshissä |
+| `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX-sisääntulon CA-kiinnitys |
 | `UTAH_MEMPOOL_NODES` | 4 oletusta | Korvaa mempool-varajärjestelmän lista |
 
 ## Tiekartta
 
-Kaikki v27.0:n tiekartan kohdat on **toteutettu** v28.0:ssa.
+Kaikki v28.0:n tiekartan kohdat on **toteutettu** v29.0:ssa (etä-RA-TLS CA -kiinnitys, laitteisto quote -rekisteri).
 
-Tulevaisuus: etä-RA-TLS CA -kiinnitys, laitteisto quote -rekisteripalvelu.
+Tulevaisuus: laitteisto quote -DHT-federointi, automaattinen PCR-driftin tunnistus.
 
-Katso [API-viite](API_REFERENCE.md) ja [Kehittäjän keittokirja](DEVELOPER_COOKBOOK.md).
+Katso [Quote-rekisteri](QUOTE_REGISTRY.md), [Todentaminen](ATTESTATION.md), [RA-TLS](RA_TLS.md), [Genesis ISO](GENESIS_ISO.md) ja [Muutosloki](CHANGELOG.md).

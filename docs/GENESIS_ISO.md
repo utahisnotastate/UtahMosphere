@@ -1,41 +1,40 @@
-# Genesis ISO Installer (v28.0)
+# Genesis ISO Installer (v29.0)
 
-Build `utah_genesis_v28.iso` with Alpine boot, TPM attestation, TPM-locked claim, and RA-TLS-ready mesh stack.
+Build `utah_genesis_v29.iso` with Alpine boot, TPM attestation, TPM-locked claim, RA-TLS guard, and hardware quote registry.
 
 ## Build
 
 ```bash
 python3 genesis_iso_builder.py
-# or ./mk_iso.sh
+# or
+sudo bash mk_iso.sh
 ```
 
-Output: `utah_genesis_v28.iso`
+Output: `utah_genesis_v29.iso`
 
-## Boot Flow
+## Contents
 
-1. Flash ISO to USB and boot hardware
-2. **Genesis Auto-Install** passes `autoinstall=/bootstrap.sh`
-3. `bootstrap.sh` verifies TPM PCR0 (`attestation_guard`)
-4. After claim, Vibe-Print seals to TPM PCR0 (`tpm_lock`)
-
-## Dev / Lab Skip
-
-```bash
-export UTAH_ATTESTATION_ENFORCE=0
-export UTAH_TPM_LOCK_ENFORCE=0
-export UTAH_RA_TLS_ENFORCE=0
-sudo bash bootstrap.sh
-```
+- Alpine `vmlinuz` + `initramfs` (when present in repo)
+- Full UtahMosphere kernel tree under `/utahmosphere/`
+- `bootstrap.sh` autoinstall menu entry
+- RA-TLS guard + quote registry modules bundled
 
 ## Environment
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `ISO_OUTPUT` | `./utah_genesis_v28.iso` | Output image |
-| `ISO_LABEL` | `UTAH_GENESIS_V28` | Volume label |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ISO_OUTPUT` | `./utah_genesis_v29.iso` | Output image |
+| `ISO_LABEL` | `UTAH_GENESIS_V29` | Volume label |
+
+## Boot Flow
+
+1. UEFI boots syslinux menu
+2. `autoinstall=` runs `bootstrap.sh`
+3. TPM PCR0 provision + kernel on port `8999`
+4. Voice `"Claim node"` seals vibe, registers hardware quote globally
 
 ## Related
 
+- [Hardware Quote Registry](QUOTE_REGISTRY.md)
+- [RA-TLS](RA_TLS.md)
 - [Hardware Attestation](ATTESTATION.md)
-- [RA-TLS Mesh Attestation](RA_TLS.md)
-- [Bootstrap script](../bootstrap.sh)

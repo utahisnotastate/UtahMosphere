@@ -36,6 +36,8 @@ try:
     from attestation_guard import HardwareAttestation
     from tpm_lock import TPMLocker
     from ra_tls_attest import RATLSAttestation
+    from quote_registry import quote_registry
+    from ra_tls_guard import RATLSGuard, ra_tls_guard
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -45,6 +47,9 @@ except ImportError:
     HardwareAttestation = None
     TPMLocker = None
     RATLSAttestation = None
+    quote_registry = None
+    RATLSGuard = None
+    ra_tls_guard = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -64,7 +69,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v28.0 TPM-HARDENED]",
+            "node_status": "Active [Omega-Build v29.0 Remote Attested]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -88,7 +93,7 @@ class UtahmosphereSovereignKernel:
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] Omega-Build v28.0 TPM-HARDENED kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v29.0 remote-attested kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -109,13 +114,15 @@ class UtahmosphereSovereignKernel:
             swarm_broadcast=self._broadcast_to_swarm,
             auth_guard=auth_guard,
             node_hash=node_hash,
+            vibe_hash=self.root_vibe,
         )
         self._sync_authorized_nodes_to_registry()
 
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
             if RATLSAttestation:
-                payload = RATLSAttestation.attach_to_message(payload, self.node_identity)
+                vibe = ledger_guard.ledger.get("root_vibe_hash") if ledger_guard else None
+                payload = RATLSAttestation.attach_to_message(payload, self.node_identity, vibe_hash=vibe)
             with self.swarm_router._lock:
                 for peer_hash in list(self.swarm_router.routing_table.keys())[:8]:
                     self.swarm_router.route_payload_deterministic(peer_hash, payload)
@@ -160,7 +167,34 @@ class UtahmosphereSovereignKernel:
             snap["tpm_lock"] = TPMLocker.status()
         if RATLSAttestation:
             snap["ra_tls"] = RATLSAttestation.status()
+        if quote_registry:
+            snap["quote_registry"] = quote_registry.stats()
         return snap
+
+    def _register_hardware_quote(self, acoustic_hash: str):
+        if not RATLSAttestation or not quote_registry:
+            return
+        quote = RATLSAttestation.generate_quote(
+            self.node_identity, vibe_hash=acoustic_hash
+        )
+        try:
+            body = json.loads(quote["body"])
+        except json.JSONDecodeError:
+            return
+        hw_id = body.get("hardware_id")
+        if not hw_id:
+            return
+        quote_registry.register_node(
+            hw_id,
+            json.dumps(quote),
+            vibe_hash=acoustic_hash,
+            pcr_digest=body.get("pcr0_digest"),
+            node_id=self.node_identity,
+        )
+        self.cluster_registry["hardware_id"] = hw_id
+        self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        self._save_registry_unlocked()
+        print(f"[RA-TLS] Hardware quote registered globally: {hw_id[:16]}...")
 
     def save_registry(self):
         self._save_registry_unlocked()
@@ -172,6 +206,9 @@ class UtahmosphereSovereignKernel:
             local = self.cluster_registry.get("tenants", {}).get(key, {})
             if key not in self.cluster_registry.get("tenants", {}) or val.get("epoch", 0) > local.get("epoch", 0):
                 self.cluster_registry.setdefault("tenants", {})[key] = val
+        if quote_registry and remote.get("quote_registry"):
+            quote_registry.merge_remote(remote["quote_registry"])
+            self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
         self._save_registry_unlocked()
         if self.swarm_router:
             self.ui_state["swarm_peers"] = self.swarm_router.peer_count()
@@ -233,6 +270,7 @@ class UtahmosphereSovereignKernel:
                 response = ledger_guard.anchor_root_vibe(acoustic_hash)
                 if "mapped" in response and UtahSwarmNode:
                     self.root_vibe = acoustic_hash
+                    self._register_hardware_quote(acoustic_hash)
                     self.swarm_router = UtahSwarmNode(acoustic_hash, on_ledger_sync=self._on_swarm_ledger_sync)
                     self._sync_authorized_nodes_to_registry()
                     if self.mesh_engine:
@@ -476,6 +514,28 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 self._json_response(404, {"error": "Node not found or cannot revoke root"})
             return
 
+        if path == "/registry/purge":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            hardware_id = data.get("hardware_id", "")
+            acoustic_hash = data.get("acoustic_hash", "")
+            if not hardware_id or not acoustic_hash:
+                self._json_response(400, {"error": "hardware_id and acoustic_hash required"})
+                return
+            if ledger_guard is None or quote_registry is None:
+                self._json_response(503, {"error": "Registry unavailable"})
+                return
+            root = ledger_guard.ledger.get("root_vibe_hash")
+            if not root or not hmac.compare_digest(root, acoustic_hash):
+                self._json_response(403, {"error": "Root vibe required for purge"})
+                return
+            if quote_registry.purge_node(hardware_id, data.get("reason", "compromised")):
+                self.core_engine.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+                self.core_engine.save_registry()
+                self._json_response(200, {"status": "purged", "hardware_id": hardware_id})
+            else:
+                self._json_response(404, {"error": "Hardware ID not found"})
+            return
+
         self.send_response(404)
         self.end_headers()
 
@@ -508,9 +568,19 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "28.0",
-                "build": "omega-build-v28-attested",
+                "version": "29.0",
+                "build": "omega-build-v29-remote-attested",
                 "attestation": self.core_engine._attestation_snapshot(),
+            })
+            return
+
+        if path == "/registry/quotes":
+            if quote_registry is None:
+                self._json_response(503, {"error": "Quote registry unavailable"})
+                return
+            self._json_response(200, {
+                "nodes": quote_registry.export_nodes(),
+                "stats": quote_registry.stats(),
             })
             return
 
@@ -518,8 +588,11 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             if RATLSAttestation is None:
                 self._json_response(503, {"error": "RA-TLS unavailable"})
                 return
-            quote = RATLSAttestation.generate_quote(self.core_engine.node_identity)
-            self._json_response(200, {"ra_tls_quote": quote})
+            quote = RATLSAttestation.generate_quote(
+                self.core_engine.node_identity,
+                vibe_hash=self.core_engine.root_vibe,
+            )
+            self._json_response(200, {"ra_tls_quote": quote, "hardware_id": self.core_engine.cluster_registry.get("hardware_id")})
             return
 
         if path == "/nonce":
@@ -600,7 +673,10 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
 
             port = self.core_engine._tenant_port(app_name)
             if port:
-                status, content, _ = proxy_request(port, sub_path, "GET")
+                ingress = {k: v for k, v in self.headers.items()}
+                status, content, _ = proxy_request(
+                    port, sub_path, "GET", ingress_headers=ingress
+                )
                 self._raw_response(status, content, "application/json" if content[:1] == b"{" else "text/plain")
             else:
                 self._json_response(404, {"error": f"Tenant {app_name} not found"})

@@ -16,15 +16,16 @@ Sonda de disponibilidad para balanceadores de carga y monitoreo.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "28.0",
-  "build": "omega-build-v28-attested",
+  "version": "29.0",
+  "build": "omega-build-v29-remote-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1}
   }
 }
 ```
@@ -45,12 +46,67 @@ Emite una cita TPM RA-TLS para verificación de pares UtahNetes en la malla.
 
 ```json
 {
+  "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
-    "signature": "hmac-sha256-hex"
+    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "signature": "hmac-sha256-hex",
+    "ca_signature": "optional-rsa-hex"
   }
 }
 ```
+
+
+
+---
+
+## GET /registry/quotes
+
+Export global hardware quote registry.
+
+**Response `200`:**
+
+```json
+{
+  "nodes": {
+    "abc123...": {
+      "public_quote": "{\"body\":\"...\",\"signature\":\"...\"}",
+      "vibe_hash": "64-char-sha256",
+      "pcr_digest": "...",
+      "node_id": "my-host",
+      "status": "active",
+      "registered_at": 1718323200.0
+    }
+  },
+  "stats": {"active": 1, "purged": 0, "total": 1}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/registry/quotes
+```
+
+---
+
+## POST /registry/purge
+
+Purge compromised hardware ID. Root vibe holder only.
+
+**Request body:**
+
+```json
+{
+  "hardware_id": "sha256-hardware-fingerprint",
+  "acoustic_hash": "root-vibe-hash-64chars",
+  "reason": "firmware tamper"
+}
+```
+
+**Response `200`:**
+
+```json
+{"status": "purged", "hardware_id": "abc123..."}
+```
+
 
 ---
 
@@ -194,6 +250,10 @@ Accede a una aplicación de inquilino desplegada. Protegida por autorización de
 | Encabezado | Descripción |
 |------------|-------------|
 | `X-Client-ID` | Identificador de cliente opcional (predeterminado: IP del cliente) |
+| `X-Utah-Hardware-ID` | RA-TLS hardware fingerprint (ingress attestation) |
+| `X-Utah-RATLS-Quote` | JSON RA-TLS quote payload |
+
+When `UTAH_RA_TLS_GUARD_ENFORCE=1`, missing or invalid attestation headers return **403** before proxy.
 
 ### Cliente sin pago — Respuesta `402 Payment Required`
 
@@ -380,6 +440,7 @@ Revocar un nodo delegado de `authorized_nodes[]`. Solo titular vibe raíz. El pa
 | `{UTAH_DATA_DIR}/s3/{bucket}/{key}` | Objetos S3 Mesh |
 | `{UTAH_DATA_DIR}/rds/ledger.json` | Almacén clave-valor RDS |
 | `security/biometric_ledger.json` | Hash vibe raíz (respaldo local si `/etc` no es escribible) |
-| `tycoon/settlement_ledger.json` | Estado de facturas y pagos |
+| `tycoon/settlement_ledger.json` |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry | | Estado de facturas y pagos |
 
 `UTAH_DATA_DIR` predeterminado: `/var/lib/utahmosphere` (recurre a directorios locales en errores de permisos).

@@ -1,6 +1,6 @@
 # UtahMosphere 文档门户
 
-欢迎来到 UtahMosphere OS 文档中心。**v27.0 Production Immutable** — 统一裸机主权边缘平台，默认端口 **8999**。v27.0 完成主权信任链：**TPM 硬件 attestation**、**多区域内存池故障转移**和**自动语音 nonce 签名** — 从芯片到全球网格。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
+欢迎来到 UtahMosphere OS 文档中心。**v28.0 TPM-Hardened Attested** — 统一裸机主权边缘平台，默认端口 **8999**。v28.0 完成主权信任链：**TPM 声纹锁定**、**网格 RA-TLS attestation**、**四区域内存池故障转移**和**自动语音 nonce 签名** — 从芯片到全球网格。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
 
 ---
 
@@ -8,7 +8,7 @@
 
 | 文档 | 最适合 |
 |------|--------|
-| [能力矩阵](CAPABILITY_MATRIX.md) | 所有人 — v27.0 Production Immutable 与未来工作 |
+| [能力矩阵](CAPABILITY_MATRIX.md) | 所有人 — v28.0 TPM-Hardened Attested 与未来工作 |
 | [API 参考](API_REFERENCE.md) | 开发者与运维人员 |
 | [本地开发指南](LOCAL_DEVELOPMENT.md) | 在 Windows、macOS 或 Linux 上开发的开发者 |
 
@@ -78,13 +78,15 @@
 
 ---
 
-## v27.0 Production Immutable 功能
+## v28.0 TPM-Hardened Attested 功能
 
+- **TPM Locker：** 通过 `tpm2_create` / `tpm2_unseal` 将声纹密封至 PCR0（`tpm_lock.py`）
+- **RA-TLS：** 网格 gossip 上的 TPM 引用；同步前验证对等节点（`ra_tls_attest.py`）
+- **内存池故障转移：** 美 / 欧 / 全球 / 大洋洲四区域故障转移（`tycoon_failover.py`）
 - **硬件 attestation：** bootstrap 中的 TPM 2.0 PCR0 关卡（`attestation_guard.py`）
-- **内存池故障转移：** 美/欧/亚静默故障转移（`tycoon_failover.py`）
 - **签名语音桥：** 自动 `GET /nonce` + HMAC（`voice_bridge_signed.py`）
 - **UtahX / ContainerEngine / S3 / Lambda / RDS：** 完整云 parity
 - **AuthGuard + Nonce-Guard + Utah-Flux 撤销：** 网格治理
-- **Genesis ISO v27：** Alpine vmlinuz + 支持 attestation 的 bootstrap
+- **Genesis ISO v28：** `utah_genesis_v28.iso`
 
-构建标识 `omega-build-v27-production`。推荐入口：`python3 utahmosphere_master.py`。
+构建标识 `omega-build-v28-attested`。推荐入口：`python3 utahmosphere_master.py`。

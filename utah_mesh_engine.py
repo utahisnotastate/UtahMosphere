@@ -18,6 +18,11 @@ try:
 except ImportError:
     AuthGuard = None  # type: ignore
 
+try:
+    from ra_tls_attest import RATLSAttestation
+except ImportError:
+    RATLSAttestation = None  # type: ignore
+
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 MASTER_REGISTRY_FILE = os.path.join(UTAH_DATA_DIR, "master_registry.json")
 GOSSIP_PORT = 9001
@@ -73,6 +78,8 @@ class UtahNetesMesh:
                 }
                 if self._auth_guard and AuthGuard is not None:
                     message = self._auth_guard.sign_message(self.node_hash, message)
+                if RATLSAttestation is not None:
+                    message = RATLSAttestation.attach_to_message(message, self.node_id)
                 payload = json.dumps(message).encode("utf-8")
                 tx.sendto(payload, (MULTICAST_ADDR, GOSSIP_PORT))
                 self._persist_master_registry(registry)
@@ -103,6 +110,9 @@ class UtahNetesMesh:
                 message = json.loads(data.decode("utf-8"))
                 remote = message.get("node")
                 if remote and remote != self.node_id:
+                    if RATLSAttestation is not None and not RATLSAttestation.verify_mesh_message(message):
+                        print(f"[UtahNetes] RA-TLS rejected mesh sync from {remote}")
+                        continue
                     if self._auth_guard and not self._auth_guard.verify_message(message):
                         print(f"[UtahNetes] Rejected unsigned mesh sync from {remote}")
                         continue

@@ -13,6 +13,11 @@ from typing import Dict, Any, List, Optional
 
 from ledger_auth import AuthGuard
 
+try:
+    from tpm_lock import TPMLocker
+except ImportError:
+    TPMLocker = None  # type: ignore
+
 def _resolve_security_dir() -> str:
     primary = "/etc/utahmosphere/security"
     try:
@@ -66,6 +71,12 @@ class QuantumLedgerGuard:
         nodes: List[str] = self.ledger.setdefault("authorized_nodes", [])
         if acoustic_hash not in nodes:
             nodes.append(acoustic_hash)
+        self.ledger["tpm_sealed"] = False
+        if TPMLocker and TPMLocker.seal_vibe_print(acoustic_hash):
+            self.ledger["tpm_sealed"] = True
+            self.ledger["root_vibe_storage"] = "tpm_pcr0"
+        else:
+            self.ledger["root_vibe_storage"] = "ledger_json"
         self._save_ledger()
         return "Biological resonance mapped. Hardware locked to General 23."
 
@@ -96,9 +107,13 @@ class QuantumLedgerGuard:
     def verify_vibe_signature(self, incoming_acoustic_hash: str, payload: str) -> bool:
         """
         Validates command authority: root vibe hash or delegated authorized_nodes entry.
+        When TPM-sealed, verifies PCR binding before accepting root hash.
         """
         if self.ledger["root_vibe_hash"] is None:
             return True
+        if TPMLocker and self.ledger.get("tpm_sealed"):
+            if not TPMLocker.verify_binding(self.ledger["root_vibe_hash"]):
+                return False
         if hmac.compare_digest(self.ledger["root_vibe_hash"], incoming_acoustic_hash):
             return True
         return self.auth_guard.is_node_authorized(incoming_acoustic_hash)

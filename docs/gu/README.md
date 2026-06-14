@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v27.0 Production Immutable** — unifikådo na bare-metal sovereign edge platform, port **8999**. I v27.0 ma kompleta i sovereign trust chain: **TPM hardware attestation**, **multi-region mempool failover**, yan **automatic voice nonce signing** — ginen silicon asta global swarm. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v28.0 TPM-Hardened Attested** — unifikådo na bare-metal sovereign edge platform, port **8999**. I v28.0 ma kompleta i sovereign trust chain: **TPM Vibe-Print lock**, **RA-TLS mesh attestation**, **4-region mempool failover**, yan **automatic voice nonce signing** — ginen silicon asta global swarm. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -8,7 +8,7 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v27.0 Produc
 
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
-| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — v27.0 Production Immutable vs. trabahu futuru |
+| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — v28.0 TPM-Hardened Attested vs. trabahu futuru |
 | [Referensia API](API_REFERENCE.md) | Desarrollador siha yan operadot siha |
 | [Guia Desarrollu Lokal](LOCAL_DEVELOPMENT.md) | Desarrollador siha gi Windows, macOS, pat Linux |
 
@@ -78,13 +78,15 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## Features v27.0 Production Immutable
+## Features v28.0 TPM-Hardened Attested
 
+- **TPM Locker:** Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` (`tpm_lock.py`)
+- **RA-TLS:** TPM quotes gi mesh gossip; peer verification antes sync (`ra_tls_attest.py`)
+- **Mempool Failover:** US / EU / global / Oceania 4-region failover (`tycoon_failover.py`)
 - **Hardware Attestation:** TPM 2.0 PCR0 gate (`attestation_guard.py`) gi bootstrap
-- **Mempool Failover:** US/EU/ASIA silent failover (`tycoon_failover.py`)
 - **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
 - **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
-- **Genesis ISO v27:** Alpine vmlinuz + attestation-aware bootstrap
+- **Genesis ISO v28:** `utah_genesis_v28.iso`
 
-Build `omega-build-v27-production`. Ma recommend na entry: `python3 utahmosphere_master.py`.
+Build `omega-build-v28-attested`. Ma recommend na entry: `python3 utahmosphere_master.py`.

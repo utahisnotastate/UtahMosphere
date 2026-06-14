@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v27.0 Production Immutable** — suveräänsed usaldusankrud on täielikult paigas.
+UtahMosphere OS **v28.0 TPM-Hardened Attested** — suveräänne usaldusahel on täielik.
 
 ---
 
@@ -8,21 +8,15 @@ UtahMosphere OS **v27.0 Production Immutable** — suveräänsed usaldusankrud o
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | Elusoleku päring + `build: omega-build-v27-production` + `attestation` |
-| `/nonce` | GET | **Rakendatud** | Väljastab värske häälkäsu nonce (30s aken) |
-| `/status` | GET | **Rakendatud** | UI olek, rentnikud, tõendamine, mempool varuühenduse statistika |
-| `/command` | POST | **Rakendatud** | Hääle intent + automaatne nonce allkirjastamine (`voice_bridge_signed.py`) |
-| `/admin/revoke-node` | POST | **Rakendatud** | Ainult juur — volitatud sõlme tühistamine |
-| `/app/unlock` | POST | **Rakendatud** | Esita makse; mempool varuühenduse arveldus |
-| `/app/{name}` | GET | **Rakendatud** | Tycoon 402 värav + UtahX proksi konteinerisse |
-| `/app/{name}/{path}` | GET | **Rakendatud** | Alamtee proksi konteineri taustale |
-| `/s3/{bucket}/{key}` | GET | **Rakendatud** | Objekti lugemine (kohalik NVMe) |
-| `/s3/{bucket}/{key}` | PUT/POST | **Rakendatud** | Objekti kirjutamine; valikulised HMAC päised |
-| `/s3/{bucket}/{prefix}*` | GET | **Rakendatud** | Objektide loend |
-| `/lambda/{fn}/invoke` | POST | **Rakendatud** | Serveritu handleri kutsumine |
-| `/lambda/{fn}` | GET | **Rakendatud** | GET kutsumine tühja sündmusega |
-| `/rds/write` | POST | **Rakendatud** | Võti-väärtus kirjutamine |
-| `/rds/read/{key}` | GET | **Rakendatud** | Võti-väärtus lugemine |
+| `/health` | GET | **Rakendatud** | `build: omega-build-v28-attested` + täielik tõendamise hetktõmmis |
+| `/attestation/quote` | GET | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
+| `/nonce` | GET | **Rakendatud** | Häälkäsu korduskasutuse vastu nonce |
+| `/status` | GET | **Rakendatud** | TPM lock, RA-TLS, Okeaania mempool piirkonnad |
+| `/command` | POST | **Rakendatud** | Hääl + nonce + TPM-iga seotud vibe kontroll |
+| `/admin/revoke-node` | POST | **Rakendatud** | Ainult juur — sõlme tühistamine |
+| `/app/unlock` | POST | **Rakendatud** | 4-piirkonniline mempool varuühenduse arveldus |
+| `/app/{name}` | GET | **Rakendatud** | Tycoon 402 + UtahX proksi |
+| `/s3/*`, `/lambda/*`, `/rds/*` | * | **Rakendatud** | Täielik pilve pariteet |
 
 ---
 
@@ -30,60 +24,38 @@ UtahMosphere OS **v27.0 Production Immutable** — suveräänsed usaldusankrud o
 
 | Komponent | Olek | Mis täna töötab |
 |-----------|------|-----------------|
-| **Golden Master (`utahmosphere_master.py`)** | **Rakendatud** | Ühtne sisenemispunkt |
-| **Tuum (`utahmosphere_os.py`)** | **Rakendatud** | Täielik HTTP multiplekser, register, võrk |
-| **Riistvara tõendamine (`attestation_guard.py`)** | **Rakendatud** | TPM 2.0 PCR0 värav bootstrapis + tervises |
-| **Mempool varuühendus (`tycoon_failover.py`)** | **Rakendatud** | USA/EU/Aasia mempool vaikne varuühendus |
-| **Voice Bridge Signed (`voice_bridge_signed.py`)** | **Rakendatud** | Automaatne `GET /nonce` + HMAC allkirjastamine |
-| **UtahX Proxy (`utahx_proxy.py`)** | **Rakendatud** | Reaalajas HTTP proksi konteineri portidele |
-| **UtahContainerEngine (`utah_container_runtime.py`)** | **Rakendatud** | Rentniku HTTP serverid portidel 8200+ |
-| **Lazarus AST (`utah_lazarus.py`)** | **Rakendatud** | AST-kinnitatud handleri mutatsioon + OTA |
-| **S3 / Lambda / RDS** | **Rakendatud** | Täielik pilve pariteet |
-| **Quantum Ledger** | **Rakendatud** | Biomeetriline claim + kinnitamine |
-| **Utah-Tycoon** | **Rakendatud** | Varuühenduse mempool + electrum (`tycoon_settlement.py`) |
-| **AuthGuard (`ledger_auth.py`)** | **Rakendatud** | `authorized_nodes[]` jõustamine |
-| **Nonce-Guard (`nonce_guard.py`)** | **Rakendatud** | 30s korduskasutuse vastu häälkäskudele |
-| **UtahNetes + Swarm DHT** | **Rakendatud** | Allkirjastatud gossip + deterministiline marsruutimine |
-| **Genesis ISO (`genesis_iso_builder.py`)** | **Rakendatud** | Alpine vmlinuz + TPM-teadlik bootstrap |
-| **Utah-Flux tühistamise UI** | **Rakendatud** | Admin-paneel `flux_gui.py` sees |
-| **Auto-Genesis / Bootstrap** | **Rakendatud** | systemd + tõendamise värav |
+| **TPM Locker (`tpm_lock.py`)** | **Rakendatud** | Vibe-Print pitstatud PCR0-sse `tpm2_create` / `tpm2_unseal` kaudu |
+| **RA-TLS (`ra_tls_attest.py`)** | **Rakendatud** | TPM quote mesh gossip-is; sõlme kontroll enne sünkroniseerimist |
+| **Mempool varuühendus (`tycoon_failover.py`)** | **Rakendatud** | USA / EL / globaalne / **Okeaania** 4-piirkonniline varuühendus |
+| **Riistvara tõendamine (`attestation_guard.py`)** | **Rakendatud** | Bootstrap PCR0 värav |
+| **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
+| **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
+| **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
+| **Genesis ISO v28** | **Rakendatud** | `utah_genesis_v28.iso` |
+| **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
 
-## Häälkäsud
+## Juurutamine
 
-| Käsu muster | Olek | Näide |
-|-------------|------|-------|
-| Claim node | Rakendatud | `"Claim node"` |
-| Authorize node | Rakendatud | `"authorize node <64-char-vibe-hash>"` |
-| Deploy application | Rakendatud | `"deploy application my-app"` |
-| Patch application | Rakendatud | `"patch app my-app to add logging"` |
-| Status / grid | Rakendatud | `"status grid"` |
+| Meetod | Olek |
+|--------|------|
+| `python3 utahmosphere_master.py` | **Soovitatav** |
+| `sudo bash bootstrap.sh` | **Tootmine** (TPM + tpm2-tools) |
+| `python3 genesis_iso_builder.py` | **v28 ISO** |
 
-**Voice Bridge v27.0** hangib automaatselt `GET /nonce` ja allkirjastab iga käsu. Käsitsi kliendid kasutavad `voice_bridge_signed.get_signed_payload()`.
+## Keskkond
 
----
-
-## Juurutamise valikud
-
-| Meetod | Olek | Platvorm |
-|--------|------|----------|
-| `python3 utahmosphere_master.py` | **Soovitatav** | Kõik |
-| `sudo bash bootstrap.sh` | **Soovitatav tootmises** | Linux + TPM (valikuline vahelejätmine) |
-| `python3 genesis_iso_builder.py` | **Rakendatud** | Ehitab `utah_genesis_v27.iso` |
-| `./mk_iso.sh` | **Rakendatud** | Genesis ISO ehitaja ümbris |
-| `python3 voice_bridge.py` | **Rakendatud** | Automaatse nonce allkirjastamisega häälklient |
-
----
+| Muutuja | Vaikimisi | Eesmärk |
+|---------|-----------|---------|
+| `UTAH_TPM_LOCK_ENFORCE` | `1` | Nõua TPM pitst claim-il |
+| `UTAH_RA_TLS_ENFORCE` | `1` | Nõua RA-TLS quote mesh-is |
+| `UTAH_MEMPOOL_NODES` | 4 vaikimisi | Mempool varuühenduse loendi alistamine |
 
 ## Teekaart
 
-Kõik v26.0 ja varasemad teekaardi punktid on v27.0-s **rakendatud**.
+Kõik v27.0 teekaardi punktid on v28.0-s **rakendatud**.
 
-Tuleviku täiustused:
-
-- TPM quote tõendamise kaugkinnitamine (RA-TLS)
-- Neljas mempool piirkond (Okeaania)
-- Riistvaraga seotud vibe-print sidumine TPM PCR-iga
+Tulevik: kaug-RA-TLS CA kinnitamine, riistvara quote registriteenus.
 
 Vaata [API viidet](API_REFERENCE.md) ja [Arendaja retseptiraamatut](DEVELOPER_COOKBOOK.md).

@@ -1,6 +1,6 @@
 # Портал документации UtahMosphere
 
-Добро пожаловать в центр документации UtahMosphere OS. **v27.0 Production Immutable** — суверенные якоря доверия: TPM-аттестация оборудования, мультирегиональный failover mempool и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
+Добро пожаловать в центр документации UtahMosphere OS. **v28.0 TPM-Hardened Attested** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
 
 ---
 
@@ -77,21 +77,22 @@
 
 ---
 
-## Ключевые характеристики UtahMosphere OS v27.0
+## Ключевые характеристики UtahMosphere OS v28.0
 
-- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v27-production`
-- **Голосовое развёртывание** — Voice Bridge (`voice_bridge_signed.py`) автоматически вызывает `GET /nonce` и подписывает
-- **TPM-аттестация** — `attestation_guard.py` в bootstrap; поля `/health` и `/status`
-- **Failover mempool** — `tycoon_failover.py` (mempool.space, signet, blockstream)
-- **Биометрическое закрепление узла** — команда «Claim node»; `GET /nonce` против повторного воспроизведения
+- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v28-attested`
+- **TPM Locker** — `tpm_lock.py` запечатывает Vibe-Print в PCR0 при claim
+- **RA-TLS mesh-аттестация** — `ra_tls_attest.py` + `GET /attestation/quote`
+- **Голосовое развёртывание** — Voice Bridge автоматически вызывает `GET /nonce` и подписывает
+- **Failover mempool** — `tycoon_failover.py` в 4 регионах (US, EU, global, Океания)
+- **Биометрическое закрепление узла** — команда «Claim node»; TPM-привязанная проверка vibe
 - **Отзыв узлов** — `POST /admin/revoke-node` и панель Utah-Flux
-- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v27.iso`
-- **Tycoon HTTP 402** — `GET /app/{name}` с расчётом через failover mempool
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Tycoon HTTP 402** — `GET /app/{name}` с расчётом через mempool в 4 регионах
 
 ---
 
 ## Дополнительные материалы
 
-- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v27.0
+- [Матрица возможностей](CAPABILITY_MATRIX.md) — статус реализации v28.0
 - [Справочник API](API_REFERENCE.md) — все конечные точки HTTP
 - [Техническое погружение](TECHNICAL_DEEP_DIVE.md) — архитектура платформы

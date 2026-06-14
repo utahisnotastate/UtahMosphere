@@ -16,13 +16,15 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "27.0",
-  "build": "omega-build-v27-production",
+  "version": "28.0",
+  "build": "omega-build-v28-attested",
   "attestation": {
-    "tpm_present": true,
-    "provisioned": true,
+    "tpm_present": false,
+    "provisioned": false,
     "sealed": false,
-    "enforce": true
+    "enforce": true,
+    "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"}
   }
 }
 ```
@@ -31,6 +33,23 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 
 ```bash
 curl http://127.0.0.1:8999/health
+```
+
+---
+
+## GET /attestation/quote
+
+Väljasta RA-TLS TPM quote UtahNetes mesh-sõlmede kontrolliks.
+
+**Vastus `200`:**
+
+```json
+{
+  "ra_tls_quote": {
+    "body": "{\"build\":\"omega-build-v28-attested\",\"node_id\":\"my-host\",\"pcr0_digest\":\"...\"}",
+    "signature": "hmac-sha256-hex"
+  }
+}
 ```
 
 ---
@@ -82,9 +101,10 @@ Operatiivne hetktõmmis: UI olek, juurutatud rentnikud ja kas sõlm on claim-itu
     "swept_funds": 5000,
     "settlement_mode": "auto",
     "mempool_failover_nodes": [
-      "https://mempool.space/api",
-      "https://mempool.space/signet/api",
-      "https://blockstream.info/api"
+      {"region": "us-global", "url": "https://mempool.space/api"},
+      {"region": "eu-signet", "url": "https://mempool.space/signet/api"},
+      {"region": "global-blockstream", "url": "https://blockstream.info/api"},
+      {"region": "oceania-apac", "url": "https://mempool.space/testnet/api"}
     ]
   },
   "attestation": {

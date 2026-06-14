@@ -2,6 +2,22 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [28.0] — TPM-Hardened Attested (2026-06)
+
+### Added
+- `tpm_lock.py` — Vibe-Print sealed to TPM PCR0 via `tpm2_create` / `tpm2_unseal`
+- `ra_tls_attest.py` — RA-TLS TPM quotes on UtahNetes mesh gossip
+- `GET /attestation/quote` — peer quote endpoint
+- Oceania/APAC mempool node in `tycoon_failover.py` (4-region failover)
+- [RA-TLS Mesh Attestation](RA_TLS.md) documentation
+
+### Changed
+- `quantum_ledger.py` — claim seals vibe to TPM; verify checks binding
+- `utah_mesh_engine.py` — RA-TLS attach + verify on mesh sync
+- Genesis ISO: `utah_genesis_v28.iso`
+- Build: `omega-build-v28-attested`
+- v27.0 roadmap complete; all locale docs updated
+
 ## [27.0] — Production Immutable (2026-06)
 
 ### Added

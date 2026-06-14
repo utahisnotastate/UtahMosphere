@@ -1,42 +1,65 @@
-# Hardware Attestation (v27.0)
+# Hardware Attestation (v28.0)
 
-TPM 2.0 PCR0 verification anchors hardware root-of-trust during Genesis ISO boot and `bootstrap.sh` provisioning.
+TPM 2.0 PCR0 verification plus **TPM-locked Vibe-Print sealing** anchor hardware root-of-trust from Genesis boot through voice command authorization.
 
-## How It Works
+## Bootstrap Gate
 
-1. `bootstrap.sh` calls `attestation_guard.HardwareAttestation.enforce_or_exit()` before installing modules.
-2. On first provision, TPM PCR0 (`tpm2_pcrread sha256:0`) is stored at `/etc/utahmosphere/security/tpm_pcr0.txt`.
-3. Subsequent boots must match the anchored PCR digest or the boot partition is **sealed** (install payload removed).
+1. `bootstrap.sh` calls `attestation_guard.HardwareAttestation.enforce_or_exit()`
+2. First provision anchors PCR0 to `/etc/utahmosphere/security/tpm_pcr0.txt`
+3. Mismatched hardware seals the boot partition
 
-## CLI
+## TPM Vibe-Print Lock (`tpm_lock.py`)
+
+On `"Claim node"`, the kernel seals the acoustic hash to PCR0:
 
 ```bash
-# Bootstrap gate (automatic via bootstrap.sh)
-python3 attestation_guard.py
+# Seal (automatic on claim)
+python3 -c "from tpm_lock import TPMLocker; TPMLocker.seal_vibe_print('abc...64chars')"
 
-# JSON status
-python3 attestation_guard.py status
+# Unseal (requires pristine PCR0)
+python3 -c "from tpm_lock import TPMLocker; print(TPMLocker.unseal_vibe_print())"
 ```
 
-## Environment
+If PCR0 changes (kernel tamper, hardware swap), unseal fails and voice commands are rejected.
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `UTAH_ATTESTATION_ENFORCE` | `1` | Set `0` to skip TPM gate (local dev) |
-| `UTAH_ATTESTATION_STORE` | `/etc/utahmosphere/security/tpm_pcr0.txt` | Anchored PCR0 |
-| `UTAH_ATTESTATION_SEAL_MARKER` | `/etc/utahmosphere/security/boot_sealed` | Sealed boot flag |
+## RA-TLS Mesh Quotes
 
-## Kernel Integration
+See [RA-TLS Mesh Attestation](RA_TLS.md). `GET /attestation/quote` issues peer verification quotes.
 
-`GET /health` and `GET /status` include an `attestation` object:
+## Kernel `/health` Attestation Snapshot
 
 ```json
 {
   "tpm_present": true,
   "provisioned": true,
   "sealed": false,
-  "enforce": true
+  "enforce": true,
+  "tpm_lock": {
+    "sealed": true,
+    "binding_ok": true,
+    "enforce": true
+  },
+  "ra_tls": {
+    "enforce": true,
+    "kernel_root_ca": "utahmosphere_omega_build_v28_root_ca"
+  }
 }
+```
+
+## Environment
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `UTAH_ATTESTATION_ENFORCE` | `1` | Bootstrap TPM gate |
+| `UTAH_TPM_LOCK_ENFORCE` | `1` | TPM seal on claim |
+| `UTAH_RA_TLS_ENFORCE` | `1` | Mesh quote enforcement |
+
+Dev skip all TPM layers:
+
+```bash
+export UTAH_ATTESTATION_ENFORCE=0
+export UTAH_TPM_LOCK_ENFORCE=0
+export UTAH_RA_TLS_ENFORCE=0
 ```
 
 ## Prerequisites
@@ -47,6 +70,6 @@ sudo apt-get install -y tpm2-tools
 
 ## Related
 
-- [Genesis ISO Installer](GENESIS_ISO.md)
-- [Access Control Model](ACCESS_CONTROL.md)
-- [Bootstrap script](../bootstrap.sh)
+- [RA-TLS](RA_TLS.md)
+- [Genesis ISO](GENESIS_ISO.md)
+- [Access Control](ACCESS_CONTROL.md)

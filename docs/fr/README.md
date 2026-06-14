@@ -1,6 +1,6 @@
 # Portail de documentation UtahMosphere
 
-Bienvenue sur le hub de documentation d'UtahMosphere OS **v27.0 Production Immutable** — plateforme souveraine edge bare-metal unifiée, port **8999**. La v27.0 complète la chaîne de confiance souveraine : **attestation matérielle TPM**, **basculement mempool multi-région** et **signature automatique des nonces vocaux** — du silicium à l'essaim mondial. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+Bienvenue sur le hub de documentation d'UtahMosphere OS **v28.0 TPM-Hardened Attested** — plateforme souveraine edge bare-metal unifiée, port **8999**. La v28.0 complète la chaîne de confiance souveraine : **verrouillage TPM Vibe-Print**, **attestation RA-TLS du maillage**, **basculement mempool 4 régions** et **signature automatique des nonces vocaux** — du silicium à l'essaim mondial. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
 
 ---
 
@@ -8,7 +8,7 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS **v27.0 Production Immut
 
 | Document | Idéal pour |
 |----------|------------|
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v27.0 Production Immutable vs. travaux futurs |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v28.0 TPM-Hardened Attested vs. travaux futurs |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -78,13 +78,15 @@ Mini-projets complets à forker et étendre :
 
 ---
 
-## Fonctionnalités v27.0 Production Immutable
+## Fonctionnalités v28.0 TPM-Hardened Attested
 
+- **TPM Locker :** Vibe-Print scellé au PCR0 via `tpm2_create` / `tpm2_unseal` (`tpm_lock.py`)
+- **RA-TLS :** citations TPM sur gossip du maillage ; vérification des pairs avant sync (`ra_tls_attest.py`)
+- **Basculement mempool :** basculement US / EU / global / Océanie sur 4 régions (`tycoon_failover.py`)
 - **Attestation matérielle :** porte PCR0 TPM 2.0 (`attestation_guard.py`) dans bootstrap
-- **Basculement mempool :** basculement silencieux US/EU/ASIE (`tycoon_failover.py`)
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v27 :** Alpine vmlinuz + bootstrap compatible attestation
+- **Genesis ISO v28 :** `utah_genesis_v28.iso`
 
-Build `omega-build-v27-production`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v28-attested`. Entrée recommandée : `python3 utahmosphere_master.py`.

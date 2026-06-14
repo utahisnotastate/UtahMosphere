@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. **v27.0 Production Immutable** — suveräna förtroendeankare: TPM-hårdvaruattestering, mempool-failover i flera regioner och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **v28.0 TPM-Hardened Attested** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 
@@ -65,13 +65,14 @@ Välkommen till UtahMosphere OS dokumentation. **v27.0 Production Immutable** �
 
 ---
 
-## UtahMosphere OS v27.0
+## UtahMosphere OS v28.0
 
-- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v27-production`
-- **Röstdriftsättning** — Voice Bridge (`voice_bridge_signed.py`) anropar automatiskt `GET /nonce` och signerar
-- **TPM-attestering** — `attestation_guard.py` i bootstrap; fält i `/health` och `/status`
-- **Mempool-failover** — `tycoon_failover.py` (mempool.space, signet, blockstream)
-- **Biometrisk claim** — kommandot «Claim node»; `GET /nonce` mot återuppspelning
+- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v28-attested`
+- **TPM Locker** — `tpm_lock.py` förseglar Vibe-Print till PCR0 vid claim
+- **RA-TLS mesh-attestering** — `ra_tls_attest.py` + `GET /attestation/quote`
+- **Röstdriftsättning** — Voice Bridge anropar automatiskt `GET /nonce` och signerar
+- **Mempool-failover** — `tycoon_failover.py` i 4 regioner (US, EU, global, Oceanien)
+- **Biometrisk claim** — kommandot «Claim node»; TPM-bunden vibe-verifiering
 - **Nodåterkallande** — `POST /admin/revoke-node` och Utah-Flux-panel
-- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v27.iso`
-- **Tycoon HTTP 402** — `GET /app/{name}` med mempool-failover-avveckling
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Tycoon HTTP 402** — `GET /app/{name}` med mempool-avveckling i 4 regioner

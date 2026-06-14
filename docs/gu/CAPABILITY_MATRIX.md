@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v27.0 Production Immutable** — kompleto na sovereign trust anchors.
+UtahMosphere OS **v28.0 TPM-Hardened Attested** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,21 +8,15 @@ UtahMosphere OS **v27.0 Production Immutable** — kompleto na sovereign trust a
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | Liveness check + `build: omega-build-v27-production` + `attestation` |
-| `/nonce` | GET | **Ma implement** | Ma issue fresh voice command nonce (30s window) |
-| `/status` | GET | **Ma implement** | UI state, tenants, attestation, mempool failover stats |
-| `/command` | POST | **Ma implement** | Voice intent + auto nonce signing (`voice_bridge_signed.py`) |
-| `/admin/revoke-node` | POST | **Ma implement** | Root-only authorized node revocation |
-| `/app/unlock` | POST | **Ma implement** | Submit payment; mempool failover settlement |
-| `/app/{name}` | GET | **Ma implement** | Tycoon 402 gate + UtahX proxy gi container |
-| `/app/{name}/{path}` | GET | **Ma implement** | Sub-path proxy gi container backend |
-| `/s3/{bucket}/{key}` | GET | **Ma implement** | Object read (local NVMe) |
-| `/s3/{bucket}/{key}` | PUT/POST | **Ma implement** | Object write; optional HMAC headers |
-| `/s3/{bucket}/{prefix}*` | GET | **Ma implement** | List objects |
-| `/lambda/{fn}/invoke` | POST | **Ma implement** | Serverless handler invoke |
-| `/lambda/{fn}` | GET | **Ma implement** | GET invoke yan empty event |
-| `/rds/write` | POST | **Ma implement** | Key-value write |
-| `/rds/read/{key}` | GET | **Ma implement** | Key-value read |
+| `/health` | GET | **Ma implement** | `build: omega-build-v28-attested` + kompleto na attestation snapshot |
+| `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
+| `/nonce` | GET | **Ma implement** | Voice command anti-replay nonce |
+| `/status` | GET | **Ma implement** | TPM lock, RA-TLS, Oceania mempool regions |
+| `/command` | POST | **Ma implement** | Voice + nonce + TPM-bound vibe verification |
+| `/admin/revoke-node` | POST | **Ma implement** | Root-only node revocation |
+| `/app/unlock` | POST | **Ma implement** | 4-region mempool failover settlement |
+| `/app/{name}` | GET | **Ma implement** | Tycoon 402 + UtahX proxy |
+| `/s3/*`, `/lambda/*`, `/rds/*` | * | **Ma implement** | Full cloud parity |
 
 ---
 
@@ -30,60 +24,38 @@ UtahMosphere OS **v27.0 Production Immutable** — kompleto na sovereign trust a
 
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
-| **Golden Master (`utahmosphere_master.py`)** | **Ma implement** | Unified entry point |
-| **Core (`utahmosphere_os.py`)** | **Ma implement** | Full HTTP multiplexer, registry, mesh |
-| **Hardware Attestation (`attestation_guard.py`)** | **Ma implement** | TPM 2.0 PCR0 gate gi bootstrap + health |
-| **Mempool Failover (`tycoon_failover.py`)** | **Ma implement** | US/EU/ASIA mempool silent failover |
-| **Voice Bridge Signed (`voice_bridge_signed.py`)** | **Ma implement** | Auto `GET /nonce` + HMAC signing |
-| **UtahX Proxy (`utahx_proxy.py`)** | **Ma implement** | Live HTTP proxy gi container ports |
-| **UtahContainerEngine (`utah_container_runtime.py`)** | **Ma implement** | Per-tenant HTTP servers gi 8200+ |
-| **Lazarus AST (`utah_lazarus.py`)** | **Ma implement** | AST-validated handler mutation + OTA |
-| **S3 / Lambda / RDS** | **Ma implement** | Full cloud parity |
-| **Quantum Ledger** | **Ma implement** | Biometric claim + verification |
-| **Utah-Tycoon** | **Ma implement** | Failover mempool + electrum (`tycoon_settlement.py`) |
-| **AuthGuard (`ledger_auth.py`)** | **Ma implement** | `authorized_nodes[]` enforcement |
-| **Nonce-Guard (`nonce_guard.py`)** | **Ma implement** | 30s anti-replay para voice commands |
-| **UtahNetes + Swarm DHT** | **Ma implement** | Signed gossip + deterministic routing |
-| **Genesis ISO (`genesis_iso_builder.py`)** | **Ma implement** | Alpine vmlinuz + TPM-aware bootstrap |
-| **Utah-Flux Revocation UI** | **Ma implement** | Admin panel gi `flux_gui.py` |
-| **Auto-Genesis / Bootstrap** | **Ma implement** | systemd + attestation gate |
+| **TPM Locker (`tpm_lock.py`)** | **Ma implement** | Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **RA-TLS (`ra_tls_attest.py`)** | **Ma implement** | TPM quote gi mesh gossip; peer verification antes sync |
+| **Mempool Failover (`tycoon_failover.py`)** | **Ma implement** | US / EU / global / **Oceania** 4-region failover |
+| **Hardware Attestation (`attestation_guard.py`)** | **Ma implement** | Bootstrap PCR0 gate |
+| **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
+| **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
+| **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
+| **Genesis ISO v28** | **Ma implement** | `utah_genesis_v28.iso` |
+| **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
 
-## Voice Commands
+## Deployment
 
-| Command Pattern | Status | Ehemplo |
-|-----------------|--------|---------|
-| Claim node | Ma implement | `"Claim node"` |
-| Authorize node | Ma implement | `"authorize node <64-char-vibe-hash>"` |
-| Deploy application | Ma implement | `"deploy application my-app"` |
-| Patch application | Ma implement | `"patch app my-app to add logging"` |
-| Status / grid | Ma implement | `"status grid"` |
+| Method | Status |
+|--------|--------|
+| `python3 utahmosphere_master.py` | **Ma recommend** |
+| `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
+| `python3 genesis_iso_builder.py` | **v28 ISO** |
 
-**Voice Bridge v27.0** ma auto-fetch `GET /nonce` yan ma sign kada komando. Manual clients usa `voice_bridge_signed.get_signed_payload()`.
+## Environment
 
----
-
-## Deployment Options
-
-| Method | Status | Platform |
-|--------|--------|----------|
-| `python3 utahmosphere_master.py` | **Ma recommend** | Todu |
-| `sudo bash bootstrap.sh` | **Ma recommend prod** | Linux + TPM (optional skip) |
-| `python3 genesis_iso_builder.py` | **Ma implement** | Ma build `utah_genesis_v27.iso` |
-| `./mk_iso.sh` | **Ma implement** | Genesis ISO wrapper |
-| `python3 voice_bridge.py` | **Ma implement** | Auto-nonce signed voice client |
-
----
+| Variable | Default | Para håfa |
+|----------|---------|-----------|
+| `UTAH_TPM_LOCK_ENFORCE` | `1` | Require TPM seal gi claim |
+| `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes gi mesh |
+| `UTAH_MEMPOOL_NODES` | 4 defaults | Override mempool failover list |
 
 ## Roadmap
 
-Todu i v26.0 yan antes na roadmap items **ma implement** gi v27.0.
+Todu i v27.0 roadmap items **ma implement** gi v28.0.
 
-Mejoras futuru:
-
-- TPM quote attestation remote verification (RA-TLS)
-- Fourth mempool region (Oceania)
-- Hardware-bound vibe-print binding gi TPM PCR
+Futuru: remote RA-TLS CA pinning, hardware quote registry service.
 
 Para mas detalle: [Referensia API](API_REFERENCE.md) · [Cookbook Desarrollador](DEVELOPER_COOKBOOK.md)

@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentaatio
 
-Tervetuloa UtahMosphere OS -dokumentaatioon. **v27.0 Production Immutable** — suvereenit luottamusankkurit: TPM-laitteistotodentaminen, monialueinen mempool-varajärjestelmä ja Voice Bridge automaattisella nonce-allekirjoituksella. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
+Tervetuloa UtahMosphere OS -dokumentaatioon. **v28.0 TPM-Hardened Attested** — suvereeni luottamusketju: TPM Locker, RA-TLS mesh-todentaminen, Oseanian mempool ja Voice Bridge automaattisella nonce-allekirjoituksella. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
 
 ---
 
@@ -65,13 +65,14 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. **v27.0 Production Immutable** — 
 
 ---
 
-## UtahMosphere OS v27.0
+## UtahMosphere OS v28.0
 
-- **Suvereeni reunalaituri** Pythonilla — portti `8999`, `build: omega-build-v27-production`
-- **Äänikäyttöönotto** — Voice Bridge (`voice_bridge_signed.py`) kutsuu automaattisesti `GET /nonce` ja allekirjoittaa
-- **TPM-todentaminen** — `attestation_guard.py` bootstrapissa; kentät `/health` ja `/status`
-- **Mempool-varajärjestelmä** — `tycoon_failover.py` (mempool.space, signet, blockstream)
-- **Biometrinen claim** — komento «Claim node»; `GET /nonce` uudelleentoiston estoon
+- **Suvereeni reunalaituri** Pythonilla — portti `8999`, `build: omega-build-v28-attested`
+- **TPM Locker** — `tpm_lock.py` sinetöi Vibe-Printin PCR0:een claimissä
+- **RA-TLS mesh-todentaminen** — `ra_tls_attest.py` + `GET /attestation/quote`
+- **Äänikäyttöönotto** — Voice Bridge kutsuu automaattisesti `GET /nonce` ja allekirjoittaa
+- **Mempool-varajärjestelmä** — `tycoon_failover.py` neljällä alueella (US, EU, global, Oseania)
+- **Biometrinen claim** — komento «Claim node»; TPM-sidottu vibe-vahvistus
 - **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
-- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v27.iso`
-- **Tycoon HTTP 402** — `GET /app/{name}` mempool-varajärjestelmän selvityksellä
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v28.iso`
+- **Tycoon HTTP 402** — `GET /app/{name}` 4 alueen mempool-selvityksellä

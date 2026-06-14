@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v27.0 Production Immutable)
+# 🌌 UtahMosphere OS (v28.0 TPM-Hardened Attested)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS v27.0 completes the sovereign trust chain: **TPM hardware attestation**, **multi-region mempool failover**, and **automatic voice nonce signing** — from silicon to global swarm.
+v28.0 completes the hardware trust chain: **TPM-locked Vibe-Print**, **4-region Oceania mempool failover**, and **RA-TLS mesh attestation** — cryptographically locked to your silicon worldwide.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -100,20 +100,20 @@ docker-compose up -d
 | `UTAH_ELECTRUM_URL` | — | Optional electrum-server JSON-RPC URL |
 | `UTAH_NONCE_ENFORCE` | `1` | Require nonce on `/command` after claim |
 | `UTAH_NONCE_WINDOW_SEC` | `30` | Nonce freshness window |
-| `UTAH_ATTESTATION_ENFORCE` | `1` | TPM PCR0 gate in bootstrap (`0` = dev skip) |
-| `UTAH_MEMPOOL_NODES` | 3 defaults | Comma-separated mempool API bases for failover |
+| `UTAH_ATTESTATION_ENFORCE` | `1` | TPM PCR0 bootstrap gate |
+| `UTAH_TPM_LOCK_ENFORCE` | `1` | Seal Vibe-Print to TPM on claim |
+| `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes on mesh sync |
+| `UTAH_MEMPOOL_NODES` | 4 defaults | Comma-separated mempool API bases for failover |
 | `UTAH_FLUX_ACOUSTIC_HASH` | — | Root hash for Utah-Flux revocation panel |
 
 ---
 
-## 🛠 Features (v27.0 Production Immutable)
+## 🛠 Features (v28.0 TPM-Hardened)
 
-- **Hardware Attestation:** TPM 2.0 PCR0 gate (`attestation_guard.py`) in bootstrap
-- **Mempool Failover:** US/EU/ASIA silent failover (`tycoon_failover.py`)
-- **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
-- **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
-- **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
-- **Genesis ISO v27:** Alpine vmlinuz + attestation-aware bootstrap
+- **TPM Locker:** Vibe-Print sealed to PCR0 (`tpm_lock.py`)
+- **RA-TLS:** Mesh peer TPM quote verification (`ra_tls_attest.py`)
+- **Oceania Mempool:** 4-region failover including APAC endpoint
+- **Full v27 stack:** Attestation, nonce signing, AuthGuard, revocation UI, Genesis ISO
 
 ---
 

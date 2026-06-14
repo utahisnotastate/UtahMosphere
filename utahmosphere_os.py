@@ -34,6 +34,8 @@ try:
     from utah_tycoon import tycoon_engine
     from nonce_guard import nonce_guard
     from attestation_guard import HardwareAttestation
+    from tpm_lock import TPMLocker
+    from ra_tls_attest import RATLSAttestation
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -41,6 +43,8 @@ except ImportError:
     tycoon_engine = None
     nonce_guard = None
     HardwareAttestation = None
+    TPMLocker = None
+    RATLSAttestation = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -60,7 +64,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v27.0 PRODUCTION IMMUTABLE]",
+            "node_status": "Active [Omega-Build v28.0 TPM-HARDENED]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -84,7 +88,7 @@ class UtahmosphereSovereignKernel:
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] Omega-Build v27.0 PRODUCTION kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v28.0 TPM-HARDENED kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -110,11 +114,16 @@ class UtahmosphereSovereignKernel:
 
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
+            if RATLSAttestation:
+                payload = RATLSAttestation.attach_to_message(payload, self.node_identity)
             with self.swarm_router._lock:
                 for peer_hash in list(self.swarm_router.routing_table.keys())[:8]:
                     self.swarm_router.route_payload_deterministic(peer_hash, payload)
 
     def _on_swarm_ledger_sync(self, payload: dict):
+        if RATLSAttestation and not RATLSAttestation.verify_mesh_message(payload):
+            print("[Swarm Link] RA-TLS rejected DHT ledger sync")
+            return
         if ledger_guard and payload.get("mesh_signature"):
             if not ledger_guard.auth_guard.verify_message(payload):
                 print("[Swarm Link] Rejected unsigned DHT ledger sync")
@@ -143,6 +152,15 @@ class UtahmosphereSovereignKernel:
         print(f"[AuthGuard] Node {node_hash[:12]} revoked. Gossip mesh pruned.")
         self.trigger_flux_ui_render()
         return True
+
+    @staticmethod
+    def _attestation_snapshot() -> dict:
+        snap = HardwareAttestation.status() if HardwareAttestation else {}
+        if TPMLocker:
+            snap["tpm_lock"] = TPMLocker.status()
+        if RATLSAttestation:
+            snap["ra_tls"] = RATLSAttestation.status()
+        return snap
 
     def save_registry(self):
         self._save_registry_unlocked()
@@ -490,10 +508,18 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "27.0",
-                "build": "omega-build-v27-production",
-                "attestation": HardwareAttestation.status() if HardwareAttestation else {},
+                "version": "28.0",
+                "build": "omega-build-v28-attested",
+                "attestation": self.core_engine._attestation_snapshot(),
             })
+            return
+
+        if path == "/attestation/quote":
+            if RATLSAttestation is None:
+                self._json_response(503, {"error": "RA-TLS unavailable"})
+                return
+            quote = RATLSAttestation.generate_quote(self.core_engine.node_identity)
+            self._json_response(200, {"ra_tls_quote": quote})
             return
 
         if path == "/nonce":
@@ -520,7 +546,7 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 "master_registry": MASTER_REGISTRY_FILE,
                 "swarm_peers": swarm_peers,
                 "tycoon": tycoon_stats,
-                "attestation": HardwareAttestation.status() if HardwareAttestation else {},
+                "attestation": self.core_engine._attestation_snapshot(),
             })
             return
 

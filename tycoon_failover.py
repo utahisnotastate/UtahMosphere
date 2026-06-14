@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Utah-Tycoon: Multi-Region Mempool Failover (v27.0)
-Queries US / EU / ASIA mempool endpoints with silent regional failover.
+Utah-Tycoon: Multi-Region Mempool Failover (v28.0)
+Queries US / EU / global / Oceania mempool endpoints with silent failover.
 """
 
 import json
@@ -10,9 +10,10 @@ import urllib.request
 from typing import List, Optional, Tuple
 
 DEFAULT_NODES = [
-    "https://mempool.space/api",
-    "https://mempool.space/signet/api",
-    "https://blockstream.info/api",
+    "https://mempool.space/api",            # Global / US
+    "https://mempool.space/signet/api",     # EU
+    "https://blockstream.info/api",         # Global
+    "https://mempool.space/testnet/api",    # APAC / Oceania designated endpoint
 ]
 
 MEMPOOL_NODES: List[str] = [
@@ -37,7 +38,7 @@ class MempoolFailover:
                 url = f"{node}/address/{address}/txs"
                 req = urllib.request.Request(
                     url,
-                    headers={"User-Agent": "UtahMosphere-Tycoon/27.0"},
+                    headers={"User-Agent": "UtahMosphere-Tycoon/28.0"},
                 )
                 with urllib.request.urlopen(req, timeout=FAILOVER_TIMEOUT_SEC) as resp:
                     if resp.status != 200:
@@ -50,5 +51,9 @@ class MempoolFailover:
         return False, None
 
     @staticmethod
-    def node_regions() -> List[str]:
-        return list(MempoolFailover.NODES)
+    def node_regions() -> List[dict]:
+        labels = ["us-global", "eu-signet", "global-blockstream", "oceania-apac"]
+        return [
+            {"region": labels[i] if i < len(labels) else f"node-{i}", "url": url}
+            for i, url in enumerate(MempoolFailover.NODES)
+        ]

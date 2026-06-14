@@ -1,6 +1,6 @@
 # Matrice des capacités
 
-UtahMosphere OS **v27.0 Production Immutable** — ancres de confiance souveraines complètes.
+UtahMosphere OS **v28.0 TPM-Hardened Attested** — chaîne de confiance souveraine complète.
 
 ---
 
@@ -8,21 +8,15 @@ UtahMosphere OS **v27.0 Production Immutable** — ancres de confiance souverain
 
 | Point de terminaison | Méthode | Statut | Notes |
 |----------------------|---------|--------|-------|
-| `/health` | GET | **Implémenté** | Sonde de disponibilité + `build: omega-build-v27-production` + `attestation` |
-| `/nonce` | GET | **Implémenté** | Émet un nonce frais pour commande vocale (fenêtre 30 s) |
-| `/status` | GET | **Implémenté** | État UI, locataires, attestation, statistiques de basculement mempool |
-| `/command` | POST | **Implémenté** | Intention vocale + signature nonce automatique (`voice_bridge_signed.py`) |
-| `/admin/revoke-node` | POST | **Implémenté** | Révocation de nœud autorisée (racine uniquement) |
-| `/app/unlock` | POST | **Implémenté** | Soumettre le paiement ; règlement avec basculement mempool |
-| `/app/{name}` | GET | **Implémenté** | Porte Tycoon 402 + proxy UtahX vers le conteneur |
-| `/app/{name}/{path}` | GET | **Implémenté** | Proxy sous-chemin vers le backend conteneur |
-| `/s3/{bucket}/{key}` | GET | **Implémenté** | Lecture d'objet (NVMe local) |
-| `/s3/{bucket}/{key}` | PUT/POST | **Implémenté** | Écriture d'objet ; en-têtes HMAC optionnels |
-| `/s3/{bucket}/{prefix}*` | GET | **Implémenté** | Lister les objets |
-| `/lambda/{fn}/invoke` | POST | **Implémenté** | Invocation de handler serverless |
-| `/lambda/{fn}` | GET | **Implémenté** | Invocation GET avec événement vide |
-| `/rds/write` | POST | **Implémenté** | Écriture clé-valeur |
-| `/rds/read/{key}` | GET | **Implémenté** | Lecture clé-valeur |
+| `/health` | GET | **Implémenté** | `build: omega-build-v28-attested` + instantané d'attestation complet |
+| `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS pour vérification des pairs du maillage |
+| `/nonce` | GET | **Implémenté** | Nonce anti-rejeu pour commande vocale |
+| `/status` | GET | **Implémenté** | Verrou TPM, RA-TLS, régions mempool Océanie |
+| `/command` | POST | **Implémenté** | Voix + nonce + vérification vibe liée au TPM |
+| `/admin/revoke-node` | POST | **Implémenté** | Révocation de nœud (racine uniquement) |
+| `/app/unlock` | POST | **Implémenté** | Règlement avec basculement mempool 4 régions |
+| `/app/{name}` | GET | **Implémenté** | Tycoon 402 + proxy UtahX |
+| `/s3/*`, `/lambda/*`, `/rds/*` | * | **Implémenté** | Parité cloud complète |
 
 ---
 
@@ -30,60 +24,38 @@ UtahMosphere OS **v27.0 Production Immutable** — ancres de confiance souverain
 
 | Composant | Statut | Ce qui fonctionne aujourd'hui |
 |-----------|--------|-------------------------------|
-| **Golden Master (`utahmosphere_master.py`)** | **Implémenté** | Point d'entrée unifié |
-| **Noyau (`utahmosphere_os.py`)** | **Implémenté** | Multiplexeur HTTP complet, registre, maillage |
-| **Attestation matérielle (`attestation_guard.py`)** | **Implémenté** | Porte PCR0 TPM 2.0 dans bootstrap + health |
-| **Basculement mempool (`tycoon_failover.py`)** | **Implémenté** | Basculement silencieux mempool US/EU/ASIE |
-| **Voice Bridge signé (`voice_bridge_signed.py`)** | **Implémenté** | `GET /nonce` automatique + signature HMAC |
-| **Proxy UtahX (`utahx_proxy.py`)** | **Implémenté** | Proxy HTTP en direct vers les ports conteneur |
-| **UtahContainerEngine (`utah_container_runtime.py`)** | **Implémenté** | Serveurs HTTP par locataire sur 8200+ |
-| **Lazarus AST (`utah_lazarus.py`)** | **Implémenté** | Mutation de handler validée AST + OTA |
-| **S3 / Lambda / RDS** | **Implémenté** | Parité cloud complète |
-| **Quantum Ledger** | **Implémenté** | Revendication biométrique + vérification |
-| **Utah-Tycoon** | **Implémenté** | Basculement mempool + electrum (`tycoon_settlement.py`) |
-| **AuthGuard (`ledger_auth.py`)** | **Implémenté** | Application de `authorized_nodes[]` |
-| **Nonce-Guard (`nonce_guard.py`)** | **Implémenté** | Anti-rejeu 30 s pour commandes vocales |
-| **UtahNetes + Swarm DHT** | **Implémenté** | Gossip signé + routage déterministe |
-| **Genesis ISO (`genesis_iso_builder.py`)** | **Implémenté** | Alpine vmlinuz + bootstrap compatible attestation |
-| **Interface révocation Utah-Flux** | **Implémenté** | Panneau admin dans `flux_gui.py` |
-| **Auto-Genesis / Bootstrap** | **Implémenté** | systemd + porte d'attestation |
+| **TPM Locker (`tpm_lock.py`)** | **Implémenté** | Vibe-Print scellé au PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **RA-TLS (`ra_tls_attest.py`)** | **Implémenté** | Citation TPM sur gossip du maillage ; vérification des pairs avant sync |
+| **Basculement mempool (`tycoon_failover.py`)** | **Implémenté** | Basculement US / EU / global / **Océanie** sur 4 régions |
+| **Attestation matérielle (`attestation_guard.py`)** | **Implémenté** | Porte PCR0 au bootstrap |
+| **Voice Bridge signé** | **Implémenté** | Nonce automatique + HMAC |
+| **AuthGuard + Nonce-Guard** | **Implémenté** | Sécurité maillage + voix |
+| **UtahNetes + Swarm DHT** | **Implémenté** | RA-TLS + gossip signé |
+| **Genesis ISO v28** | **Implémenté** | `utah_genesis_v28.iso` |
+| **Parité cloud complète** | **Implémenté** | S3, Lambda, RDS, UtahX, conteneurs |
 
 ---
 
-## Commandes vocales
+## Déploiement
 
-| Modèle de commande | Statut | Exemple |
-|--------------------|--------|---------|
-| Revendiquer le nœud | Implémenté | `"Claim node"` |
-| Autoriser un nœud | Implémenté | `"authorize node <64-char-vibe-hash>"` |
-| Déployer une application | Implémenté | `"deploy application my-app"` |
-| Corriger une application | Implémenté | `"patch app my-app to add logging"` |
-| Statut / grille | Implémenté | `"status grid"` |
+| Méthode | Statut |
+|---------|--------|
+| `python3 utahmosphere_master.py` | **Recommandé** |
+| `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
+| `python3 genesis_iso_builder.py` | **ISO v28** |
 
-**Voice Bridge v27.0** récupère automatiquement `GET /nonce` et signe chaque commande. Les clients manuels utilisent `voice_bridge_signed.get_signed_payload()`.
+## Variables d'environnement
 
----
-
-## Options de déploiement
-
-| Méthode | Statut | Plateforme |
-|---------|--------|------------|
-| `python3 utahmosphere_master.py` | **Recommandé** | Toutes |
-| `sudo bash bootstrap.sh` | **Recommandé prod** | Linux + TPM (saut optionnel) |
-| `python3 genesis_iso_builder.py` | **Implémenté** | Génère `utah_genesis_v27.iso` |
-| `./mk_iso.sh` | **Implémenté** | Wrapper Genesis ISO |
-| `python3 voice_bridge.py` | **Implémenté** | Client vocal avec nonce automatique |
-
----
+| Variable | Défaut | Objectif |
+|----------|--------|----------|
+| `UTAH_TPM_LOCK_ENFORCE` | `1` | Exiger le scellement TPM à la revendication |
+| `UTAH_RA_TLS_ENFORCE` | `1` | Exiger les citations RA-TLS sur le maillage |
+| `UTAH_MEMPOOL_NODES` | 4 valeurs par défaut | Remplacer la liste de basculement mempool |
 
 ## Feuille de route
 
-Tous les éléments de la feuille de route v26.0 et antérieurs sont **implémentés** en v27.0.
+Tous les éléments de la feuille de route v27.0 sont **implémentés** en v28.0.
 
-Améliorations futures :
+À venir : épinglage CA RA-TLS distant, service de registre de citations matérielles.
 
-- Vérification distante de citation d'attestation TPM (RA-TLS)
-- Quatrième région mempool (Océanie)
-- Liaison vibe-print au PCR TPM
-
-Consultez la [Référence API](API_REFERENCE.md) et le [Guide du développeur](DEVELOPER_COOKBOOK.md) pour les détails d'implémentation actuels.
+Consultez la [Référence API](API_REFERENCE.md) et le [Guide du développeur](DEVELOPER_COOKBOOK.md).

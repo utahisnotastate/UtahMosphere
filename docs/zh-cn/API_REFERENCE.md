@@ -16,8 +16,14 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ curl http://127.0.0.1:8999/nonce
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ curl http://127.0.0.1:8999/nonce
 | `transcript` | string | 是 | 语音命令（不区分大小写） |
 | `acoustic_hash` | string | 是 | 64 字符 SHA-256 声纹哈希 |
 | `nonce` | integer | 认领后 | 来自 `GET /nonce` 的服务器签发时间戳 |
-| `command_signature` | string | 认领后 | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | 认领后 | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — 别名：`signature` |
 | `request_signature` | string | 否 | 委派节点的可选 AuthGuard HMAC |
 
 **响应 `200`：**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** 自动调用 `GET /nonce` 并完成签名。手动签名：
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **认领后：** `acoustic_hash` 必须与根节点或 `authorized_nodes[]` 匹配，且 `nonce` + `command_signature` 必须有效，否则内核返回：

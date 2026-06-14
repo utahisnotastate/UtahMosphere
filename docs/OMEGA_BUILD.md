@@ -120,9 +120,17 @@ Alpine vmlinuz/initramfs hybrid ISO with syslinux auto-install. See [Genesis ISO
 
 30-second anti-replay window for voice commands. `GET /nonce` + `command_signature` on `/command`.
 
-### 15. Utah-Flux Revocation UI (`ui_revocation.py`)
+### 16. Hardware Attestation (`attestation_guard.py`)
 
-Administrative panel in `flux_gui.py` — revoke delegated nodes via `POST /admin/revoke-node`.
+TPM 2.0 PCR0 verification during bootstrap. Mismatched hardware seals boot partition. See [Attestation](ATTESTATION.md).
+
+### 17. Mempool Failover (`tycoon_failover.py`)
+
+Silent failover across mempool.space, signet, and blockstream.info regional APIs.
+
+### 18. Voice Bridge Signed (`voice_bridge_signed.py`)
+
+`voice_bridge.py` auto-fetches `GET /nonce` and HMAC-signs every command.
 
 ---
 

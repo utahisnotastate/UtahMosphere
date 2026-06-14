@@ -16,8 +16,14 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Instantané opérationnel : état de l'interface, locataires déployés et statu
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Exécuter une intention vocale par programmation. Même charge utile que celle e
 | `transcript` | string | Oui | Commande parlée (insensible à la casse) |
 | `acoustic_hash` | string | Oui | Hash vibe-print SHA-256 sur 64 caractères |
 | `nonce` | integer | Après revendication | Horodatage émis par le serveur depuis `GET /nonce` |
-| `command_signature` | string | Après revendication | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | Après revendication | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias : `signature` |
 | `request_signature` | string | Non | HMAC AuthGuard optionnel pour nœuds délégués |
 
 **Réponse `200` :**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** appelle `GET /nonce` et signe automatiquement. Signature manuelle :
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **Après revendication :** `acoustic_hash` doit correspondre à la racine ou à `authorized_nodes[]`, et `nonce` + `command_signature` doivent être valides, sinon le noyau renvoie :

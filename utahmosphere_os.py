@@ -33,12 +33,14 @@ try:
     from utah_swarm_protocol import UtahSwarmNode
     from utah_tycoon import tycoon_engine
     from nonce_guard import nonce_guard
+    from attestation_guard import HardwareAttestation
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
     UtahSwarmNode = None
     tycoon_engine = None
     nonce_guard = None
+    HardwareAttestation = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -58,7 +60,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v26.0 FINAL]",
+            "node_status": "Active [Omega-Build v27.0 PRODUCTION IMMUTABLE]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -82,7 +84,7 @@ class UtahmosphereSovereignKernel:
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] Omega-Build v26.0 FINAL kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v27.0 PRODUCTION kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -234,7 +236,10 @@ class UtahmosphereSovereignKernel:
 
             if nonce_guard and nonce_guard.enforcement_required(claimed) and "claim node" not in transcript:
                 nonce = payload.get("nonce")
-                command_signature = payload.get("command_signature", "")
+                command_signature = (
+                    payload.get("command_signature")
+                    or payload.get("signature", "")
+                )
                 if nonce is None or not command_signature:
                     return "Access Denied. Fresh nonce and command_signature required (GET /nonce)."
                 try:
@@ -485,8 +490,9 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "26.0",
-                "build": "omega-build-v26-final",
+                "version": "27.0",
+                "build": "omega-build-v27-production",
+                "attestation": HardwareAttestation.status() if HardwareAttestation else {},
             })
             return
 
@@ -514,6 +520,7 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 "master_registry": MASTER_REGISTRY_FILE,
                 "swarm_peers": swarm_peers,
                 "tycoon": tycoon_stats,
+                "attestation": HardwareAttestation.status() if HardwareAttestation else {},
             })
             return
 

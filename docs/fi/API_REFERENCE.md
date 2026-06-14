@@ -16,8 +16,14 @@ Elvytystarkistus kuormantasaajille ja seurannalle.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset ja onko solm
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Suorita ääni-intentti ohjelmallisesti. Sama payload, jonka Voice Bridge lähet
 | `transcript` | string | Kyllä | Puhuttu komento (kirjainkoolla ei väliä) |
 | `acoustic_hash` | string | Kyllä | 64 merkin SHA-256 vibe-print -hash |
 | `nonce` | integer | Claimin jälkeen | Palvelimen myöntämä aikaleima `GET /nonce`:sta |
-| `command_signature` | string | Claimin jälkeen | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | Claimin jälkeen | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias: `signature` |
 | `request_signature` | string | Ei | Valinnainen AuthGuard HMAC delegoiduille solmuille |
 
 **Vastaus `200`:**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** kutsuu automaattisesti `GET /nonce` ja allekirjoittaa. Manuaalinen allekirjoitus:
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **Claimin jälkeen:** `acoustic_hash` täytyy vastata juurta tai `authorized_nodes[]`-listaa, ja `nonce` + `command_signature` täytyy olla kelvollisia, muuten ydin palauttaa:

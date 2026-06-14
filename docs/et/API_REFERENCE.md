@@ -16,8 +16,14 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Operatiivne hetktõmmis: UI olek, juurutatud rentnikud ja kas sõlm on claim-itu
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Käivita hääle intent programmiliselt. Sama keha, mida Voice Bridge saadab.
 | `transcript` | string | Jah | Kõnele käsk (tõstutundetu) |
 | `acoustic_hash` | string | Jah | 64-tähemärgiline SHA-256 vibe-print räsi |
 | `nonce` | integer | Pärast claim-i | Serveri väljastatud ajatempel `GET /nonce`-st |
-| `command_signature` | string | Pärast claim-i | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | Pärast claim-i | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias: `signature` |
 | `request_signature` | string | Ei | Valikuline AuthGuard HMAC delegeeritud sõlmedele |
 
 **Vastus `200`:**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** kutsub automaatselt `GET /nonce` ja allkirjastab. Käsitsi allkirjastamine:
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **Pärast claim-i:** `acoustic_hash` peab ühtima juure või `authorized_nodes[]`-ga ning `nonce` + `command_signature` peavad olema kehtivad, muidu tagastab tuum:

@@ -137,7 +137,24 @@ Disable enforcement for testing: `export UTAH_NONCE_ENFORCE=0`
 
 ## Utah-Flux Revocation (v26.0)
 
-Run `python flux_gui.py` to open the revocation panel. Set `UTAH_FLUX_ACOUSTIC_HASH` to your root vibe hash, or enter it when prompted. Revoking a node removes it from `authorized_nodes[]` and prunes mesh gossip instantly.
+Run `python flux_gui.py` to open the revocation panel.
+
+## Hardware Attestation (v27.0)
+
+`bootstrap.sh` verifies TPM PCR0 before provisioning. `GET /health` reports attestation status.
+
+## Mempool Failover (v27.0)
+
+`UTAH_MEMPOOL_NODES` configures regional endpoints. Tycoon tries each until payment confirms.
+
+## Voice Bridge Auto-Signing (v27.0)
+
+`python voice_bridge.py` uses `voice_bridge_signed.py` — no manual nonce handling required.
+
+```bash
+export UTAH_ATTESTATION_ENFORCE=0   # local dev without TPM
+export UTAH_MEMPOOL_NODES=https://mempool.space/api,https://blockstream.info/api
+```
 
 ---
 

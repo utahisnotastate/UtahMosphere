@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# UtahMosphere Auto-Genesis Provisioning Engine (v25.0 Golden Master)
+# UtahMosphere Auto-Genesis Provisioning Engine (v27.0 Production Immutable)
 # Target: Sovereign Edge Hardware (Pi, M5Stack, SBC, x86 Mini PC)
-# Final State: Zero-Manual-Management Cloud Node
 # ==============================================================================
 
 set -euo pipefail
@@ -15,6 +14,12 @@ fi
 INSTALL_ROOT="${INSTALL_ROOT:-/opt/utahmosphere}"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+echo "[Omega-Genesis] Hardware attestation gate..."
+if ! python3 -c "from attestation_guard import HardwareAttestation; import sys; sys.exit(0 if HardwareAttestation.enforce_or_exit('${INSTALL_ROOT}') else 1)"; then
+  echo "[Omega-Genesis] Untrusted Hardware Detected. Sealing partition." 1>&2
+  exit 1
+fi
+
 echo "[Omega-Genesis] Wiping Legacy World-A Residue..."
 systemctl stop docker 2>/dev/null || true
 systemctl stop nginx 2>/dev/null || true
@@ -23,6 +28,7 @@ apt-get autoremove -y 2>/dev/null || true
 
 echo "[Omega-Genesis] Installing Sovereign Infrastructure..."
 apt-get update -y
+apt-get install -y python3 python3-pip python3-tk libasound2-dev portaudio19-dev curl git tpm2-tools 2>/dev/null || \
 apt-get install -y python3 python3-pip python3-tk libasound2-dev portaudio19-dev curl git
 
 pip3 install -r "${REPO_DIR}/requirements.txt" 2>/dev/null || pip3 install numpy librosa SpeechRecognition pyaudio

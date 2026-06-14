@@ -9,7 +9,9 @@ import os
 import time
 import urllib.error
 import urllib.request
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
+
+from tycoon_failover import MempoolFailover
 
 SETTLEMENT_POLL_SEC = int(os.environ.get("UTAH_TYCOON_POLL_SEC", "5"))
 MEMPOOL_API_BASE = os.environ.get(
@@ -26,13 +28,21 @@ class RealTimeTycoon:
     @staticmethod
     def get_tx_status(address: str) -> bool:
         """Return True when the payment address has at least one confirmed transaction."""
+        settled, _ = RealTimeTycoon.get_tx_status_with_source(address)
+        return settled
+
+    @staticmethod
+    def get_tx_status_with_source(address: str) -> Tuple[bool, str]:
         if not address:
-            return False
-        if RealTimeTycoon._query_mempool_space(address):
-            return True
-        if ELECTRUM_URL:
-            return RealTimeTycoon._query_electrum(address)
-        return False
+            return False, "none"
+        paid, node = MempoolFailover.get_status_with_failover(address)
+        if paid:
+            return True, node or "mempool-failover"
+        if ELECTRUM_URL and RealTimeTycoon._query_electrum(address):
+            return True, "electrum"
+        if MEMPOOL_API_BASE and RealTimeTycoon._query_mempool_space(address):
+            return True, MEMPOOL_API_BASE
+        return False, "none"
 
     @staticmethod
     def _query_mempool_space(address: str) -> bool:
@@ -110,10 +120,14 @@ class RealTimeTycoon:
     def _is_settled(self, record: dict, address: str, now: float) -> bool:
         if self.should_use_simulation(address):
             return self.simulate_elapsed(record, now)
-        return self.get_tx_status(address)
+        settled, source = RealTimeTycoon.get_tx_status_with_source(address)
+        if settled:
+            record["settlement_node"] = source
+        return settled
 
     @staticmethod
     def _settlement_source(address: str) -> str:
         if RealTimeTycoon.should_use_simulation(address):
             return "simulate"
-        return "mempool"
+        _, source = RealTimeTycoon.get_tx_status_with_source(address)
+        return source if source != "none" else "mempool-failover"

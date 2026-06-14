@@ -16,8 +16,14 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Operational snapshot: UI state, deployed tenants, and whether the node has been 
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Execute a voice intent programmatically. Same payload the Voice Bridge sends.
 | `transcript` | string | Yes | Spoken command (case-insensitive) |
 | `acoustic_hash` | string | Yes | 64-char SHA-256 vibe-print hash |
 | `nonce` | integer | After claim | Server-issued timestamp from `GET /nonce` |
-| `command_signature` | string | After claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | After claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias: `signature` |
 | `request_signature` | string | No | Optional AuthGuard HMAC for delegated nodes |
 
 **Response `200`:**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** calls `GET /nonce` and signs automatically. Manual signing:
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **After claim:** `acoustic_hash` must match root or `authorized_nodes[]`, and `nonce` + `command_signature` must be valid, or the kernel returns:

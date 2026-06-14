@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v26.0 Omega-Build FINAL** — unifikådo na bare-metal sovereign edge platform, port **8999**. I Omega-Build FINAL kernel (`utahmosphere_master.py`) ma deliver mempool Tycoon settlement, AuthGuard `authorized_nodes[]` enforcement, Alpine Genesis ISO provisioning, voice nonce anti-replay, yan Utah-Flux node revocation — mas kompleto na S3/Lambda/RDS parity. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v27.0 Production Immutable** — unifikådo na bare-metal sovereign edge platform, port **8999**. I v27.0 ma kompleta i sovereign trust chain: **TPM hardware attestation**, **multi-region mempool failover**, yan **automatic voice nonce signing** — ginen silicon asta global swarm. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -8,7 +8,7 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v26.0 Omega-
 
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
-| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — kompleto na v26.0 implementasion vs. trabahu futuru |
+| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — v27.0 Production Immutable vs. trabahu futuru |
 | [Referensia API](API_REFERENCE.md) | Desarrollador siha yan operadot siha |
 | [Guia Desarrollu Lokal](LOCAL_DEVELOPMENT.md) | Desarrollador siha gi Windows, macOS, pat Linux |
 
@@ -78,18 +78,13 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## Features v26.0 Omega-Build FINAL
+## Features v27.0 Production Immutable
 
-- **UtahX:** Native HTTP/1.1 stream proxy gi containers
-- **UtahContainerEngine:** In-process handler servers gi ports 8200+
-- **Lazarus AST Engine:** Live handler mutation sin rebuilds
-- **S3 Mesh / Lambda / RDS:** Full cloud parity gi port 8999
-- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`)
-- **AuthGuard:** `authorized_nodes[]` enforcement (`ledger_auth.py`)
-- **Nonce-Guard:** 30s voice anti-replay (`nonce_guard.py`, `GET /nonce`)
-- **Utah-Flux Revocation UI:** Purge mesh nodes (`ui_revocation.py` + `flux_gui.py`)
-- **Genesis ISO:** Alpine vmlinuz bundling (`genesis_iso_builder.py` → `utah_genesis_v26.iso`)
-- **UtahNetes + Swarm DHT:** Signed gossip yan deterministic routing
-- **Quantum Ledger:** Biometric vibe-print node claim
+- **Hardware Attestation:** TPM 2.0 PCR0 gate (`attestation_guard.py`) gi bootstrap
+- **Mempool Failover:** US/EU/ASIA silent failover (`tycoon_failover.py`)
+- **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
+- **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
+- **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
+- **Genesis ISO v27:** Alpine vmlinuz + attestation-aware bootstrap
 
-Build `omega-build-v26-final`. Ma recommend na entry: `python3 utahmosphere_master.py`.
+Build `omega-build-v27-production`. Ma recommend na entry: `python3 utahmosphere_master.py`.

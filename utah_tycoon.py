@@ -12,6 +12,7 @@ import threading
 from typing import Dict, Any, Callable, List, Optional
 
 from tycoon_settlement import RealTimeTycoon, SETTLEMENT_POLL_SEC
+from tycoon_failover import MempoolFailover
 
 SETTLEMENT_INTERVAL_SEC = SETTLEMENT_POLL_SEC
 
@@ -167,7 +168,7 @@ class UtahTycoonDaemon:
                 "settled_invoices": settled,
                 "swept_funds": self.ledger.get("swept_funds", 0),
                 "settlement_mode": os.environ.get("UTAH_TYCOON_SETTLEMENT_MODE", "auto"),
-                "mempool_api": os.environ.get("UTAH_MEMPOOL_API", "https://mempool.space/api"),
+                "mempool_failover_nodes": MempoolFailover.node_regions(),
             }
 
 

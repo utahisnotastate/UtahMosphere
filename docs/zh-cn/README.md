@@ -1,6 +1,6 @@
 # UtahMosphere 文档门户
 
-欢迎来到 UtahMosphere OS 文档中心。**v26.0 Omega-Build FINAL** — 统一裸机主权边缘平台，默认端口 **8999**。Omega-Build FINAL 内核（`utahmosphere_master.py`）提供内存池 Tycoon 结算、AuthGuard `authorized_nodes[]` 强制执行、Alpine Genesis ISO 配置、语音 nonce 防重放与 Utah-Flux 节点撤销 — 以及完整 S3/Lambda/RDS  parity。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
+欢迎来到 UtahMosphere OS 文档中心。**v27.0 Production Immutable** — 统一裸机主权边缘平台，默认端口 **8999**。v27.0 完成主权信任链：**TPM 硬件 attestation**、**多区域内存池故障转移**和**自动语音 nonce 签名** — 从芯片到全球网格。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
 
 ---
 
@@ -8,7 +8,7 @@
 
 | 文档 | 最适合 |
 |------|--------|
-| [能力矩阵](CAPABILITY_MATRIX.md) | 所有人 — v26.0 完整实现与未来工作 |
+| [能力矩阵](CAPABILITY_MATRIX.md) | 所有人 — v27.0 Production Immutable 与未来工作 |
 | [API 参考](API_REFERENCE.md) | 开发者与运维人员 |
 | [本地开发指南](LOCAL_DEVELOPMENT.md) | 在 Windows、macOS 或 Linux 上开发的开发者 |
 
@@ -78,18 +78,13 @@
 
 ---
 
-## v26.0 Omega-Build FINAL 功能
+## v27.0 Production Immutable 功能
 
-- **UtahX：** 原生 HTTP/1.1 流代理至容器
-- **UtahContainerEngine：** 8200+ 端口进程内 handler 服务
-- **Lazarus AST：** 无需重建的实时 handler 变更
-- **S3 Mesh / Lambda / RDS：** 8999 端口完整云 parity
-- **Utah-Tycoon：** 内存池/electrum 结算（`tycoon_settlement.py`）
-- **AuthGuard：** `authorized_nodes[]` 强制执行（`ledger_auth.py`）
-- **Nonce-Guard：** 30 秒语音防重放（`nonce_guard.py`，`GET /nonce`）
-- **Utah-Flux 撤销 UI：** 清除网格节点（`ui_revocation.py` + `flux_gui.py`）
-- **Genesis ISO：** Alpine vmlinuz 打包（`genesis_iso_builder.py` → `utah_genesis_v26.iso`）
-- **UtahNetes + Swarm DHT：** 签名 gossip 与确定性路由
-- **Quantum Ledger：** 生物识别声纹节点认领
+- **硬件 attestation：** bootstrap 中的 TPM 2.0 PCR0 关卡（`attestation_guard.py`）
+- **内存池故障转移：** 美/欧/亚静默故障转移（`tycoon_failover.py`）
+- **签名语音桥：** 自动 `GET /nonce` + HMAC（`voice_bridge_signed.py`）
+- **UtahX / ContainerEngine / S3 / Lambda / RDS：** 完整云 parity
+- **AuthGuard + Nonce-Guard + Utah-Flux 撤销：** 网格治理
+- **Genesis ISO v27：** Alpine vmlinuz + 支持 attestation 的 bootstrap
 
-构建标识 `omega-build-v26-final`。推荐入口：`python3 utahmosphere_master.py`。
+构建标识 `omega-build-v27-production`。推荐入口：`python3 utahmosphere_master.py`。

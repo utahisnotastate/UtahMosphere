@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v26.0 Omega-Build FINAL** — täielik teekaardi rakendamine: nonce-kaitse, sõlme tühistamine, Alpine Genesis ISO ja integreeritud Utah-Tycoon, UtahNetes ning Global Swarm. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v27.0 Production Immutable** — suveräänsed usaldusankrud: TPM riistvara tõendamine, mitmepiirkondiline mempool varuühendus ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 
@@ -65,11 +65,13 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v26.0 Omega-Build F
 
 ---
 
-## UtahMosphere OS v26.0
+## UtahMosphere OS v27.0
 
-- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v26-final`
-- **Hääljuurutus** — Voice Bridge või `POST /command` koos `nonce` + `command_signature`
+- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v27-production`
+- **Hääljuurutus** — Voice Bridge (`voice_bridge_signed.py`) kutsub automaatselt `GET /nonce` ja allkirjastab
+- **TPM tõendamine** — `attestation_guard.py` bootstrapis; väljad `/health` ja `/status`
+- **Mempool varuühendus** — `tycoon_failover.py` (mempool.space, signet, blockstream)
 - **Biomeetriline claim** — käsk «Claim node»; `GET /nonce` korduskasutuse vastu
 - **Sõlme tühistamine** — `POST /admin/revoke-node` ja Utah-Flux paneel
-- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v26.iso`
-- **Tycoon HTTP 402** — `GET /app/{name}`
+- **Genesis ISO** — `genesis_iso_builder.py` / `mk_iso.sh` → `utah_genesis_v27.iso`
+- **Tycoon HTTP 402** — `GET /app/{name}` mempool varuühenduse arveldusega

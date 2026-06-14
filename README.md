@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v26.0 Omega-Build FINAL)
+# 🌌 UtahMosphere OS (v27.0 Production Immutable)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Omega-Build FINAL Kernel** (`utahmosphere_master.py`) delivers mempool Tycoon settlement, AuthGuard mesh enforcement, Alpine Genesis ISO provisioning, voice nonce anti-replay, and Utah-Flux node revocation — plus full S3/Lambda/RDS parity.
+UtahMosphere OS v27.0 completes the sovereign trust chain: **TPM hardware attestation**, **multi-region mempool failover**, and **automatic voice nonce signing** — from silicon to global swarm.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -100,23 +100,20 @@ docker-compose up -d
 | `UTAH_ELECTRUM_URL` | — | Optional electrum-server JSON-RPC URL |
 | `UTAH_NONCE_ENFORCE` | `1` | Require nonce on `/command` after claim |
 | `UTAH_NONCE_WINDOW_SEC` | `30` | Nonce freshness window |
+| `UTAH_ATTESTATION_ENFORCE` | `1` | TPM PCR0 gate in bootstrap (`0` = dev skip) |
+| `UTAH_MEMPOOL_NODES` | 3 defaults | Comma-separated mempool API bases for failover |
 | `UTAH_FLUX_ACOUSTIC_HASH` | — | Root hash for Utah-Flux revocation panel |
 
 ---
 
-## 🛠 Features (v26.0 Omega-Build FINAL)
+## 🛠 Features (v27.0 Production Immutable)
 
-- **UtahX:** Native HTTP/1.1 stream proxy to containers (replaces Nginx)
-- **UtahContainerEngine:** In-process handler servers on ports 8200+ (replaces Docker)
-- **Lazarus AST Engine:** Live handler mutation without rebuilds
-- **S3 Mesh / Lambda / RDS:** Full cloud parity on port 8999
-- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`)
-- **AuthGuard:** `authorized_nodes[]` enforcement (`ledger_auth.py`)
-- **Nonce-Guard:** 30s voice anti-replay (`nonce_guard.py`, `GET /nonce`)
-- **Utah-Flux Revocation UI:** Purge mesh nodes (`ui_revocation.py` + `flux_gui.py`)
-- **Genesis ISO:** Alpine vmlinuz bundling (`genesis_iso_builder.py` -> `utah_genesis_v26.iso`)
-- **UtahNetes + Swarm DHT:** Signed gossip and deterministic routing
-- **Quantum Ledger:** Biometric vibe-print node claim
+- **Hardware Attestation:** TPM 2.0 PCR0 gate (`attestation_guard.py`) in bootstrap
+- **Mempool Failover:** US/EU/ASIA silent failover (`tycoon_failover.py`)
+- **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
+- **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
+- **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
+- **Genesis ISO v27:** Alpine vmlinuz + attestation-aware bootstrap
 
 ---
 

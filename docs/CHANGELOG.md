@@ -2,6 +2,22 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [27.0] — Production Immutable (2026-06)
+
+### Added
+- `attestation_guard.py` — TPM 2.0 PCR0 hardware root-of-trust in `bootstrap.sh`
+- `tycoon_failover.py` — multi-region mempool failover (mempool.space, signet, blockstream)
+- `voice_bridge_signed.py` — automatic `GET /nonce` + HMAC signing for voice commands
+- [Hardware Attestation](ATTESTATION.md) documentation
+- `/health` and `/status` `attestation` field
+
+### Changed
+- `voice_bridge.py` — uses `voice_bridge_signed` for all transmissions
+- `tycoon_settlement.py` — routes through `MempoolFailover` before electrum fallback
+- Genesis ISO output: `utah_genesis_v27.iso`
+- Build identifier: `omega-build-v27-production`
+- v26.0 roadmap items complete; all locale docs updated
+
 ## [26.0] — Omega-Build FINAL (2026-06)
 
 ### Added

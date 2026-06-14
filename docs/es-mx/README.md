@@ -1,6 +1,6 @@
 # Portal de documentación UtahMosphere
 
-Bienvenido al centro de documentación de UtahMosphere OS **v26.0 Omega-Build FINAL** — plataforma soberana edge bare-metal unificada, puerto **8999**. El kernel Omega-Build FINAL (`utahmosphere_master.py`) entrega liquidación mempool Tycoon, aplicación AuthGuard `authorized_nodes[]`, aprovisionamiento Genesis ISO Alpine, anti-replay nonce de voz y revocación de nodos Utah-Flux — más paridad completa S3/Lambda/RDS. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
+Bienvenido al centro de documentación de UtahMosphere OS **v27.0 Production Immutable** — plataforma soberana edge bare-metal unificada, puerto **8999**. La v27.0 completa la cadena de confianza soberana: **attestation de hardware TPM**, **failover mempool multi-región** y **firma automática de nonce de voz** — del silicio al enjambre global. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
 
 ---
 
@@ -8,7 +8,7 @@ Bienvenido al centro de documentación de UtahMosphere OS **v26.0 Omega-Build FI
 
 | Documento | Ideal para |
 |-----------|------------|
-| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — implementación completa v26.0 vs. trabajo futuro |
+| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — v27.0 Production Immutable vs. trabajo futuro |
 | [Referencia de API](API_REFERENCE.md) | Desarrolladores y operadores |
 | [Guía de desarrollo local](LOCAL_DEVELOPMENT.md) | Desarrolladores en Windows, macOS o Linux |
 
@@ -78,18 +78,13 @@ Mini-proyectos completos para bifurcar y extender:
 
 ---
 
-## Funciones v26.0 Omega-Build FINAL
+## Funciones v27.0 Production Immutable
 
-- **UtahX:** proxy HTTP/1.1 nativo a contenedores
-- **UtahContainerEngine:** servidores handler in-process en puertos 8200+
-- **Lazarus AST:** mutación de handler en vivo sin reconstrucción
-- **S3 Mesh / Lambda / RDS:** paridad cloud completa en puerto 8999
-- **Utah-Tycoon:** liquidación mempool/electrum (`tycoon_settlement.py`)
-- **AuthGuard:** aplicación de `authorized_nodes[]` (`ledger_auth.py`)
-- **Nonce-Guard:** anti-replay de voz 30 s (`nonce_guard.py`, `GET /nonce`)
-- **UI de revocación Utah-Flux:** purga de nodos de malla (`ui_revocation.py` + `flux_gui.py`)
-- **Genesis ISO:** empaquetado Alpine vmlinuz (`genesis_iso_builder.py` → `utah_genesis_v26.iso`)
-- **UtahNetes + Swarm DHT:** gossip firmado y enrutamiento determinista
-- **Quantum Ledger:** claim de nodo por vibe-print biométrico
+- **Attestation de hardware:** puerta PCR0 TPM 2.0 (`attestation_guard.py`) en bootstrap
+- **Failover mempool:** failover silencioso US/EU/ASIA (`tycoon_failover.py`)
+- **Voice Bridge firmado:** `GET /nonce` automático + HMAC (`voice_bridge_signed.py`)
+- **UtahX / ContainerEngine / S3 / Lambda / RDS:** paridad cloud completa
+- **AuthGuard + Nonce-Guard + revocación Utah-Flux:** gobernanza de malla
+- **Genesis ISO v27:** Alpine vmlinuz + bootstrap con attestation
 
-Build `omega-build-v26-final`. Entrada recomendada: `python3 utahmosphere_master.py`.
+Build `omega-build-v27-production`. Entrada recomendada: `python3 utahmosphere_master.py`.

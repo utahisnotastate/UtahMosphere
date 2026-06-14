@@ -85,10 +85,21 @@ Replaces IAM roles and passwords.
 - `command_signature = HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")`
 - 30-second replay window; reused nonces rejected
 
-#### **12. Utah-Flux Revocation UI (`ui_revocation.py`)**
+#### **13. Hardware Attestation (`attestation_guard.py`)**
 
-- Admin panel in `flux_gui.py` lists `authorized_nodes[]`
-- `POST /admin/revoke-node` prunes revoked nodes from mesh gossip
+- TPM 2.0 PCR0 read via `tpm2_pcrread sha256:0`
+- Bootstrap gate; mismatch seals boot partition
+- `GET /health` exposes attestation status
+
+#### **14. Mempool Failover (`tycoon_failover.py`)**
+
+- Rotates across mempool.space, signet, blockstream.info
+- Silent failover on regional outage or censorship
+
+#### **15. Voice Bridge Auto-Signing (`voice_bridge_signed.py`)**
+
+- Fetches `GET /nonce` before every voice transmission
+- Signs with vibe-print HMAC; immune to 30s+ replay
 
 ---
 

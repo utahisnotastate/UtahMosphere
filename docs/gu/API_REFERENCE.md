@@ -16,8 +16,14 @@ Chek si mumuña para load balancers yan monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Retratu operasion: UI state, deployed tenants, yan claimed status.
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Ma execute voice intent programmaticamente. I mismo payload Voice Bridge ma send
 | `transcript` | string | Si | Komando gi bos (ti importa uppercase/lowercase) |
 | `acoustic_hash` | string | Si | 64-char SHA-256 vibe-print hash |
 | `nonce` | integer | Después claim | Server-issued timestamp ginen `GET /nonce` |
-| `command_signature` | string | Después claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | Después claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias: `signature` |
 | `request_signature` | string | Tåya' | Optional AuthGuard HMAC para delegated nodes |
 
 **Response `200`:**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** ma call `GET /nonce` yan ma sign automaticamente. Manual signing:
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **Después claim:** `acoustic_hash` debi match root pat `authorized_nodes[]`, yan `nonce` + `command_signature` debi valid, pat core returns:

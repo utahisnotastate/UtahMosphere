@@ -16,8 +16,14 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "26.0",
-  "build": "omega-build-v26-final"
+  "version": "27.0",
+  "build": "omega-build-v27-production",
+  "attestation": {
+    "tpm_present": true,
+    "provisioned": true,
+    "sealed": false,
+    "enforce": true
+  }
 }
 ```
 
@@ -75,7 +81,17 @@ Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants och om noden har cla
     "settled_invoices": 1,
     "swept_funds": 5000,
     "settlement_mode": "auto",
-    "mempool_api": "https://mempool.space/api"
+    "mempool_failover_nodes": [
+      "https://mempool.space/api",
+      "https://mempool.space/signet/api",
+      "https://blockstream.info/api"
+    ]
+  },
+  "attestation": {
+    "tpm_present": false,
+    "provisioned": false,
+    "sealed": false,
+    "enforce": true
   }
 }
 ```
@@ -93,7 +109,7 @@ Kör en röstintent programmatiskt. Samma payload som Voice Bridge skickar.
 | `transcript` | string | Ja | Talat kommando (skiftlägesokänsligt) |
 | `acoustic_hash` | string | Ja | 64-teckens SHA-256 vibe-print-hash |
 | `nonce` | integer | Efter claim | Serverutfärdad tidsstämpel från `GET /nonce` |
-| `command_signature` | string | Efter claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` |
+| `command_signature` | string | Efter claim | `HMAC-SHA256(acoustic_hash, f"{nonce}:{transcript}")` — alias: `signature` |
 | `request_signature` | string | Nej | Valfri AuthGuard HMAC för delegerade noder |
 
 **Svar `200`:**
@@ -129,6 +145,13 @@ curl -X POST http://127.0.0.1:8999/command \
 curl -X POST http://127.0.0.1:8999/command \
   -H "Content-Type: application/json" \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
+```
+
+**Voice Bridge v27.0** anropar automatiskt `GET /nonce` och signerar. Manuell signering:
+
+```python
+from voice_bridge_signed import get_signed_payload
+payload = get_signed_payload("deploy application hello", acoustic_hash)
 ```
 
 **Efter claim:** `acoustic_hash` måste matcha root eller `authorized_nodes[]`, och `nonce` + `command_signature` måste vara giltiga, annars returnerar kärnan:

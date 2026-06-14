@@ -56,7 +56,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Golden Master Final v25.0]",
+            "node_status": "Active [Golden Master v25.1 Migration Ready]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -78,7 +78,7 @@ class UtahmosphereSovereignKernel:
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
 
-        print(f"[{self.node_identity}] Golden Master Final kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Golden Master v25.1 kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -90,13 +90,17 @@ class UtahmosphereSovereignKernel:
             return
         node_hash = self._node_hash()
         self.root_vibe = node_hash if ledger_guard and ledger_guard.ledger.get("root_vibe_hash") else None
+        auth_guard = ledger_guard.auth_guard if ledger_guard else None
         self.swarm_router = UtahSwarmNode(node_hash, on_ledger_sync=self._on_swarm_ledger_sync)
         self.mesh_engine = UtahNetesMesh(
             node_id=self.node_identity,
             get_registry=lambda: self.cluster_registry,
             apply_registry=self._apply_remote_registry,
             swarm_broadcast=self._broadcast_to_swarm,
+            auth_guard=auth_guard,
+            node_hash=node_hash,
         )
+        self._sync_authorized_nodes_to_registry()
 
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
@@ -105,10 +109,21 @@ class UtahmosphereSovereignKernel:
                     self.swarm_router.route_payload_deterministic(peer_hash, payload)
 
     def _on_swarm_ledger_sync(self, payload: dict):
+        if ledger_guard and payload.get("mesh_signature"):
+            if not ledger_guard.auth_guard.verify_message(payload):
+                print("[Swarm Link] Rejected unsigned DHT ledger sync")
+                return
         registry = payload.get("registry", {})
         origin = payload.get("origin_node", "unknown")
         print(f"[Swarm Link] DHT state sync from {origin}")
         self._apply_remote_registry(registry)
+
+    def _sync_authorized_nodes_to_registry(self):
+        if not ledger_guard:
+            return
+        nodes = ledger_guard.get_authorized_nodes()
+        self.cluster_registry["authorized_nodes"] = nodes
+        self._save_registry_unlocked()
 
     def _apply_remote_registry(self, remote: dict):
         if not remote:
@@ -125,7 +140,7 @@ class UtahmosphereSovereignKernel:
         app_name = record.get("app_target")
         if app_name:
             self.activate_tenant(app_name)
-            print(f"[Tycoon] Tenant {app_name} → active-compute after settlement {tx_id[:8]}")
+            print(f"[Tycoon] Tenant {app_name} -> active-compute after settlement {tx_id[:8]}")
         self.trigger_flux_ui_render()
 
     def _bootstrap_sovereign_paths(self):
@@ -178,7 +193,29 @@ class UtahmosphereSovereignKernel:
                 if "mapped" in response and UtahSwarmNode:
                     self.root_vibe = acoustic_hash
                     self.swarm_router = UtahSwarmNode(acoustic_hash, on_ledger_sync=self._on_swarm_ledger_sync)
+                    self._sync_authorized_nodes_to_registry()
+                    if self.mesh_engine:
+                        self.mesh_engine.node_hash = acoustic_hash
+                        self.mesh_engine._auth_guard = ledger_guard.auth_guard
                 return response
+
+            if "authorize node" in transcript:
+                parts = transcript.split()
+                try:
+                    idx = parts.index("node") + 1
+                    node_hash = parts[idx]
+                    if ledger_guard.authorize_node(node_hash):
+                        self._sync_authorized_nodes_to_registry()
+                        return f"Node {node_hash[:8]} authorized for mesh gossip."
+                    return "Invalid node hash. Expected 64-char vibe-print."
+                except Exception:
+                    return "Usage: authorize node <64-char-vibe-hash>"
+
+            request_sig = payload.get("request_signature", "")
+            if request_sig and not ledger_guard.verify_request_signature(request_sig, transcript):
+                self.ui_state["node_status"] = "SECURITY LOCKDOWN: INVALID SIGNATURE"
+                self.trigger_flux_ui_render()
+                return "Access Denied. Request signature failed AuthGuard validation."
 
             if not ledger_guard.verify_vibe_signature(acoustic_hash, transcript):
                 self.ui_state["node_status"] = "SECURITY LOCKDOWN: UNAUTHORIZED ENTITY"
@@ -391,8 +428,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "25.0",
-                "build": "golden-master-final",
+                "version": "25.1",
+                "build": "golden-master-v25.1",
             })
             return
 
@@ -403,6 +440,7 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 "ui_state": self.core_engine.ui_state,
                 "tenants": list(self.core_engine.cluster_registry.get("tenants", {}).keys()),
                 "claimed": self.core_engine.root_vibe is not None,
+                "authorized_nodes": self.core_engine.cluster_registry.get("authorized_nodes", []),
                 "s3_root": S3_ROOT,
                 "master_registry": MASTER_REGISTRY_FILE,
                 "swarm_peers": swarm_peers,

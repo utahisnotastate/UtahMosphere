@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v25.0 Golden Master Final)
+# 🌌 UtahMosphere OS (v25.1 Migration Ready)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Final Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python socket-level event loops — voice deploy, biometric security, S3/Lambda/RDS parity, Tycoon settlement, UtahNetes mesh gossip, and deterministic Swarm DHT routing.
+UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Master Kernel** (`utahmosphere_master.py`) replaces Nginx, Docker, and Kubernetes with native Python socket-level event loops — mempool Tycoon settlement, AuthGuard mesh enforcement, Genesis ISO provisioning, and full S3/Lambda/RDS parity.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -27,6 +27,7 @@ UtahMosphere OS is a unified bare-metal sovereign edge platform. The **Golden Ma
 ### Reference
 
 - [Omega-Build Golden Master Final](docs/OMEGA_BUILD.md) — unified kernel architecture
+- [Genesis ISO Installer](docs/GENESIS_ISO.md) — flash-drive UEFI boot image (`mk_iso.sh`)
 - [OTA Lazarus Channel](docs/OTA_LAZARUS.md) — over-the-air swarm kernel updates
 - [API Reference](docs/API_REFERENCE.md) — S3, Lambda, RDS, `/app` proxy, `/app/unlock`, `/command`
 - [Capability Matrix](docs/CAPABILITY_MATRIX.md) — what works today vs. roadmap
@@ -94,11 +95,13 @@ docker-compose up -d
 | `UTAH_DATA_DIR` | `/var/lib/utahmosphere` | Registry, containers, UtahX manifests |
 | `UTAH_PROXY_CONF_DIR` | `/etc/nginx/sites-enabled` | Legacy proxy path |
 | `UTAH_XPUB` | placeholder | Tycoon master xpub |
-| `UTAH_ENV` | — | Environment label |
+| `UTAH_TYCOON_SETTLEMENT_MODE` | `auto` | `auto`, `real`, or `simulate` Bitcoin settlement |
+| `UTAH_MEMPOOL_API` | `https://mempool.space/api` | Mempool confirmation endpoint |
+| `UTAH_ELECTRUM_URL` | — | Optional electrum-server JSON-RPC URL |
 
 ---
 
-## 🛠 Features (Golden Master Final)
+## 🛠 Features (v25.1 Migration Ready)
 
 - **UtahX:** Native HTTP/1.1 stream proxy to containers (replaces Nginx)
 - **UtahContainerEngine:** In-process handler servers on ports 8200+ (replaces Docker)
@@ -106,10 +109,12 @@ docker-compose up -d
 - **S3 Mesh:** Local NVMe object storage at `/s3/{bucket}/{key}`
 - **Utah Lambda:** `POST /lambda/{fn}/invoke` serverless handlers
 - **RDS Ledger:** `POST /rds/write`, `GET /rds/read/{key}` key-value store
-- **Utah-Tycoon:** `POST /app/unlock` + HTTP 402 gate → `active-compute` after ~60s settlement
-- **UtahNetes Mesh:** 5s multicast gossip + `master_registry.json` sync (`utah_mesh_engine.py`)
-- **Global Swarm DHT:** Deterministic XOR routing, `FIND_NODE` peer lookup (`utah_swarm_protocol.py`)
-- **OTA Lazarus:** Push kernel updates to swarm nodes (`utah_ota_lazarus.py`)
+- **Utah-Tycoon:** Mempool/electrum settlement (`tycoon_settlement.py`) + HTTP 402 gate
+- **AuthGuard:** `authorized_nodes[]` enforcement for voice + mesh (`ledger_auth.py`)
+- **UtahNetes Mesh:** Signed 5s multicast gossip + `master_registry.json`
+- **Global Swarm DHT:** Deterministic XOR routing, `FIND_NODE` peer lookup
+- **Genesis ISO:** `./mk_iso.sh` → `utah_genesis_v25.iso` flash installer
+- **OTA Lazarus:** Push kernel updates to swarm nodes
 - **Quantum Ledger:** Biometric vibe-print node claim
 - **Utah-Flux:** Reactive Tkinter dashboard
 

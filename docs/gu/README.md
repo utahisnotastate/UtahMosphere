@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. **Golden Master Final v25.0** — unifikådo na bare-metal kernel yan Utah-Tycoon, UtahNetes, yan Global Swarm må'pos implement. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS. **Migration Ready v25.1** — unifikådo na bare-metal kernel yan mempool Tycoon settlement, AuthGuard `authorized_nodes[]` enforcement, Genesis ISO installer (`mk_iso.sh`), UtahNetes, yan Global Swarm må'pos implement. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -64,7 +64,8 @@ Scripts dikike' para usa i live API:
 |---------|--------------|
 | [hello-world](../../examples/hello-world/) | Deploy app via `/command` |
 | [check-node-health](../../examples/check-node-health/) | Health yan status probes |
-| [paid-app-access](../../examples/paid-app-access/) | Tycoon tollbooth settlement |
+| [paid-app-access](../../examples/paid-app-access/) | Mempool/electrum Tycoon settlement |
+| [omega-build-verify](../../examples/omega-build-verify/) | Full S3/Lambda/RDS/container parity test |
 | [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Deploy sin mikrofonu |
 
 ### Starter Projects (`starter-projects/`)
@@ -79,8 +80,8 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## UtahMosphere OS v25.0 Golden Master Final
+## UtahMosphere OS v25.1 Migration Ready
 
-Suveranu edge Python platform — port `8999`, voice deploy, biometric claim, HTTP 402, `POST /app/unlock`.
+Suveranu edge Python platform — port `8999`, build `golden-master-v25.1`, voice deploy, biometric claim, mempool Tycoon settlement, AuthGuard `authorized_nodes[]`, Genesis ISO (`./mk_iso.sh`), `authorize node` voice command, HTTP 402, `POST /app/unlock`.
 
 **Mas dokumentu:** [Referensia API](API_REFERENCE.md) · [Matrisis Kapasidad](CAPABILITY_MATRIX.md)

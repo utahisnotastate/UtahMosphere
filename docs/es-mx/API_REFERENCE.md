@@ -16,8 +16,8 @@ Sonda de disponibilidad para balanceadores de carga y monitoreo.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -46,8 +46,15 @@ Instantánea operativa: estado de la UI, inquilinos desplegados y si el nodo ha 
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Ejecuta una intención de voz de forma programática. Mismo payload que envía V
 |-------|------|-----------|-------------|
 | `transcript` | string | Sí | Comando hablado (sin distinción de mayúsculas) |
 | `acoustic_hash` | string | Sí | Hash vibe-print SHA-256 de 64 caracteres |
+| `request_signature` | string | No | HMAC AuthGuard opcional para nodos delegados |
 
 **Respuesta `200`:**
 
@@ -78,6 +86,7 @@ Ejecuta una intención de voz de forma programática. Mismo payload que envía V
 | Intención | Ejemplo de transcripción |
 |-----------|--------------------------|
 | Reclamar nodo | `"Claim node"` |
+| Autorizar nodo | `"authorize node <64-char-vibe-hash>"` |
 | Desplegar app | `"deploy application hello"` o `"manifest app hello"` |
 | Parchear app | `"patch app hello to add feature x"` |
 | Estado | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Después del claim:** `acoustic_hash` debe coincidir con el hash vibe raíz anclado o el kernel devuelve:
+**Después del claim:** `acoustic_hash` debe coincidir con el hash vibe raíz anclado **o** con una entrada en `authorized_nodes[]`, o el kernel devuelve:
 
 ```json
 {
@@ -144,7 +153,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Enviar una solicitud de desbloqueo por pago. Tycoon registra una transacción pendiente y devuelve HTTP `202` hasta la liquidación criptográfica (~60 s).
+Enviar una solicitud de desbloqueo por pago. Tycoon consulta mempool.space (o electrum-server) para la finalidad del pago. Las direcciones de desarrollo (`bc1q_utah_*`) usan liquidación temporizada en modo `auto`.
 
 **Cuerpo de la solicitud:**
 

@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämfört med vad som beskrivs i marknadsföringsdokument eller planeras för framtida releaser. Använd den för att sätta realistiska förväntningar under migrering och utveckling.
+UtahMosphere OS **v25.1 Migration Ready** — implementeringsstatus enligt Omega-Build.
 
 ---
 
@@ -8,14 +8,19 @@ Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämf
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | Nod-liveness-probe |
-| `/status` | GET | **Implementerat** | UI-tillstånd, tenant-lista, claim-status |
-| `/command` | POST | **Implementerat** | Röstintent-exekvering (JSON-body) |
+| `/health` | GET | **Implementerat** | Liveness-probe + `build: golden-master-v25.1` |
+| `/status` | GET | **Implementerat** | UI-tillstånd, tenants, claim-status, S3-rot |
+| `/command` | POST | **Implementerat** | Röstintent-exekvering |
 | `/app/unlock` | POST | **Implementerat** | Skicka betalning; returnerar 202 tills avveckling |
-| `/app/{name}` | GET | **Implementerat** | Tycoon-gated appåtkomst (402 tills betald) |
-| `/s3/*` | * | Planerat | Dokumenterat i migreringsguiden; ännu inte routat |
-| `/lambda/*/invoke` | POST | Planerat | Handler-stubs skapas endast vid driftsättning |
-| `/rds/read/*`, `/rds/write` | * | Planerat | Register finns; HTTP-routes inte kopplade |
+| `/app/{name}` | GET | **Implementerat** | Tycoon 402-grind + UtahX-proxy till container |
+| `/app/{name}/{path}` | GET | **Implementerat** | Subpath-proxy till container-backend |
+| `/s3/{bucket}/{key}` | GET | **Implementerat** | Objektläsning (lokal NVMe) |
+| `/s3/{bucket}/{key}` | PUT/POST | **Implementerat** | Objekt-skrivning; valfria HMAC-headers |
+| `/s3/{bucket}/{prefix}*` | GET | **Implementerat** | Lista objekt |
+| `/lambda/{fn}/invoke` | POST | **Implementerat** | Serverlös handler-invokering |
+| `/lambda/{fn}` | GET | **Implementerat** | GET-invokering med tomt event |
+| `/rds/write` | POST | **Implementerat** | Nyckel-värde-skrivning |
+| `/rds/read/{key}` | GET | **Implementerat** | Nyckel-värde-läsning |
 
 ---
 
@@ -23,25 +28,34 @@ Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämf
 
 | Komponent | Status | Vad som fungerar idag |
 |-----------|--------|----------------------|
-| **Kärna (`utahmosphere_os.py`)** | Implementerat | Register, röstintents, UtahX-routemanifest, mesh-gossip |
-| **Quantum Ledger** | Implementerat | Rot-vibe-claim, biometrisk hash-verifiering, öppet läge före claim |
-| **Voice Bridge** | Implementerat | Google STT + MFCC vibe-print-extraktion → `/command` |
-| **Utah-Tycoon** | **Implementerat** | Händelsedriven avvecklingsloop, `POST /app/unlock`, HTTP 402-grind |
-| **UtahNetes Gossip** | **Implementerat** | 5s multicast-synk via `utah_mesh_engine.py`, `master_registry.json` |
-| **Global Swarm** | **Implementerat** | Deterministisk DHT-routing, FIND_NODE, iterativ peer-sökning |
-| **Lazarus Daemon** | Delvis | Lägger till patch-kommentarer i `handler.py` (inte full AST-omskrivning) |
-| **Utah-Flux UI** | Implementerat | Tkinter-panel läser `flux_ui_manifest.json` |
-| **UtahX Proxy** | Delvis | JSON-routemanifest skrivs; ingen live TCP-proxyprocess |
+| **Golden Master (`utahmosphere_master.py`)** | **Implementerat** | Enhetlig ingångspunkt |
+| **Kärna (`utahmosphere_os.py`)** | **Implementerat** | Full HTTP-multiplexer, register, mesh |
+| **UtahX Proxy (`utahx_proxy.py`)** | **Implementerat** | Live HTTP-proxy till containerportar |
+| **UtahContainerEngine (`utah_container_runtime.py`)** | **Implementerat** | HTTP-servrar per tenant på 8200+ |
+| **Lazarus AST (`utah_lazarus.py`)** | **Implementerat** | AST-validerad handler-mutation + OTA-kanal |
+| **S3 Mesh (`utah_s3_mesh.py`)** | **Implementerat** | Lokal objektlagring + HMAC |
+| **Lambda Engine (`utah_lambda_engine.py`)** | **Implementerat** | Handler-invokering utan images |
+| **RDS Ledger (`utah_rds_ledger.py`)** | **Implementerat** | JSON nyckel-värde-register |
+| **Quantum Ledger** | Implementerat | Biometrisk claim + verifiering |
+| **Utah-Tycoon** | **Implementerat** | Mempool/electrum-avveckling (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402-grind |
+| **UtahNetes Gossip** | **Implementerat** | AuthGuard-signerad 5s multicast via `utah_mesh_engine.py` |
+| **Global Swarm** | **Implementerat** | Deterministisk DHT + signerad register-synk |
+| **AuthGuard (`ledger_auth.py`)** | **Implementerat** | `authorized_nodes[]`-tillämpning för röst och mesh |
+| **Genesis ISO (`mk_iso.sh`)** | **Implementerat** | UEFI/hybrid flash-installationsbyggare |
+| **Utah-Flux UI** | Implementerat | Tkinter-statuspanel |
+| **Auto-Genesis (`genesis_deploy.py`)** | **Implementerat** | Multiprocess-orkestrator |
+| **Bootstrap (`bootstrap.sh`)** | **Implementerat** | Bare-metal systemd-installation |
 
 ---
 
-## Röstkommandon (auktoriserade)
+## Röstkommandon
 
 | Kommandomönster | Status | Exempel |
 |-----------------|--------|---------|
 | Claim node | Implementerat | `"Claim node"` |
 | Deploy application | Implementerat | `"deploy application my-app"` |
-| Patch application | Delvis | `"patch app my-app to add logging"` |
+| Patch application | **Implementerat** | `"patch app my-app to add logging"` |
+| Authorize node | **Implementerat** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Implementerat | `"status grid"` |
 
 ---
@@ -50,44 +64,18 @@ Denna matris dokumenterar vad UtahMosphere OS **v25.0** implementerar idag jämf
 
 | Metod | Status | Plattform |
 |-------|--------|-----------|
-| `python3 utahmosphere_os.py` | Implementerat | Alla (sätt `UTAH_DATA_DIR` lokalt) |
-| `python3 genesis_deploy.py` | Implementerat | Linux föredraget; Windows dev OK |
-| `sudo bash setup.sh` | Implementerat | Linux (systemd-tjänst) |
-| `docker-compose up` | Implementerat | Valfritt; använder host-nätverk |
+| `python3 utahmosphere_master.py` | **Rekommenderas** | Alla |
+| `python3 utahmosphere_os.py` | Implementerat | Alla |
+| `python3 genesis_deploy.py` | Implementerat | Linux / dev |
+| `sudo bash bootstrap.sh` | **Rekommenderas prod** | Linux systemd |
+| `sudo bash setup.sh` | Implementerat | Alias till bootstrap |
+| `./mk_iso.sh` | **Implementerat** | Linux — bygger `utah_genesis_v25.iso` |
+| `docker-compose up` | Valfritt | Endast legacy-bekvämlighet |
 
 ---
 
-## Säkerhetsmodell
+## Roadmap (återstående luckor)
 
-| Funktion | Status | Noteringar |
-|----------|--------|------------|
-| En rot-vibe-innehavare | Implementerat | Första talaren som claimar äger noden |
-| `authorized_nodes[]`-fält | Stub | Lagrat i ledger JSON; inte enforced i kod |
-| HMAC tenant-signaturer | Dokumenterat | Recept tillhandahållet; kärn-enforcement delvis |
-| Ed25519-signering | Planerat | Dokumentation refererar; inte implementerat |
-| Standard `UTAH_SECRET_VECTOR` | Implementerat | Ändra i produktion (se [Åtkomstkontroll](CAPABILITY_MATRIX.md)) |
-
----
-
-## Docker / Nginx-relation
-
-UtahMospheres **primära runtime** är bare-metal Python. Docker och Nginx är **valfria legacy-sökvägar**:
-
-- `docker-compose.yaml` — bekvämt omslag för lokala tester
-- `nginx.conf` — referensconfig; UtahX JSON-manifest är den suveräna sökvägen
-- `setup.sh` — rensar Docker/Nginx på rena Linux-installationer (suveräna produktionsnoder)
-
-I hybridmiljöer, behåll Docker/Nginx tillsammans med UtahMosphere under migrering.
-
----
-
-## Roadmap (ännu inte implementerat)
-
-- S3-kompatibel objektlagrings-HTTP API
-- Lambda-stil invoke HTTP API
-- RDS-ledger read/write HTTP API
-- Git-baserat deploy-röstkommando
-- Full AST-mutation via Lazarus
-- Riktig Bitcoin-mempool-integration i Tycoon
-
-Se [Ändringslogg](CAPABILITY_MATRIX.md) för versionshistorik.
+- Alpine/vmlinuz-bundling i Genesis ISO (startmenyn dokumenterar för närvarande manuell installationsväg)
+- Nonce/tidsstämpel mot återuppspelning av röstkommandon
+- Användargränssnitt för återkallande av `authorized_nodes`

@@ -16,8 +16,8 @@ Elvytystarkistus kuormantasaajille ja seurannalle.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -31,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset, claim-tila, `swarm_peers` ja Tycoon-tilastot.
+Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset, claim-tila, `authorized_nodes`, `swarm_peers` ja laajennetut Tycoon-kentät.
 
 **Vastaus `200`:**
 
@@ -46,8 +46,15 @@ Operatiivinen tilannekuva: UI-tila, käyttöön otetut vuokralaiset, claim-tila,
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Suorita ääni-intentti ohjelmallisesti. Sama payload, jonka Voice Bridge lähet
 |--------|--------|------------|--------|
 | `transcript` | string | Kyllä | Puhuttu komento (kirjainkoolla ei väliä) |
 | `acoustic_hash` | string | Kyllä | 64 merkin SHA-256 vibe-print -hash |
+| `request_signature` | string | Ei | Valinnainen AuthGuard HMAC delegoiduille solmuille |
 
 **Vastaus `200`:**
 
@@ -78,6 +86,7 @@ Suorita ääni-intentti ohjelmallisesti. Sama payload, jonka Voice Bridge lähet
 | Intent | Transkriptiesimerkki |
 |--------|---------------------|
 | Claim node | `"Claim node"` |
+| Authorize node | `"authorize node <64-char-vibe-hash>"` |
 | Deploy app | `"deploy application hello"` tai `"manifest app hello"` |
 | Patch app | `"patch app hello to add feature x"` |
 | Status | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Claimin jälkeen:** `acoustic_hash` täytyy vastata ankkuroitua juuri-vibe-hashia tai ydin palauttaa:
+**Claimin jälkeen:** `acoustic_hash` täytyy vastata ankkuroitua juuri-vibe-hashia **tai** olla merkintä `authorized_nodes[]`-listassa, muuten ydin palauttaa:
 
 ```json
 {
@@ -151,7 +160,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Lähetä maksun avauspyyntö. Tycoon rekisteröi odottavan tapahtuman ja palauttaa HTTP `202` kunnes kryptografinen selvitys (~60 s).
+Lähetä maksun avauspyyntö. Tycoon kysyy mempool.space (tai electrum-server) maksun lopullisuutta varten. Kehitysosoitteet (`bc1q_utah_*`) käyttävät ajoitettua selvitystä `auto`-tilassa.
 
 **Pyynnön runko:**
 

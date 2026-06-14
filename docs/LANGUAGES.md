@@ -14,6 +14,6 @@ UtahMosphere documentation is available in separate, single-language sites. Each
 | Mexico (Español) | [docs/es-mx/README.md](es-mx/README.md) |
 | China (简体中文) | [docs/zh-cn/README.md](zh-cn/README.md) |
 
-Each localized site includes 13+ documents: portal, role guides, API reference, capability matrix, developer cookbook, local development guide, and tutorials. English-only guides such as [OTA Lazarus](OTA_LAZARUS.md) and [Omega-Build](OMEGA_BUILD.md) live in the root `docs/` portal.
+Each localized site includes 13+ documents: portal, role guides, API reference, capability matrix, developer cookbook, local development guide, and tutorials. English-only guides such as [Genesis ISO](GENESIS_ISO.md), [OTA Lazarus](OTA_LAZARUS.md), and [Omega-Build](OMEGA_BUILD.md) live in the root `docs/` portal.
 
 Code examples (`templates/`, `examples/`, `starter-projects/`) remain in English because they are source code.

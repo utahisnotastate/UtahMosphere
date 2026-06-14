@@ -9,7 +9,9 @@ import os
 import json
 import hmac
 import hashlib
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
+
+from ledger_auth import AuthGuard
 
 def _resolve_security_dir() -> str:
     primary = "/etc/utahmosphere/security"
@@ -29,7 +31,11 @@ class QuantumLedgerGuard:
     def __init__(self):
         self._ensure_security_paths()
         self.ledger = self._load_ledger()
-        print("[Quantum Ledger] Biometric Guard Layer Initialized. Static secrets deprecated.")
+        self.auth_guard = AuthGuard(
+            self.ledger.get("authorized_nodes", []),
+            self.ledger.get("root_vibe_hash"),
+        )
+        print("[Quantum Ledger] Biometric Guard Layer Initialized. AuthGuard enforcement active.")
 
     def _ensure_security_paths(self):
         os.makedirs(UTAH_SECURITY_DIR, exist_ok=True)
@@ -46,27 +52,54 @@ class QuantumLedgerGuard:
     def _save_ledger(self):
         with open(ROOT_LEDGER_FILE, "w") as f:
             json.dump(self.ledger, f, indent=4)
+        self.auth_guard.refresh(
+            self.ledger.get("authorized_nodes", []),
+            self.ledger.get("root_vibe_hash"),
+        )
 
     def anchor_root_vibe(self, acoustic_hash: str) -> str:
         """Anchors the initial biological signature to the hardware permanently."""
         if self.ledger["root_vibe_hash"] is not None:
             return "Paradox: Root biological signature is already anchored to this silicon."
-        
+
         self.ledger["root_vibe_hash"] = acoustic_hash
+        nodes: List[str] = self.ledger.setdefault("authorized_nodes", [])
+        if acoustic_hash not in nodes:
+            nodes.append(acoustic_hash)
         self._save_ledger()
         return "Biological resonance mapped. Hardware locked to General 23."
 
+    def authorize_node(self, node_hash: str) -> bool:
+        if not node_hash or len(node_hash) != 64:
+            return False
+        nodes: List[str] = self.ledger.setdefault("authorized_nodes", [])
+        if node_hash in nodes:
+            return True
+        nodes.append(node_hash)
+        self._save_ledger()
+        return True
+
+    def get_authorized_nodes(self) -> List[str]:
+        return list(self.ledger.get("authorized_nodes", []))
+
     def verify_vibe_signature(self, incoming_acoustic_hash: str, payload: str) -> bool:
         """
-        Validates that the incoming command was spoken by the authorized entity.
-        The acoustic hash acts as the symmetric key for the HMAC validation.
+        Validates command authority: root vibe hash or delegated authorized_nodes entry.
         """
         if self.ledger["root_vibe_hash"] is None:
-            # Open mode if no master has claimed the node yet
             return True
-            
-        # Secure time-constant comparison to prevent timing attacks
-        return hmac.compare_digest(self.ledger["root_vibe_hash"], incoming_acoustic_hash)
+        if hmac.compare_digest(self.ledger["root_vibe_hash"], incoming_acoustic_hash):
+            return True
+        return self.auth_guard.is_node_authorized(incoming_acoustic_hash)
+
+    def verify_request_signature(self, signature: str, payload: str) -> bool:
+        return self.auth_guard.is_authorized(signature, payload)
+
+    def sign_mesh_payload(self, payload: str) -> Optional[str]:
+        root = self.ledger.get("root_vibe_hash")
+        if not root:
+            return None
+        return self.auth_guard.sign_payload(root, payload)
 
 # --- Expose Singleton for OS Kernel Integration ---
 ledger_guard = QuantumLedgerGuard()

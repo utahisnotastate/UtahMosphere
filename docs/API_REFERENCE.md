@@ -16,8 +16,8 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -46,8 +46,15 @@ Operational snapshot: UI state, deployed tenants, and whether the node has been 
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Execute a voice intent programmatically. Same payload the Voice Bridge sends.
 |-------|------|----------|-------------|
 | `transcript` | string | Yes | Spoken command (case-insensitive) |
 | `acoustic_hash` | string | Yes | 64-char SHA-256 vibe-print hash |
+| `request_signature` | string | No | Optional AuthGuard HMAC for delegated nodes |
 
 **Response `200`:**
 
@@ -78,6 +86,7 @@ Execute a voice intent programmatically. Same payload the Voice Bridge sends.
 | Intent | Transcript example |
 |--------|-------------------|
 | Claim node | `"Claim node"` |
+| Authorize node | `"authorize node <64-char-vibe-hash>"` |
 | Deploy app | `"deploy application hello"` or `"manifest app hello"` |
 | Patch app | `"patch app hello to add feature x"` |
 | Status | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**After claim:** `acoustic_hash` must match the anchored root vibe hash or the kernel returns:
+**After claim:** `acoustic_hash` must match the anchored root vibe hash **or** an entry in `authorized_nodes[]`, or the kernel returns:
 
 ```json
 {
@@ -223,7 +232,7 @@ curl -X POST http://127.0.0.1:8999/lambda/my-function/invoke \
 
 ## POST /app/unlock
 
-Submit a payment unlock request. Tycoon registers a pending transaction and returns HTTP `202` until cryptographic settlement (~60s).
+Submit a payment unlock request. Tycoon polls mempool.space (or electrum-server) for payment finality. Dev addresses (`bc1q_utah_*`) use timed settlement in `auto` mode.
 
 **Request body:**
 

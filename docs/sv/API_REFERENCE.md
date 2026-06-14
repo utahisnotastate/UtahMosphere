@@ -16,8 +16,8 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -31,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants, claim-status, `swarm_peers` och Tycoon-statistik.
+Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants, claim-status, `authorized_nodes`, `swarm_peers` och utökade Tycoon-fält.
 
 **Svar `200`:**
 
@@ -46,8 +46,15 @@ Operativ ögonblicksbild: UI-tillstånd, driftsatta tenants, claim-status, `swar
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Kör en röstintent programmatiskt. Samma payload som Voice Bridge skickar.
 |------|-----|---------------|-------------|
 | `transcript` | string | Ja | Talat kommando (skiftlägesokänsligt) |
 | `acoustic_hash` | string | Ja | 64-teckens SHA-256 vibe-print-hash |
+| `request_signature` | string | Nej | Valfri AuthGuard HMAC för delegerade noder |
 
 **Svar `200`:**
 
@@ -78,6 +86,7 @@ Kör en röstintent programmatiskt. Samma payload som Voice Bridge skickar.
 | Intent | Transkriptexempel |
 |--------|-------------------|
 | Claim node | `"Claim node"` |
+| Authorize node | `"authorize node <64-char-vibe-hash>"` |
 | Deploy app | `"deploy application hello"` eller `"manifest app hello"` |
 | Patch app | `"patch app hello to add feature x"` |
 | Status | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Efter claim:** `acoustic_hash` måste matcha den förankrade rot-vibe-hashen eller kärnan returnerar:
+**Efter claim:** `acoustic_hash` måste matcha den förankrade rot-vibe-hashen **eller** vara en post i `authorized_nodes[]`, annars returnerar kärnan:
 
 ```json
 {
@@ -151,7 +160,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Skicka en begäran om betalningsupplåsning. Tycoon registrerar en väntande transaktion och returnerar HTTP `202` tills kryptografisk avveckling (~60 s).
+Skicka en begäran om betalningsupplåsning. Tycoon frågar mempool.space (eller electrum-server) om betalningens slutgiltighet. Dev-adresser (`bc1q_utah_*`) använder tidsstyrd avveckling i läget `auto`.
 
 **Request body:**
 

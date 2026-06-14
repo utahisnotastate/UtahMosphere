@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentaatio
 
-Tervetuloa UtahMosphere OS -dokumentaatioon. **Golden Master Final v25.0** — yhtenäinen bare-metal-ydin, jossa Utah-Tycoon, UtahNetes ja Global Swarm on täysin integroitu. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
+Tervetuloa UtahMosphere OS -dokumentaatioon. **v25.1 Migration Ready** — yhtenäinen bare-metal-ydin, jossa Utah-Tycoon, UtahNetes ja Global Swarm on täysin integroitu. Sisältö on jaettu **rooleihin**, **oppaisiin**, **resepteihin** ja **aloitusprojekteihin**.
 
 ---
 

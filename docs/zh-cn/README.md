@@ -1,6 +1,6 @@
 # UtahMosphere 文档门户
 
-欢迎来到 UtahMosphere OS 文档中心。**Golden Master Final v25.0**：统一裸机内核，Utah-Tycoon、UtahNetes 与 Global Swarm 已全面就绪。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
+欢迎来到 UtahMosphere OS 文档中心。**Migration Ready v25.1**：统一裸机内核，内存池 Tycoon 结算、AuthGuard `authorized_nodes[]` 强制执行、Genesis ISO 安装器（`mk_iso.sh`），UtahNetes 与 Global Swarm 已全面就绪。内容按**受众角色**、**实操教程**、**可复制配方**和**入门项目**组织。
 
 ---
 
@@ -62,7 +62,8 @@
 |------|----------|
 | [hello-world](../../examples/hello-world/) | 通过 `/command` 部署应用 |
 | [check-node-health](../../examples/check-node-health/) | 健康与状态探测 |
-| [paid-app-access](../../examples/paid-app-access/) | Tycoon 收费结算 |
+| [paid-app-access](../../examples/paid-app-access/) | Tycoon 内存池/electrum 结算 |
+| [omega-build-verify](../../examples/omega-build-verify/) | 完整 S3/Lambda/RDS/容器 parity 测试 |
 | [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | 无需麦克风即可部署 |
 
 ### 入门项目（`starter-projects/`）
@@ -79,4 +80,4 @@
 
 ## 关于 UtahMosphere OS
 
-UtahMosphere OS v25.0 Golden Master Final 是主权边缘 Python 平台，默认 HTTP 入口端口为 **8999**。推荐入口：`utahmosphere_master.py`。
+UtahMosphere OS v25.1 Migration Ready 是主权边缘 Python 平台，构建标识 `golden-master-v25.1`，默认 HTTP 入口端口为 **8999**。核心功能：内存池 Tycoon 结算、AuthGuard `authorized_nodes[]` 强制执行、Genesis ISO 安装器（`./mk_iso.sh`）、`authorize node` 语音命令。推荐入口：`utahmosphere_master.py`。

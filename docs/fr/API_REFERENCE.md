@@ -16,8 +16,8 @@ Sonde de disponibilité pour les équilibreurs de charge et la surveillance.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -46,8 +46,15 @@ Instantané opérationnel : état de l'interface, locataires déployés et statu
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Exécuter une intention vocale par programmation. Même charge utile que celle e
 |-------|------|--------|-------------|
 | `transcript` | string | Oui | Commande parlée (insensible à la casse) |
 | `acoustic_hash` | string | Oui | Hash vibe-print SHA-256 sur 64 caractères |
+| `request_signature` | string | Non | HMAC AuthGuard optionnel pour nœuds délégués |
 
 **Réponse `200` :**
 
@@ -78,6 +86,7 @@ Exécuter une intention vocale par programmation. Même charge utile que celle e
 | Intention | Exemple de transcription |
 |-----------|--------------------------|
 | Revendiquer le nœud | `"Claim node"` |
+| Autoriser un nœud | `"authorize node <64-char-vibe-hash>"` |
 | Déployer une application | `"deploy application hello"` ou `"manifest app hello"` |
 | Corriger une application | `"patch app hello to add feature x"` |
 | Statut | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Après revendication :** `acoustic_hash` doit correspondre au hash vibe racine ancré, sinon le noyau renvoie :
+**Après revendication :** `acoustic_hash` doit correspondre au hash vibe racine ancré **ou** à une entrée dans `authorized_nodes[]`, sinon le noyau renvoie :
 
 ```json
 {
@@ -144,7 +153,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Soumettre une demande de déverrouillage par paiement. Tycoon enregistre une transaction en attente et renvoie HTTP `202` jusqu'au règlement cryptographique (~60 s).
+Soumettre une demande de déverrouillage par paiement. Tycoon interroge mempool.space (ou electrum-server) pour la finalité du paiement. Les adresses de développement (`bc1q_utah_*`) utilisent un règlement temporisé en mode `auto`.
 
 **Corps de la requête :**
 

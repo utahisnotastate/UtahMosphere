@@ -16,8 +16,8 @@ Elusoleku päring koormuse tasakaalustajatele ja jälgimisele.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -31,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Operatiivne hetktõmmis: UI olek, juurutatud rentnikud, claim olek, `swarm_peers` ja Tycoon statistika.
+Operatiivne hetktõmmis: UI olek, juurutatud rentnikud, claim olek, `authorized_nodes`, `swarm_peers` ja laiendatud Tycoon väljad.
 
 **Vastus `200`:**
 
@@ -46,8 +46,15 @@ Operatiivne hetktõmmis: UI olek, juurutatud rentnikud, claim olek, `swarm_peers
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ Käivita hääle intent programmiliselt. Sama keha, mida Voice Bridge saadab.
 |------|------|-------------|-----------|
 | `transcript` | string | Jah | Kõnele käsk (tõstutundetu) |
 | `acoustic_hash` | string | Jah | 64-tähemärgiline SHA-256 vibe-print räsi |
+| `request_signature` | string | Ei | Valikuline AuthGuard HMAC delegeeritud sõlmedele |
 
 **Vastus `200`:**
 
@@ -78,6 +86,7 @@ Käivita hääle intent programmiliselt. Sama keha, mida Voice Bridge saadab.
 | Intent | Transkriptsiooni näide |
 |--------|------------------------|
 | Claim node | `"Claim node"` |
+| Authorize node | `"authorize node <64-char-vibe-hash>"` |
 | Deploy app | `"deploy application hello"` või `"manifest app hello"` |
 | Patch app | `"patch app hello to add feature x"` |
 | Status | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**Pärast claim-i:** `acoustic_hash` peab ühtima ankurdatud juur-vibe räsiga, muidu tagastab tuum:
+**Pärast claim-i:** `acoustic_hash` peab ühtima ankurdatud juur-vibe räsiga **või** olema kirjes `authorized_nodes[]`, muidu tagastab tuum:
 
 ```json
 {
@@ -151,7 +160,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Esita makse avamise taotlus. Tycoon registreerib ootel tehingu ja tagastab HTTP `202` kuni krüptograafilise arvelduseni (~60 s).
+Esita makse avamise taotlus. Tycoon küsitleb mempool.space (või electrum-server) makse lõplikkuse jaoks. Arendusaadressid (`bc1q_utah_*`) kasutavad ajastatud arveldust režiimis `auto`.
 
 **Päringu keha:**
 

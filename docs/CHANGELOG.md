@@ -2,6 +2,22 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [25.3] — Migration Ready (2026-06)
+
+### Added
+- `tycoon_settlement.py` — real-time mempool.space / electrum-server Bitcoin settlement
+- `ledger_auth.py` — AuthGuard HMAC enforcement for `authorized_nodes[]`
+- `mk_iso.sh` — Genesis ISO builder (`utah_genesis_v25.iso`)
+- [Genesis ISO Installer](GENESIS_ISO.md) documentation
+- Voice command: `"authorize node <hash>"` for delegated mesh authority
+
+### Changed
+- Utah-Tycoon: simulated 60s wait → mempool polling with `auto`/`real`/`simulate` modes
+- UtahNetes mesh: signed gossip payloads (`mesh_signature`, `signer_hash`)
+- `authorized_nodes[]`: stub → **enforced** via AuthGuard
+- `/status` includes `authorized_nodes` and expanded `tycoon` stats
+- Build identifier: `golden-master-v25.1`
+
 ## [25.2] — Golden Master Final (2026-06)
 
 ### Added

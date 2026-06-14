@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Tycoon Daemon - Golden Master v25.0
-Non-blocking settlement loop with threading.Event cryptographic finality.
+UtahMosphere Tycoon Daemon - Golden Master v25.1
+Mempool-driven settlement with simulate fallback for dev ephemeral addresses.
 """
 
 import os
@@ -11,8 +11,9 @@ import hashlib
 import threading
 from typing import Dict, Any, Callable, List, Optional
 
-SETTLEMENT_INTERVAL_SEC = 10
-SETTLEMENT_FINALITY_SEC = 60
+from tycoon_settlement import RealTimeTycoon, SETTLEMENT_POLL_SEC
+
+SETTLEMENT_INTERVAL_SEC = SETTLEMENT_POLL_SEC
 
 
 def _resolve_finance_dir() -> str:
@@ -40,9 +41,10 @@ class UtahTycoonDaemon:
         self.settlement_event = threading.Event()
         self._callbacks: List[Callable[[str, dict], None]] = []
         self._stop = threading.Event()
+        self._realtime = RealTimeTycoon()
         self._bootstrap_finance_paths()
         threading.Thread(target=self._settlement_loop, daemon=True).start()
-        print("[Utah-Tycoon] Financial Daemon Online. Event-driven settlement active.")
+        print("[Utah-Tycoon] Financial Daemon Online. Mempool settlement active.")
 
     def _bootstrap_finance_paths(self):
         os.makedirs(UTAH_FINANCE_DIR, exist_ok=True)
@@ -115,6 +117,7 @@ class UtahTycoonDaemon:
             self.ledger.setdefault("transactions", {})[tx_id] = record
             inv = self.generate_tollbooth_invoice(app_name, client_id, amount_sats)
             record["invoice_address"] = inv["payment_address"]
+            record["payment_address"] = inv["payment_address"]
             self.ledger["transactions"][tx_id] = record
             self._save_ledger()
         return {"tx_id": tx_id, "status": "pending", "invoice": inv}
@@ -132,37 +135,39 @@ class UtahTycoonDaemon:
         return False
 
     def _settlement_loop(self):
-        """Non-blocking settlement sweep — cryptographic finality after SETTLEMENT_FINALITY_SEC."""
+        """Mempool / electrum settlement sweep every SETTLEMENT_POLL_SEC."""
         while not self._stop.is_set():
             self._stop.wait(SETTLEMENT_INTERVAL_SEC)
             with self._lock:
-                changes = False
-                now = time.time()
-                for inv_id, data in self.ledger.get("invoices", {}).items():
-                    if data["status"] == "pending" and now - data.get("epoch", data["timestamp"]) >= SETTLEMENT_FINALITY_SEC:
-                        data["status"] = "settled"
-                        self.ledger["swept_funds"] = self.ledger.get("swept_funds", 0) + data["amount_sats"]
-                        print(f"[Tycoon] Transaction {inv_id[:8]} settled via crypto-finality.")
-                        self._notify_settled(inv_id, data)
-                        changes = True
-                for tx_id, data in self.ledger.get("transactions", {}).items():
-                    if data["status"] == "pending" and now - data["epoch"] >= SETTLEMENT_FINALITY_SEC:
-                        data["status"] = "settled"
-                        print(f"[Tycoon] Unlock {tx_id} settled. App {data['app_target']} → active-compute.")
-                        self._notify_settled(tx_id, data)
-                        changes = True
-                if changes:
+                pending_before = self._pending_count()
+                if self._realtime.settlement_pass(self.ledger):
                     self._save_ledger()
+                    for inv_id, data in self.ledger.get("invoices", {}).items():
+                        if data.get("status") == "settled" and data.get("_notified") is not True:
+                            data["_notified"] = True
+                            self._notify_settled(inv_id, data)
+                    for tx_id, data in self.ledger.get("transactions", {}).items():
+                        if data.get("status") == "settled" and data.get("_notified") is not True:
+                            data["_notified"] = True
+                            self._notify_settled(tx_id, data)
+                elif pending_before:
+                    pass
+
+    def _pending_count(self) -> int:
+        pending = sum(1 for i in self.ledger.get("invoices", {}).values() if i["status"] == "pending")
+        pending += sum(1 for t in self.ledger.get("transactions", {}).values() if t["status"] == "pending")
+        return pending
 
     def get_stats(self) -> dict:
         with self._lock:
-            pending = sum(1 for i in self.ledger.get("invoices", {}).values() if i["status"] == "pending")
-            pending += sum(1 for t in self.ledger.get("transactions", {}).values() if t["status"] == "pending")
+            pending = self._pending_count()
             settled = sum(1 for i in self.ledger.get("invoices", {}).values() if i["status"] == "settled")
             return {
                 "pending": pending,
                 "settled_invoices": settled,
                 "swept_funds": self.ledger.get("swept_funds", 0),
+                "settlement_mode": os.environ.get("UTAH_TYCOON_SETTLEMENT_MODE", "auto"),
+                "mempool_api": os.environ.get("UTAH_MEMPOOL_API", "https://mempool.space/api"),
             }
 
 

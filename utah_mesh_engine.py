@@ -13,6 +13,11 @@ import hashlib
 import time
 from typing import Callable, Optional, Any
 
+try:
+    from ledger_auth import AuthGuard
+except ImportError:
+    AuthGuard = None  # type: ignore
+
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 MASTER_REGISTRY_FILE = os.path.join(UTAH_DATA_DIR, "master_registry.json")
 GOSSIP_PORT = 9001
@@ -27,8 +32,12 @@ class UtahNetesMesh:
         get_registry: Callable[[], dict],
         apply_registry: Callable[[dict], None],
         swarm_broadcast: Optional[Callable[[dict], None]] = None,
+        auth_guard: Optional["AuthGuard"] = None,
+        node_hash: Optional[str] = None,
     ):
         self.node_id = node_id
+        self.node_hash = node_hash or node_id
+        self._auth_guard = auth_guard
         self._get_registry = get_registry
         self._apply_registry = apply_registry
         self._swarm_broadcast = swarm_broadcast
@@ -57,11 +66,14 @@ class UtahNetesMesh:
         while not self._stop.is_set():
             try:
                 registry = self._get_registry()
-                payload = json.dumps({
+                message = {
                     "node": self.node_id,
                     "registry": registry,
                     "type": "MESH_SYNC",
-                }).encode("utf-8")
+                }
+                if self._auth_guard and AuthGuard is not None:
+                    message = self._auth_guard.sign_message(self.node_hash, message)
+                payload = json.dumps(message).encode("utf-8")
                 tx.sendto(payload, (MULTICAST_ADDR, GOSSIP_PORT))
                 self._persist_master_registry(registry)
                 if self._swarm_broadcast:
@@ -91,6 +103,9 @@ class UtahNetesMesh:
                 message = json.loads(data.decode("utf-8"))
                 remote = message.get("node")
                 if remote and remote != self.node_id:
+                    if self._auth_guard and not self._auth_guard.verify_message(message):
+                        print(f"[UtahNetes] Rejected unsigned mesh sync from {remote}")
+                        continue
                     self._apply_registry(message.get("registry", {}))
             except Exception:
                 pass

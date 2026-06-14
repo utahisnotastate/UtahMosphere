@@ -1,6 +1,6 @@
 # Portal de documentación UtahMosphere
 
-Bienvenido al centro de documentación de UtahMosphere OS v25.0 — plataforma soberana edge Python, puerto **8999**. **Golden Master Final v25.0**: núcleo unificado bare-metal con Utah-Tycoon, UtahNetes y Global Swarm totalmente operativos. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
+Bienvenido al centro de documentación de UtahMosphere OS v25.1 — plataforma soberana edge Python, puerto **8999**. **Migration Ready v25.1**: núcleo unificado bare-metal con liquidación mempool Tycoon, aplicación AuthGuard `authorized_nodes[]`, instalador Genesis ISO (`mk_iso.sh`), UtahNetes y Global Swarm totalmente operativos. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
 
 ---
 
@@ -62,7 +62,8 @@ Scripts pequeños y ejecutables que usan la API en vivo:
 |---------|---------------|
 | [hello-world](../../examples/hello-world/) | Desplegar una aplicación vía `/command` |
 | [check-node-health](../../examples/check-node-health/) | Sondas de salud y estado |
-| [paid-app-access](../../examples/paid-app-access/) | Liquidación del peaje Tycoon |
+| [paid-app-access](../../examples/paid-app-access/) | Liquidación mempool/electrum Tycoon |
+| [omega-build-verify](../../examples/omega-build-verify/) | Prueba de paridad S3/Lambda/RDS/contenedor completa |
 | [voice-deploy-simulator](../../examples/voice-deploy-simulator/) | Desplegar sin micrófono |
 
 ### Proyectos de arranque (`starter-projects/`)
@@ -79,4 +80,4 @@ Mini-proyectos completos para bifurcar y extender:
 
 ## Acerca de esta documentación
 
-Esta sección de documentación está completamente en español de México. UtahMosphere OS v25.0 Golden Master Final es una plataforma soberana edge basada en Python, accesible por defecto en el puerto **8999**.
+Esta sección de documentación está completamente en español de México. UtahMosphere OS v25.1 Migration Ready es una plataforma soberana edge basada en Python, build `golden-master-v25.1`, accesible por defecto en el puerto **8999**. Funciones clave: liquidación mempool Tycoon, aplicación `authorized_nodes[]` vía AuthGuard, instalador Genesis ISO (`./mk_iso.sh`), comando de voz `authorize node`.

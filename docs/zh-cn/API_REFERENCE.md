@@ -16,8 +16,8 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -46,8 +46,15 @@ curl http://127.0.0.1:8999/health
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ curl http://127.0.0.1:8999/health
 |------|------|------|------|
 | `transcript` | string | 是 | 语音命令（不区分大小写） |
 | `acoustic_hash` | string | 是 | 64 字符 SHA-256 声纹哈希 |
+| `request_signature` | string | 否 | 委派节点的可选 AuthGuard HMAC |
 
 **响应 `200`：**
 
@@ -78,6 +86,7 @@ curl http://127.0.0.1:8999/health
 | 意图 | transcript 示例 |
 |------|-----------------|
 | 认领节点 | `"Claim node"` |
+| 授权节点 | `"authorize node <64-char-vibe-hash>"` |
 | 部署应用 | `"deploy application hello"` 或 `"manifest app hello"` |
 | 修补应用 | `"patch app hello to add feature x"` |
 | 状态 | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**认领后：** `acoustic_hash` 必须与锚定的根声纹哈希匹配，否则内核返回：
+**认领后：** `acoustic_hash` 必须与锚定的根声纹哈希匹配**或**为 `authorized_nodes[]` 中的条目，否则内核返回：
 
 ```json
 {
@@ -144,7 +153,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-提交支付解锁请求。Tycoon 登记待处理交易，在加密结算完成前（约 60 秒）返回 HTTP `202`。
+提交支付解锁请求。Tycoon 轮询 mempool.space（或 electrum-server）以确认支付最终性。开发地址（`bc1q_utah_*`）在 `auto` 模式下使用定时结算。
 
 **请求体：**
 

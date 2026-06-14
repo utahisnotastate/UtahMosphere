@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus mis on turundusdokumentides kirjeldatud või planeeritud tulevasteks väljalaseteks. Kasuta seda realistlike ootuste seadmiseks migratsiooni ja arenduse ajal.
+UtahMosphere OS **v25.1 Migration Ready** — rakendamise olek Omega-Buildi järgi.
 
 ---
 
@@ -8,14 +8,19 @@ See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | Sõlme elusoleku päring |
-| `/status` | GET | **Rakendatud** | UI olek, rentnikute nimekiri, claim olek |
-| `/command` | POST | **Rakendatud** | Hääle intenti käivitus (JSON keha) |
+| `/health` | GET | **Rakendatud** | Elusoleku päring + `build: golden-master-v25.1` |
+| `/status` | GET | **Rakendatud** | UI olek, rentnikud, claim olek, S3 juur |
+| `/command` | POST | **Rakendatud** | Hääle intenti käivitus |
 | `/app/unlock` | POST | **Rakendatud** | Esita makse; tagastab 202 kuni arveldus |
-| `/app/{name}` | GET | **Rakendatud** | Tycoon-ga kaitstud rakenduse juurdepääs (402 kuni makstud) |
-| `/s3/*` | * | Planeeritud | Dokumenteeritud migratsiooni juhendis; pole veel marsruutitud |
-| `/lambda/*/invoke` | POST | Planeeritud | Handler stubid luuakse ainult juurutamisel |
-| `/rds/read/*`, `/rds/write` | * | Planeeritud | Register eksisteerib; HTTP marsruudid pole ühendatud |
+| `/app/{name}` | GET | **Rakendatud** | Tycoon 402 värav + UtahX proksi konteinerisse |
+| `/app/{name}/{path}` | GET | **Rakendatud** | Alamtee proksi konteineri taustale |
+| `/s3/{bucket}/{key}` | GET | **Rakendatud** | Objekti lugemine (kohalik NVMe) |
+| `/s3/{bucket}/{key}` | PUT/POST | **Rakendatud** | Objekti kirjutamine; valikulised HMAC päised |
+| `/s3/{bucket}/{prefix}*` | GET | **Rakendatud** | Objektide loend |
+| `/lambda/{fn}/invoke` | POST | **Rakendatud** | Serveritu handleri kutsumine |
+| `/lambda/{fn}` | GET | **Rakendatud** | GET kutsumine tühja sündmusega |
+| `/rds/write` | POST | **Rakendatud** | Võti-väärtus kirjutamine |
+| `/rds/read/{key}` | GET | **Rakendatud** | Võti-väärtus lugemine |
 
 ---
 
@@ -23,25 +28,34 @@ See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus
 
 | Komponent | Olek | Mis täna töötab |
 |-----------|------|-----------------|
-| **Tuum (`utahmosphere_os.py`)** | Rakendatud | Register, hääle intentid, UtahX marsruudi manifestid, võrgu gossip |
-| **Quantum Ledger** | Rakendatud | Juur-vibe claim, biomeetriline räsi kontroll, avatud režiim enne claim-i |
-| **Voice Bridge** | Rakendatud | Google STT + MFCC vibe-print eraldamine → `/command` |
-| **Utah-Tycoon** | **Rakendatud** | Sündmuspõhine arveldusloop, `POST /app/unlock`, HTTP 402 värav |
-| **UtahNetes Gossip** | **Rakendatud** | 5s multicast sünk `utah_mesh_engine.py` kaudu, `master_registry.json` |
-| **Global Swarm** | **Rakendatud** | Deterministiline DHT marsruutimine, FIND_NODE, iteratiivne peer otsing |
-| **Lazarus Daemon** | Osaliselt | Lisab patch kommentaarid `handler.py`-sse (mitte täielik AST ümberkirjutus) |
-| **Utah-Flux UI** | Rakendatud | Tkinter armatuurlaud, loeb `flux_ui_manifest.json` |
-| **UtahX Proxy** | Osaliselt | JSON marsruudi manifestid kirjutatakse; reaalajas TCP proksi protsessi pole |
+| **Golden Master (`utahmosphere_master.py`)** | **Rakendatud** | Ühtne sisenemispunkt |
+| **Tuum (`utahmosphere_os.py`)** | **Rakendatud** | Täielik HTTP multiplekser, register, võrk |
+| **UtahX Proxy (`utahx_proxy.py`)** | **Rakendatud** | Reaalajas HTTP proksi konteineri portidele |
+| **UtahContainerEngine (`utah_container_runtime.py`)** | **Rakendatud** | Rentniku HTTP serverid portidel 8200+ |
+| **Lazarus AST (`utah_lazarus.py`)** | **Rakendatud** | AST-kinnitatud handleri mutatsioon + OTA kanal |
+| **S3 Mesh (`utah_s3_mesh.py`)** | **Rakendatud** | Kohalik objektisalvestus + HMAC |
+| **Lambda Engine (`utah_lambda_engine.py`)** | **Rakendatud** | Handleri kutsumine ilma piltideta |
+| **RDS Ledger (`utah_rds_ledger.py`)** | **Rakendatud** | JSON võti-väärtus register |
+| **Quantum Ledger** | Rakendatud | Biomeetriline claim + kinnitamine |
+| **Utah-Tycoon** | **Rakendatud** | Mempool/electrum arveldus (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402 värav |
+| **UtahNetes Gossip** | **Rakendatud** | AuthGuard-allkirjastatud 5s multicast `utah_mesh_engine.py` kaudu |
+| **Global Swarm** | **Rakendatud** | Deterministiline DHT + allkirjastatud registeri sünk |
+| **AuthGuard (`ledger_auth.py`)** | **Rakendatud** | `authorized_nodes[]` jõustamine hääle ja võrgu jaoks |
+| **Genesis ISO (`mk_iso.sh`)** | **Rakendatud** | UEFI/hübriid flash-installeri ehitaja |
+| **Utah-Flux UI** | Rakendatud | Tkinter oleku armatuurlaud |
+| **Auto-Genesis (`genesis_deploy.py`)** | **Rakendatud** | Mitmeprotsessiline orkestreerija |
+| **Bootstrap (`bootstrap.sh`)** | **Rakendatud** | Palja riistvara systemd paigaldus |
 
 ---
 
-## Häälkäsud (autoriseeritud)
+## Häälkäsud
 
 | Käsu muster | Olek | Näide |
 |-------------|------|-------|
 | Claim node | Rakendatud | `"Claim node"` |
 | Deploy application | Rakendatud | `"deploy application my-app"` |
-| Patch application | Osaliselt | `"patch app my-app to add logging"` |
+| Patch application | **Rakendatud** | `"patch app my-app to add logging"` |
+| Authorize node | **Rakendatud** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Rakendatud | `"status grid"` |
 
 ---
@@ -50,44 +64,18 @@ See maatriks dokumenteerib, mida UtahMosphere OS **v25.0** täna rakendab versus
 
 | Meetod | Olek | Platvorm |
 |--------|------|----------|
-| `python3 utahmosphere_os.py` | Rakendatud | Kõik (määra kohalikult `UTAH_DATA_DIR`) |
-| `python3 genesis_deploy.py` | Rakendatud | Linux eelistatud; Windows dev OK |
-| `sudo bash setup.sh` | Rakendatud | Linux (systemd teenus) |
-| `docker-compose up` | Rakendatud | Valikuline; kasutab host võrgustamist |
+| `python3 utahmosphere_master.py` | **Soovitatav** | Kõik |
+| `python3 utahmosphere_os.py` | Rakendatud | Kõik |
+| `python3 genesis_deploy.py` | Rakendatud | Linux / arendus |
+| `sudo bash bootstrap.sh` | **Soovitatav tootmises** | Linux systemd |
+| `sudo bash setup.sh` | Rakendatud | Aliase bootstrapile |
+| `./mk_iso.sh` | **Rakendatud** | Linux — ehitab `utah_genesis_v25.iso` |
+| `docker-compose up` | Valikuline | Ainult pärand mugavus |
 
 ---
 
-## Turvamudel
+## Teekaart (ülejäänud lüngad)
 
-| Funktsioon | Olek | Märkused |
-|------------|------|----------|
-| Üks juur-vibe omanik | Rakendatud | Esimene kõneleja claim-ib sõlme |
-| `authorized_nodes[]` väli | Stub | Salvestatud ledger JSON-is; koodis pole jõustatud |
-| HMAC rentniku allkirjad | Dokumenteeritud | Retsept olemas; tuuma jõustamine osaliselt |
-| Ed25519 allkirjastamine | Planeeritud | Dokumentides viidatud; pole rakendatud |
-| Vaikimisi `UTAH_SECRET_VECTOR` | Rakendatud | Muuda tootmises (vaata [Juurdepääsukontrolli](CAPABILITY_MATRIX.md)) |
-
----
-
-## Docker / Nginx seos
-
-UtahMosphere **peamine käitusaeg** on palja riistvara Python. Docker ja Nginx on **valikulised pärand-teed**:
-
-- `docker-compose.yaml` — mugavuswrapper kohalikeks katseteks
-- `nginx.conf` — viitekonfiguratsioon; UtahX JSON manifestid on suveräänne tee
-- `setup.sh` — eemaldab Docker/Nginx puhtal Linux paigaldusel (tootmise suveräänsetel sõlmedel)
-
-Hübriidkeskkondades hoia Docker/Nginx UtahMosphere kõrval migratsiooni ajal.
-
----
-
-## Teekaart (veel rakendamata)
-
-- S3-ühilduv objektisalvestuse HTTP API
-- Lambda-stiilis invoke HTTP API
-- RDS ledger read/write HTTP API
-- Git-põhine deploy häälkäsk
-- Täielik AST mutatsioon Lazarus kaudu
-- Reaalne Bitcoin mempool integratsioon Tycoon-is
-
-Vaata versiooniajalugu: [Muudatuste logi](CAPABILITY_MATRIX.md).
+- Alpine/vmlinuz bundling Genesis ISO sees (käivitusmenüü dokumenteerib praegu käsitsi paigaldustee)
+- Nonce/ajatempel häälkäskude korduskasutamise vastu
+- `authorized_nodes` tühistamise kasutajaliides

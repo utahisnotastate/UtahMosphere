@@ -61,12 +61,22 @@ Replaces IAM roles and passwords.
 - **Cryptographic Binding:** Hashes biometric data into Ed25519 keys to sign every system mutation
 - **Access Control:** The system becomes cryptographically inert if the vocal signature does not match the anchored root record
 
-#### **8. Utah-Tycoon: Autonomous Settlement Engine**
+#### **8. Utah-Tycoon: Mempool Settlement Engine**
 
-- **Settlement Loop:** `threading.Event`-driven 10s sweep, ~60s crypto-finality simulation
-- **Unlock API:** `POST /app/unlock` → HTTP 202 until ledger settles
-- **Sovereign Monetization:** Derives deterministic settlement addresses from an XPUB
-- **Zero-Fee:** No middleman; revenue flows to the node owner
+- **Real-time:** `tycoon_settlement.py` polls mempool.space / electrum-server every 5s
+- **Modes:** `UTAH_TYCOON_SETTLEMENT_MODE=auto|real|simulate`
+- **Unlock API:** `POST /app/unlock` → HTTP 202 until on-chain confirmation
+
+#### **9. AuthGuard: Node Whitelist Enforcement**
+
+- **`ledger_auth.py`:** HMAC signatures for mesh gossip and delegated voice authority
+- **`authorized_nodes[]`:** enforced in biometric ledger and `secure_registry.json`
+- **Voice:** `"authorize node <64-char-hash>"`
+
+#### **10. Genesis ISO (`mk_iso.sh`)**
+
+- Builds `utah_genesis_v25.iso` for UEFI/hybrid USB boot
+- Packages kernel + `bootstrap.sh` for zero-touch edge provisioning
 
 ---
 

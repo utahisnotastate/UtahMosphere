@@ -1,6 +1,6 @@
 # Matrice des capacités
 
-UtahMosphere OS **v25.0 Golden Master Final** — état d'implémentation au titre d'Omega-Build.
+UtahMosphere OS **v25.1 Migration Ready** — état d'implémentation au titre d'Omega-Build.
 
 ---
 
@@ -8,8 +8,8 @@ UtahMosphere OS **v25.0 Golden Master Final** — état d'implémentation au tit
 
 | Point de terminaison | Méthode | Statut | Notes |
 |----------------------|---------|--------|-------|
-| `/health` | GET | **Implémenté** | Sonde de disponibilité + `build: golden-master-final` |
-| `/status` | GET | **Implémenté** | État UI, locataires, statut de revendication, racine S3 |
+| `/health` | GET | **Implémenté** | Sonde de disponibilité + `build: golden-master-v25.1` |
+| `/status` | GET | **Implémenté** | État UI, locataires, statut de revendication, S3 root |
 | `/command` | POST | **Implémenté** | Exécution d'intention vocale |
 | `/app/unlock` | POST | **Implémenté** | Soumettre le paiement ; renvoie 202 en attente de règlement |
 | `/app/{name}` | GET | **Implémenté** | Porte Tycoon 402 + proxy UtahX vers le conteneur |
@@ -37,9 +37,11 @@ UtahMosphere OS **v25.0 Golden Master Final** — état d'implémentation au tit
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Implémenté** | Invocation de handler sans images |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Implémenté** | Registre clé-valeur JSON |
 | **Quantum Ledger** | Implémenté | Revendication biométrique + vérification |
-| **Utah-Tycoon** | **Implémenté** | Boucle de règlement événementielle, `POST /app/unlock`, porte HTTP 402 |
-| **Gossip UtahNetes** | **Implémenté** | Synchronisation multidiffusion 5 s via `utah_mesh_engine.py`, `master_registry.json` |
-| **Global Swarm** | **Implémenté** | Routage DHT déterministe, FIND_NODE, recherche de pairs itérative |
+| **Utah-Tycoon** | **Implémenté** | Règlement mempool/electrum (`tycoon_settlement.py`), `POST /app/unlock`, porte HTTP 402 |
+| **Gossip UtahNetes** | **Implémenté** | Multidiffusion 5 s signée AuthGuard via `utah_mesh_engine.py` |
+| **Global Swarm** | **Implémenté** | DHT déterministe + synchronisation de registre signée |
+| **AuthGuard (`ledger_auth.py`)** | **Implémenté** | Application de `authorized_nodes[]` pour voix + maillage |
+| **Genesis ISO (`mk_iso.sh`)** | **Implémenté** | Générateur d'installateur flash UEFI/hybride |
 | **Interface Utah-Flux** | Implémenté | Tableau de bord Tkinter de statut |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Implémenté** | Orchestrateur multi-processus |
 | **Bootstrap (`bootstrap.sh`)** | **Implémenté** | Installation bare-metal systemd |
@@ -53,6 +55,7 @@ UtahMosphere OS **v25.0 Golden Master Final** — état d'implémentation au tit
 | Revendiquer le nœud | Implémenté | `"Claim node"` |
 | Déployer une application | Implémenté | `"deploy application my-app"` |
 | Corriger une application | **Implémenté** | `"patch app my-app to add logging"` |
+| Autoriser un nœud | **Implémenté** | `"authorize node <64-char-vibe-hash>"` |
 | Statut / grille | Implémenté | `"status grid"` |
 
 ---
@@ -66,14 +69,15 @@ UtahMosphere OS **v25.0 Golden Master Final** — état d'implémentation au tit
 | `python3 genesis_deploy.py` | Implémenté | Linux / dev |
 | `sudo bash bootstrap.sh` | **Recommandé prod** | Linux systemd |
 | `sudo bash setup.sh` | Implémenté | Alias de bootstrap |
+| `./mk_iso.sh` | **Implémenté** | Linux — génère `utah_genesis_v25.iso` |
 | `docker-compose up` | Optionnel | Commodité héritée uniquement |
 
 ---
 
 ## Feuille de route (restant)
 
-- Intégration réelle du mempool Bitcoin dans Tycoon (la simulation de règlement fonctionne aujourd'hui)
-- Image d'installation `genesis.iso` sur clé USB
-- Application du champ `authorized_nodes[]`
+- Intégration Alpine/vmlinuz dans Genesis ISO (le menu de démarrage documente aujourd'hui le chemin d'installation manuel)
+- Anti-rejeu nonce/horodatage pour les commandes vocales
+- Interface de révocation `authorized_nodes`
 
 Consultez la [Référence API](API_REFERENCE.md) et le [Guide du développeur](DEVELOPER_COOKBOOK.md) pour les détails d'implémentation actuels.

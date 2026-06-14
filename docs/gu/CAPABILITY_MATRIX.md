@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega-Build.
+UtahMosphere OS **v25.1 Migration Ready** — implementation status gi Omega-Build.
 
 ---
 
@@ -8,7 +8,7 @@ UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | Liveness check + `build: golden-master-final` |
+| `/health` | GET | **Ma implement** | Liveness check + `build: golden-master-v25.1` |
 | `/status` | GET | **Ma implement** | UI state, tenants, claim status, S3 root |
 | `/command` | POST | **Ma implement** | Voice intent execution |
 | `/app/unlock` | POST | **Ma implement** | Submit payment; ma return 202 pending settlement |
@@ -37,9 +37,11 @@ UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega
 | **Lambda Engine (`utah_lambda_engine.py`)** | **Ma implement** | Handler invoke sin images |
 | **RDS Ledger (`utah_rds_ledger.py`)** | **Ma implement** | JSON key-value ledger |
 | **Quantum Ledger** | Ma implement | Biometric claim + verification |
-| **Utah-Tycoon** | **Ma implement** | Event-driven settlement loop, `POST /app/unlock`, HTTP 402 gate |
-| **UtahNetes Gossip** | **Ma implement** | 5s multicast sync via `utah_mesh_engine.py`, `master_registry.json` |
-| **Global Swarm** | **Ma implement** | Deterministic DHT routing, FIND_NODE, iterative peer lookup |
+| **Utah-Tycoon** | **Ma implement** | Mempool/electrum settlement (`tycoon_settlement.py`), `POST /app/unlock`, HTTP 402 gate |
+| **UtahNetes Gossip** | **Ma implement** | AuthGuard-signed 5s multicast via `utah_mesh_engine.py` |
+| **Global Swarm** | **Ma implement** | Deterministic DHT + signed ledger sync |
+| **AuthGuard (`ledger_auth.py`)** | **Ma implement** | `authorized_nodes[]` enforcement para voice + mesh |
+| **Genesis ISO (`mk_iso.sh`)** | **Ma implement** | UEFI/hybrid flash installer builder |
 | **Utah-Flux UI** | Ma implement | Tkinter status dashboard |
 | **Auto-Genesis (`genesis_deploy.py`)** | **Ma implement** | Multi-process orchestrator |
 | **Bootstrap (`bootstrap.sh`)** | **Ma implement** | Bare-metal systemd install |
@@ -53,6 +55,7 @@ UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega
 | Claim node | Ma implement | `"Claim node"` |
 | Deploy application | Ma implement | `"deploy application my-app"` |
 | Patch application | **Ma implement** | `"patch app my-app to add logging"` |
+| Authorize node | **Ma implement** | `"authorize node <64-char-vibe-hash>"` |
 | Status / grid | Ma implement | `"status grid"` |
 
 ---
@@ -66,14 +69,15 @@ UtahMosphere OS **v25.0 Golden Master Final** — implementation status gi Omega
 | `python3 genesis_deploy.py` | Ma implement | Linux / dev |
 | `sudo bash bootstrap.sh` | **Ma recommend prod** | Linux systemd |
 | `sudo bash setup.sh` | Ma implement | Alias para bootstrap |
+| `./mk_iso.sh` | **Ma implement** | Linux — ma build `utah_genesis_v25.iso` |
 | `docker-compose up` | Optional | Legacy convenience ha' |
 
 ---
 
 ## Roadmap (remaining)
 
-- Real Bitcoin mempool integration gi Tycoon (settlement simulation mumuña på'go)
-- `genesis.iso` flash-drive installer image
-- `authorized_nodes[]` enforcement
+- Alpine/vmlinuz bundling gi Genesis ISO (boot menu på'go ma dokumenta manual install path)
+- Nonce/timestamp anti-replay para voice commands
+- `authorized_nodes` revocation UI
 
 Para mas detalle: [Referensia API](API_REFERENCE.md) · [Cookbook Desarrollador](DEVELOPER_COOKBOOK.md)

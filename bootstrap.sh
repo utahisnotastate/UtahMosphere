@@ -27,6 +27,8 @@ apt-get install -y python3 python3-pip python3-tk libasound2-dev portaudio19-dev
 
 pip3 install -r "${REPO_DIR}/requirements.txt" 2>/dev/null || pip3 install numpy librosa SpeechRecognition pyaudio
 
+chmod +x "${REPO_DIR}/mk_iso.sh" 2>/dev/null || true
+
 echo "[Omega-Genesis] Synthesizing data paths..."
 mkdir -p /var/lib/utahmosphere/{containers,utahx_mesh,s3,lambda,rds,tycoon,swarm}
 mkdir -p /etc/utahmosphere/security

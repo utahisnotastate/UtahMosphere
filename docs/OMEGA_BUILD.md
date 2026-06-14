@@ -83,27 +83,38 @@ curl -X POST http://127.0.0.1:8999/rds/write \
 curl http://127.0.0.1:8999/rds/read/user:123
 ```
 
-### 8. Financial Ledger (Utah-Tycoon) — Fully Integrated
+### 8. Financial Ledger (Utah-Tycoon) — Mempool Integrated
 
-- **Settlement loop:** `threading.Event`-driven 10s sweep, 60s crypto-finality
+- **Settlement:** `tycoon_settlement.py` polls mempool.space / electrum every 5s
+- **Modes:** `UTAH_TYCOON_SETTLEMENT_MODE=auto|real|simulate`
 - **`POST /app/unlock`:** Register pending payment, HTTP `202` until settled
-- **HTTP 402** on `/app/{name}` until invoice settles → `active-compute`
+- **HTTP 402** on `/app/{name}` until invoice confirms on-chain (or simulate fallback)
 
-### 9. UtahNetes Mesh (`utah_mesh_engine.py`)
+### 9. AuthGuard (`ledger_auth.py`)
+
+- HMAC validation for `authorized_nodes[]` voice delegation
+- Signed UtahNetes mesh gossip (`mesh_signature`, `signer_hash`)
+- Voice: `"authorize node <64-char-hash>"`
+
+### 10. UtahNetes Mesh (`utah_mesh_engine.py`)
 
 - **5-second** multicast broadcast to `239.255.43.21:9001`
 - Persists `master_registry.json` on each sync cycle
 - Merges remote tenant state by monotonic `epoch`
 
-### 10. Global Swarm DHT (`utah_swarm_protocol.py`)
+### 11. Global Swarm DHT (`utah_swarm_protocol.py`)
 
 - Deterministic XOR-distance routing
 - `FIND_NODE` / `FIND_NODE_RESPONSE` iterative lookup
 - `LEDGER_SYNC` payloads propagate planetary registry state
 
-### 11. OTA Lazarus Channel (`utah_ota_lazarus.py`)
+### 12. OTA Lazarus Channel (`utah_ota_lazarus.py`)
 
 Push Golden Master kernel updates to swarm peers. See [OTA Lazarus Channel](OTA_LAZARUS.md).
+
+### 13. Genesis ISO (`mk_iso.sh`)
+
+UEFI/hybrid bootable flash installer. See [Genesis ISO Installer](GENESIS_ISO.md).
 
 ---
 
@@ -111,8 +122,9 @@ Push Golden Master kernel updates to swarm peers. See [OTA Lazarus Channel](OTA_
 
 1. **Hardware inoculation:** `sudo bash bootstrap.sh` — purges Docker/Nginx, installs `utah-genesis` systemd unit.
 2. **Voice manifestation:** `"Deploy application inventory-system"` — UtahContainerEngine + UtahX route created instantly.
-3. **Financial finality:** `GET /app/{name}` returns `402` until Tycoon invoice settles (~60s simulation).
-4. **Cloud parity:** Run `python examples/omega-build-verify/verify.py` against a live kernel.
+3. **Financial finality:** `GET /app/{name}` returns `402` until Tycoon confirms payment via mempool (or simulate for dev addresses).
+4. **Genesis ISO:** `./mk_iso.sh` → flash `utah_genesis_v25.iso` → `bootstrap.sh` on boot.
+5. **Cloud parity:** Run `python examples/omega-build-verify/verify.py` against a live kernel.
 
 ---
 

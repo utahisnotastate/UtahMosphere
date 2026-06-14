@@ -1,6 +1,6 @@
 # Portail de documentation UtahMosphere
 
-Bienvenue sur le hub de documentation d'UtahMosphere OS v25.0 — cloud souverain edge Python, port **8999**. **Golden Master Final v25.0** : noyau unifié bare-metal avec Utah-Tycoon, UtahNetes et Global Swarm entièrement opérationnels. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
+Bienvenue sur le hub de documentation d'UtahMosphere OS v25.1 — cloud souverain edge Python, port **8999**. **Migration Ready v25.1** : noyau unifié bare-metal avec règlement mempool Tycoon, application AuthGuard `authorized_nodes[]`, installateur Genesis ISO (`mk_iso.sh`), UtahNetes et Global Swarm entièrement opérationnels. Le contenu est organisé par **profil d'audience**, **tutoriels pratiques**, **recettes prêtes à copier-coller** et **projets de démarrage**.
 
 ---
 
@@ -62,7 +62,8 @@ Petits scripts exécutables qui utilisent l'API en direct :
 |---------|-------------------|
 | `examples/hello-world/` | Déployer une application via `/command` |
 | `examples/check-node-health/` | Sondes de santé et de statut |
-| `examples/paid-app-access/` | Règlement du péage Tycoon |
+| `examples/paid-app-access/` | Règlement mempool/electrum Tycoon |
+| `examples/omega-build-verify/` | Test de parité S3/Lambda/RDS/conteneur complet |
 | `examples/voice-deploy-simulator/` | Déployer sans microphone |
 
 ### Projets de démarrage (`starter-projects/`)
@@ -79,4 +80,4 @@ Mini-projets complets à forker et étendre :
 
 ## À propos de cette documentation
 
-Cette section de documentation est entièrement en français. UtahMosphere OS v25.0 Golden Master Final est un cloud souverain edge basé sur Python, accessible par défaut sur le port **8999**.
+Cette section de documentation est entièrement en français. UtahMosphere OS v25.1 Migration Ready est un cloud souverain edge basé sur Python, build `golden-master-v25.1`, accessible par défaut sur le port **8999**. Fonctionnalités clés : règlement mempool Tycoon, application `authorized_nodes[]` via AuthGuard, installateur Genesis ISO (`./mk_iso.sh`), commande vocale `authorize node`.

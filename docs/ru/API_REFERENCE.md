@@ -16,8 +16,8 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "25.0",
-  "build": "golden-master-final"
+  "version": "25.1",
+  "build": "golden-master-v25.1"
 }
 ```
 
@@ -31,7 +31,7 @@ curl http://127.0.0.1:8999/health
 
 ## GET /status
 
-Операционный снимок: состояние UI, развёрнутые арендаторы, статус claim, `swarm_peers` и статистика Tycoon.
+Операционный снимок: состояние UI, развёрнутые арендаторы, статус claim, `authorized_nodes`, `swarm_peers` и расширенные поля Tycoon.
 
 **Ответ `200`:**
 
@@ -46,8 +46,15 @@ curl http://127.0.0.1:8999/health
   },
   "tenants": ["my-app"],
   "claimed": true,
+  "authorized_nodes": ["abc123..."],
   "swarm_peers": 2,
-  "tycoon": {"pending": 0, "settled_invoices": 1, "swept_funds": 5000}
+  "tycoon": {
+    "pending": 0,
+    "settled_invoices": 1,
+    "swept_funds": 5000,
+    "settlement_mode": "auto",
+    "mempool_api": "https://mempool.space/api"
+  }
 }
 ```
 
@@ -63,6 +70,7 @@ curl http://127.0.0.1:8999/health
 |------|-----|-------------|----------|
 | `transcript` | string | Да | Произнесённая команда (без учёта регистра) |
 | `acoustic_hash` | string | Да | 64-символьный SHA-256 хеш vibe-print |
+| `request_signature` | string | Нет | Опциональный HMAC AuthGuard для делегированных узлов |
 
 **Ответ `200`:**
 
@@ -78,6 +86,7 @@ curl http://127.0.0.1:8999/health
 | Интент | Пример транскрипта |
 |--------|-------------------|
 | Закрепление узла | `"Claim node"` |
+| Authorize node | `"authorize node <64-char-vibe-hash>"` |
 | Развёртывание приложения | `"deploy application hello"` или `"manifest app hello"` |
 | Патч приложения | `"patch app hello to add feature x"` |
 | Статус | `"status grid"` |
@@ -98,7 +107,7 @@ curl -X POST http://127.0.0.1:8999/command \
   -d '{"transcript": "deploy application hello", "acoustic_hash": "0000000000000000000000000000000000000000000000000000000000000000"}'
 ```
 
-**После claim:** `acoustic_hash` должен совпадать с закреплённым корневым vibe-хешем, иначе ядро вернёт:
+**После claim:** `acoustic_hash` должен совпадать с закреплённым корневым vibe-хешем **или** быть записью в `authorized_nodes[]`, иначе ядро вернёт:
 
 ```json
 {
@@ -151,7 +160,7 @@ curl -H "X-Client-ID: demo-client" http://127.0.0.1:8999/app/hello
 
 ## POST /app/unlock
 
-Отправьте запрос на разблокировку оплаты. Tycoon регистрирует ожидающую транзакцию и возвращает HTTP `202` до криптографического закрытия (~60 с).
+Отправьте запрос на разблокировку оплаты. Tycoon опрашивает mempool.space (или electrum-server) для финальности платежа. Dev-адреса (`bc1q_utah_*`) используют отложенное закрытие в режиме `auto`.
 
 **Тело запроса:**
 

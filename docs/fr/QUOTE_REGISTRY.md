@@ -1,4 +1,4 @@
-# Registre des citations matérielles (v29.0)
+# Registre des citations matérielles (v30.0)
 
 Le **registre des citations matérielles** est la source de vérité distribuée des empreintes matérielles TPM valides dans l'essaim UtahMosphere. Les nœuds ne font pas confiance aux adresses IP — ils font confiance aux **citations matérielles** signées par la CA racine Utah-Kernel et enregistrées dans ce registre.
 
@@ -87,7 +87,7 @@ curl -X POST http://127.0.0.1:8999/registry/purge \
 |----------|--------|----------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Persistance du registre |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Ingress UtahX + épinglage CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v29_root_ca` | Racine de signature des citations |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Racine de signature des citations |
 | `UTAH_KERNEL_ROOT_CA_PATH` | `/etc/utahmosphere/security/utah_root_ca.pem` | Clé publique PEM pour vérification CA |
 
 Ignorer toutes les couches d'attestation en développement :

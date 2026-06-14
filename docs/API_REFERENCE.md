@@ -16,16 +16,18 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "29.0",
-  "build": "omega-build-v29-remote-attested",
+  "version": "30.0",
+  "build": "omega-build-v30-federated-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
-    "quote_registry": {"active": 1, "purged": 0, "total": 1}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v30_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1},
+    "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
+    "pcr_drift": {"enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
   }
 }
 ```
@@ -48,7 +50,7 @@ Issue an RA-TLS TPM quote for UtahNetes mesh peer verification.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v30-federated-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -105,6 +107,53 @@ Purge a compromised hardware ID from the global registry. Root vibe holder only.
 
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
+```
+
+---
+
+## GET /dht/consensus
+
+Export the DHT golden measurement ledger (swarm-wide TPM consensus).
+
+**Response `200`:**
+
+```json
+{
+  "golden": {
+    "my-host": {
+      "golden_quote": "sha256-fingerprint",
+      "pcr_digest": "...",
+      "hardware_id": "...",
+      "status": "consensus",
+      "recorded_at": 1718323200.0
+    }
+  },
+  "stats": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/dht/consensus
+```
+
+See [DHT-Federated Attestation](DHT_FEDERATION.md).
+
+---
+
+## POST /dht/challenge
+
+Issue an attestation challenge to a swarm peer (requires active DHT routing table).
+
+**Request body:**
+
+```json
+{"peer_hash": "64-char-node-hash"}
+```
+
+**Response `202`:**
+
+```json
+{"status": "challenge_sent", "peer_hash": "abc123..."}
 ```
 
 ---
@@ -440,5 +489,7 @@ Revoke a delegated node from `authorized_nodes[]`. Root vibe holder only. Utah-F
 | `{UTAH_DATA_DIR}/rds/ledger.json` | RDS key-value store |
 | `security/biometric_ledger.json` | Root vibe hash (local fallback if `/etc` not writable) |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
+| `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden measurement ledger |
+| `{UTAH_DATA_DIR}/golden_pcr0.txt` | Anchored golden PCR0 digest |
 
 Default `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (falls back to local dirs on permission errors).

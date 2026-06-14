@@ -1,6 +1,6 @@
 # Matrice des capacités
 
-UtahMosphere OS **v29.0 Infrastructure d'attestation à distance** — ancres de confiance souveraines : registre global des citations matérielles, épinglage CA RA-TLS, liaison biométrique au TPM.
+UtahMosphere OS **v30.0 Infrastructure d'attestation à distance** — ancres de confiance souveraines : registre global des citations matérielles, épinglage CA RA-TLS, liaison biométrique au TPM.
 
 ---
 
@@ -8,10 +8,12 @@ UtahMosphere OS **v29.0 Infrastructure d'attestation à distance** — ancres de
 
 | Point de terminaison | Méthode | Statut | Notes |
 |----------------------|---------|--------|-------|
-| `/health` | GET | **Implémenté** | `build: omega-build-v29-remote-attested` + instantané d'attestation complet |
+| `/health` | GET | **Implémenté** | `build: omega-build-v30-federated-attested` + instantané d'attestation complet |
 | `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS + `hardware_id` |
 | `/registry/quotes` | GET | **Implémenté** | Export du registre global des citations matérielles |
-| `/registry/purge` | POST | **Implémenté** | Purger le matériel compromis (vibe racine) |
+| `/registry/purge` | POST |
+| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
+| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implémenté** | Purger le matériel compromis (vibe racine) |
 | `/nonce` | GET | **Implémenté** | Nonce anti-rejeu pour commande vocale |
 | `/status` | GET | **Implémenté** | Verrou TPM, garde RA-TLS, statistiques du registre de citations |
 | `/command` | POST | **Implémenté** | Voix + nonce + vibe liée au TPM + envoi au registre lors de la revendication |
@@ -35,7 +37,7 @@ UtahMosphere OS **v29.0 Infrastructure d'attestation à distance** — ancres de
 | **Voice Bridge signé** | **Implémenté** | Nonce automatique + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implémenté** | Sécurité maillage + voix |
 | **UtahNetes + Swarm DHT** | **Implémenté** | RA-TLS + gossip signé + fusion du registre |
-| **Genesis ISO v29** | **Implémenté** | `utah_genesis_v29.iso` |
+| **Genesis ISO v30** | **Implémenté** | `utah_genesis_v30.iso` |
 | **Parité cloud complète** | **Implémenté** | S3, Lambda, RDS, UtahX, conteneurs |
 
 ---
@@ -46,7 +48,7 @@ UtahMosphere OS **v29.0 Infrastructure d'attestation à distance** — ancres de
 |---------|--------|
 | `python3 utahmosphere_master.py` | **Recommandé** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **ISO v29** |
+| `python3 genesis_iso_builder.py` | **v30 ISO** |
 
 ## Variables d'environnement
 
@@ -54,12 +56,14 @@ UtahMosphere OS **v29.0 Infrastructure d'attestation à distance** — ancres de
 |----------|--------|----------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Exiger le scellement TPM à la revendication |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Exiger les citations RA-TLS sur le maillage |
+| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
+| `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Épinglage CA à l'ingress UtahX |
 | `UTAH_MEMPOOL_NODES` | 4 valeurs par défaut | Remplacer la liste de basculement mempool |
 
 ## Feuille de route
 
-Tous les éléments de la feuille de route v28.0 sont **implémentés** en v29.0 (épinglage CA RA-TLS distant, registre des citations matérielles).
+Tous les éléments de la feuille de route v28.0 sont **implémentés** en v30.0 (épinglage CA RA-TLS distant, registre des citations matérielles).
 
 À venir : fédération DHT des citations matérielles, détection automatisée de la dérive PCR.
 

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Golden Master Build v25.0
-Unified bare-metal sovereign cloud: UtahX, UtahContainerEngine, Lazarus,
-UtahNetes, Quantum Ledger, S3 Mesh, Lambda, RDS Ledger, Tycoon Finance.
-Replaces Nginx, Docker, and Kubernetes with native Python-to-kernel logic gates.
+UtahMosphere Operating System Kernel - Omega-Build v30.0
+DHT-federated attestation, PCR drift healing, unified sovereign cloud stack.
 """
 
 import os
@@ -24,7 +22,7 @@ from utah_lazarus import LazarusEngine
 from utah_s3_mesh import get_object, put_object, verify_signature, list_objects, S3_ROOT
 from utah_rds_ledger import read as rds_read, write as rds_write
 from utah_lambda_engine import invoke as lambda_invoke, register_function
-from utah_container_runtime import start_container_server
+from utah_container_runtime import start_container_server, stop_all_containers
 from utahx_proxy import proxy_request
 from utah_mesh_engine import UtahNetesMesh, derive_node_hash, MASTER_REGISTRY_FILE
 
@@ -38,6 +36,8 @@ try:
     from ra_tls_attest import RATLSAttestation
     from quote_registry import quote_registry
     from ra_tls_guard import RATLSGuard, ra_tls_guard
+    from dht_quote_registry import dht_quote_registry
+    from drift_detector import drift_detector
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -50,6 +50,8 @@ except ImportError:
     quote_registry = None
     RATLSGuard = None
     ra_tls_guard = None
+    dht_quote_registry = None
+    drift_detector = None
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -69,7 +71,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v29.0 Remote Attested]",
+            "node_status": "Active [Omega-Build v30.0 Federated Attested]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -92,8 +94,10 @@ class UtahmosphereSovereignKernel:
             tycoon_engine.register_settlement_callback(self._on_tycoon_settlement)
 
         threading.Thread(target=self._initiate_predictive_janitor, daemon=True).start()
+        if drift_detector:
+            drift_detector.monitor(self)
 
-        print(f"[{self.node_identity}] Omega-Build v29.0 remote-attested kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v30.0 federated-attested kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -106,7 +110,11 @@ class UtahmosphereSovereignKernel:
         node_hash = self._node_hash()
         self.root_vibe = node_hash if ledger_guard and ledger_guard.ledger.get("root_vibe_hash") else None
         auth_guard = ledger_guard.auth_guard if ledger_guard else None
-        self.swarm_router = UtahSwarmNode(node_hash, on_ledger_sync=self._on_swarm_ledger_sync)
+        self.swarm_router = UtahSwarmNode(
+            node_hash,
+            on_ledger_sync=self._on_swarm_ledger_sync,
+            on_attestation=self._on_swarm_attestation,
+        )
         self.mesh_engine = UtahNetesMesh(
             node_id=self.node_identity,
             get_registry=lambda: self.cluster_registry,
@@ -120,6 +128,8 @@ class UtahmosphereSovereignKernel:
 
     def _broadcast_to_swarm(self, payload: dict):
         if self.swarm_router:
+            if dht_quote_registry:
+                payload["dht_golden_registry"] = dht_quote_registry.export_golden()
             if RATLSAttestation:
                 vibe = ledger_guard.ledger.get("root_vibe_hash") if ledger_guard else None
                 payload = RATLSAttestation.attach_to_message(payload, self.node_identity, vibe_hash=vibe)
@@ -128,6 +138,12 @@ class UtahmosphereSovereignKernel:
                     self.swarm_router.route_payload_deterministic(peer_hash, payload)
 
     def _on_swarm_ledger_sync(self, payload: dict):
+        if payload.get("type") == "DHT_GOLDEN_SYNC":
+            if dht_quote_registry and payload.get("dht_golden_registry"):
+                dht_quote_registry.merge_dht_consensus(payload["dht_golden_registry"])
+                self.cluster_registry["dht_golden_registry"] = dht_quote_registry.export_golden()
+                self._save_registry_unlocked()
+            return
         if RATLSAttestation and not RATLSAttestation.verify_mesh_message(payload):
             print("[Swarm Link] RA-TLS rejected DHT ledger sync")
             return
@@ -139,6 +155,73 @@ class UtahmosphereSovereignKernel:
         origin = payload.get("origin_node", "unknown")
         print(f"[Swarm Link] DHT state sync from {origin}")
         self._apply_remote_registry(registry)
+
+    def _on_swarm_attestation(self, payload: dict, source_hash: str, addr: tuple):
+        ptype = payload.get("type")
+        if ptype == "ATTESTATION_CHALLENGE" and RATLSAttestation and self.swarm_router:
+            quote = RATLSAttestation.generate_quote(
+                self.node_identity, vibe_hash=self.root_vibe
+            )
+            self.swarm_router._send_to(addr[0], addr[1], {
+                "type": "ATTESTATION_RESPONSE",
+                "quote": quote,
+                "peer_id": self.node_identity,
+                "hardware_id": self.cluster_registry.get("hardware_id"),
+            })
+            return
+        if ptype == "ATTESTATION_RESPONSE":
+            quote = payload.get("quote")
+            peer_id = payload.get("peer_id") or source_hash
+            if dht_quote_registry and quote and not dht_quote_registry.verify_against_swarm(peer_id, quote):
+                print(f"[DHT-Federation] Peer {peer_id[:12]} failed golden measurement consensus.")
+                hw = payload.get("hardware_id")
+                if quote_registry and hw:
+                    quote_registry.purge_node(hw, "dht_consensus_mismatch")
+                dht_quote_registry.purge_peer(peer_id, "consensus_mismatch")
+            return
+        if ptype == "QUARANTINE_NOTICE":
+            hw = payload.get("hardware_id")
+            peer = payload.get("peer_id", source_hash)
+            if quote_registry and hw:
+                quote_registry.purge_node(hw, payload.get("reason", "remote_quarantine"))
+            if dht_quote_registry:
+                dht_quote_registry.purge_peer(peer, payload.get("reason", "remote_quarantine"))
+            print(f"[DHT-Federation] Swarm quarantine notice for peer {peer[:12]}")
+
+    def emergency_quarantine(self, reason: str = "pcr_drift"):
+        """Forces all containers into cryo-stasis upon attestation failure."""
+        stopped = stop_all_containers()
+        for app in list(self.cluster_registry.get("tenants", {}).keys()):
+            tenant = self.cluster_registry["tenants"][app]
+            tenant["status"] = "quarantined"
+            tenant["quarantine_reason"] = reason
+        hw_id = self.cluster_registry.get("hardware_id")
+        if quote_registry and hw_id:
+            quote_registry.purge_node(hw_id, reason)
+        if dht_quote_registry:
+            dht_quote_registry.purge_peer(self.node_identity, reason)
+        self.cluster_registry["quarantined"] = True
+        self.cluster_registry["quarantine_reason"] = reason
+        if quote_registry:
+            self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        if dht_quote_registry:
+            self.cluster_registry["dht_golden_registry"] = dht_quote_registry.export_golden()
+        status_label = "QUARANTINED: PCR DRIFT" if reason == "pcr_drift" else f"QUARANTINED: {reason.upper()}"
+        self.ui_state["node_status"] = status_label
+        self.ui_state["cluster_health"] = "Quarantined"
+        self._save_registry_unlocked()
+        self.trigger_flux_ui_render()
+        if self.swarm_router:
+            notice = {
+                "type": "QUARANTINE_NOTICE",
+                "peer_id": self.node_identity,
+                "hardware_id": hw_id,
+                "reason": reason,
+            }
+            with self.swarm_router._lock:
+                for peer_hash in list(self.swarm_router.routing_table.keys())[:8]:
+                    self.swarm_router.route_payload_deterministic(peer_hash, notice)
+        print(f"[Kernel] Emergency quarantine ({reason}). Stopped {stopped} container(s).")
 
     def _sync_authorized_nodes_to_registry(self):
         if not ledger_guard:
@@ -169,6 +252,10 @@ class UtahmosphereSovereignKernel:
             snap["ra_tls"] = RATLSAttestation.status()
         if quote_registry:
             snap["quote_registry"] = quote_registry.stats()
+        if dht_quote_registry:
+            snap["dht_federation"] = dht_quote_registry.stats()
+        if drift_detector:
+            snap["pcr_drift"] = drift_detector.status()
         return snap
 
     def _register_hardware_quote(self, acoustic_hash: str):
@@ -191,8 +278,20 @@ class UtahmosphereSovereignKernel:
             pcr_digest=body.get("pcr0_digest"),
             node_id=self.node_identity,
         )
+        if dht_quote_registry:
+            dht_quote_registry.record_golden(
+                self.node_identity,
+                quote,
+                pcr_digest=body.get("pcr0_digest"),
+                hardware_id=hw_id,
+            )
+            if drift_detector:
+                drift_detector.anchor_golden()
         self.cluster_registry["hardware_id"] = hw_id
         self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        self.cluster_registry["dht_golden_registry"] = (
+            dht_quote_registry.export_golden() if dht_quote_registry else {}
+        )
         self._save_registry_unlocked()
         print(f"[RA-TLS] Hardware quote registered globally: {hw_id[:16]}...")
 
@@ -209,6 +308,9 @@ class UtahmosphereSovereignKernel:
         if quote_registry and remote.get("quote_registry"):
             quote_registry.merge_remote(remote["quote_registry"])
             self.cluster_registry["quote_registry"] = quote_registry.export_nodes()
+        if dht_quote_registry and remote.get("dht_golden_registry"):
+            dht_quote_registry.merge_dht_consensus(remote["dht_golden_registry"])
+            self.cluster_registry["dht_golden_registry"] = dht_quote_registry.export_golden()
         self._save_registry_unlocked()
         if self.swarm_router:
             self.ui_state["swarm_peers"] = self.swarm_router.peer_count()
@@ -271,7 +373,11 @@ class UtahmosphereSovereignKernel:
                 if "mapped" in response and UtahSwarmNode:
                     self.root_vibe = acoustic_hash
                     self._register_hardware_quote(acoustic_hash)
-                    self.swarm_router = UtahSwarmNode(acoustic_hash, on_ledger_sync=self._on_swarm_ledger_sync)
+                    self.swarm_router = UtahSwarmNode(
+                        acoustic_hash,
+                        on_ledger_sync=self._on_swarm_ledger_sync,
+                        on_attestation=self._on_swarm_attestation,
+                    )
                     self._sync_authorized_nodes_to_registry()
                     if self.mesh_engine:
                         self.mesh_engine.node_hash = acoustic_hash
@@ -536,6 +642,19 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 self._json_response(404, {"error": "Hardware ID not found"})
             return
 
+        if path == "/dht/challenge":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            peer_hash = data.get("peer_hash", "")
+            if not peer_hash or not self.core_engine.swarm_router:
+                self._json_response(400, {"error": "peer_hash required and swarm must be online"})
+                return
+            ok = self.core_engine.swarm_router.challenge_peer_attestation(peer_hash)
+            self._json_response(202 if ok else 503, {
+                "status": "challenge_sent" if ok else "challenge_failed",
+                "peer_hash": peer_hash,
+            })
+            return
+
         self.send_response(404)
         self.end_headers()
 
@@ -568,8 +687,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "29.0",
-                "build": "omega-build-v29-remote-attested",
+                "version": "30.0",
+                "build": "omega-build-v30-federated-attested",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -581,6 +700,16 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "nodes": quote_registry.export_nodes(),
                 "stats": quote_registry.stats(),
+            })
+            return
+
+        if path == "/dht/consensus":
+            if dht_quote_registry is None:
+                self._json_response(503, {"error": "DHT federation unavailable"})
+                return
+            self._json_response(200, {
+                "golden": dht_quote_registry.export_golden(),
+                "stats": dht_quote_registry.stats(),
             })
             return
 

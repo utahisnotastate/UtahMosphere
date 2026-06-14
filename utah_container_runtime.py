@@ -68,6 +68,28 @@ class UtahContainerRequestHandler(BaseHTTPRequestHandler):
             self._send_json(500, {"error": str(e)})
 
 
+def stop_container_server(port: int) -> bool:
+    """Stop UtahContainerEngine listener on port (cryo-stasis / quarantine)."""
+    server = RUNNING_SERVERS.pop(port, None)
+    if server is None:
+        return False
+    try:
+        server.shutdown()
+    except Exception:
+        pass
+    print(f"[UtahContainerEngine] Stopped container on port {port}")
+    return True
+
+
+def stop_all_containers() -> int:
+    """Stop all running UtahContainerEngine listeners."""
+    stopped = 0
+    for port in list(RUNNING_SERVERS.keys()):
+        if stop_container_server(port):
+            stopped += 1
+    return stopped
+
+
 def start_container_server(
     app_name: str,
     port: int,

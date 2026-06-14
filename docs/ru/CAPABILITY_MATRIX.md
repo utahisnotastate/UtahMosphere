@@ -1,6 +1,6 @@
 # Матрица возможностей
 
-UtahMosphere OS **v29.0 Remote Attestation Infrastructure** — суверенная цепочка доверия завершена.
+UtahMosphere OS **v30.0 DHT-Federated Attestation** — суверенная цепочка доверия завершена.
 
 ---
 
@@ -8,10 +8,12 @@ UtahMosphere OS **v29.0 Remote Attestation Infrastructure** — суверенн
 
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
-| `/health` | GET | **Реализовано** | `build: omega-build-v29-remote-attested` + полный снимок аттестации |
+| `/health` | GET | **Реализовано** | `build: omega-build-v30-federated-attested` + полный снимок аттестации |
 | `/attestation/quote` | GET |
 | `/registry/quotes` | GET | **Implemented** | Global hardware quote registry |
-| `/registry/purge` | POST | **Implemented** | Purge compromised hardware | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
+| `/registry/purge` | POST |
+| `/dht/consensus` | GET | **Implemented** | DHT golden ledger |
+| `/dht/challenge` | POST | **Implemented** | Swarm attestation challenge | **Implemented** | Purge compromised hardware | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
 | `/nonce` | GET | **Реализовано** | Nonce против повторного воспроизведения голосовых команд |
 | `/status` | GET | **Реализовано** | TPM lock, RA-TLS, регионы mempool Океании |
 | `/command` | POST | **Реализовано** | Голос + nonce + TPM-привязанная проверка vibe |
@@ -27,6 +29,8 @@ UtahMosphere OS **v29.0 Remote Attestation Infrastructure** — суверенн
 | Компонент | Статус | Что работает сегодня |
 |-----------|--------|----------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Реализовано** | Vibe-Print запечатан в PCR0 через `tpm2_create` / `tpm2_unseal` |
+| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
+| **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
 | **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
 | **RA-TLS Guard (`ra_tls_guard.py`)** | **Implemented** | CA pinning; UtahX ingress |
 | **RA-TLS (`ra_tls_attest.py`)** | **Реализовано** | TPM quote в mesh gossip; проверка узлов перед синхронизацией |
@@ -35,7 +39,7 @@ UtahMosphere OS **v29.0 Remote Attestation Infrastructure** — суверенн
 | **Voice Bridge Signed** | **Реализовано** | Автоматический nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Реализовано** | Безопасность mesh + голоса |
 | **UtahNetes + Swarm DHT** | **Реализовано** | RA-TLS + подписанный gossip |
-| **Genesis ISO v29** | **Реализовано** | `utah_genesis_v29.iso` |
+| **Genesis ISO v30** | **Реализовано** | `utah_genesis_v30.iso` |
 | **Полная облачная паритетность** | **Реализовано** | S3, Lambda, RDS, UtahX, контейнеры |
 
 ---
@@ -46,20 +50,22 @@ UtahMosphere OS **v29.0 Remote Attestation Infrastructure** — суверенн
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Рекомендуется** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v29 ISO** |
+| `python3 genesis_iso_builder.py` | **v30 ISO** |
 
 ## Переменные окружения
 
 | Переменная | По умолчанию | Назначение |
 |------------|--------------|------------|
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Требовать TPM seal при claim |
+| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus |
+| `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Требовать RA-TLS quote в mesh |
 | `UTAH_MEMPOOL_NODES` | 4 по умолчанию | Переопределить список failover mempool |
 
 ## Дорожная карта
 
-Все пункты дорожной карты v28.0 **реализованы** в v29.0.
+Все пункты дорожной карты v28.0 **реализованы** в v30.0.
 
 Будущее: удалённое закрепление RA-TLS CA, сервис реестра hardware quote.
 

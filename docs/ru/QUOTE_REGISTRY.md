@@ -1,4 +1,4 @@
-# Реестр аппаратных цитат (v29.0)
+# Реестр аппаратных цитат (v30.0)
 
 **Реестр аппаратных цитат** — распределённый источник истины для действительных отпечатков TPM в рое UtahMosphere. Узлы не доверяют IP-адресам — они доверяют **аппаратным цитатам**, подписанным корневым CA Utah-Kernel и зарегистрированным в этом реестре.
 
@@ -49,7 +49,7 @@ UtahX ingress ----------------------> ra_tls_guard.verify_http_headers()
 |------------|--------------|------------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Персистентность |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v29_root_ca` | Корень подписи |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Корень подписи |
 
 Dev:
 

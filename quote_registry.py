@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Hardware Quote Registry (v29.0)
+UtahMosphere Hardware Quote Registry (v30.0)
 Distributed source of truth for TPM hardware quotes across the swarm.
 """
 

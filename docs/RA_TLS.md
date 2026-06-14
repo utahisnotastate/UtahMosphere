@@ -1,6 +1,6 @@
-# RA-TLS Mesh Attestation (v29.0)
+# RA-TLS Mesh Attestation (v30.0)
 
-**Remote Attestation via TLS (RA-TLS)** moves UtahMosphere from local hardware locking to **global swarm trust**. Every node verifies peer authenticity via TPM hardware quotes registered in the distributed **Hardware Quote Registry**.
+**Remote Attestation via TLS (RA-TLS)** plus **DHT-federated golden consensus** ensures UtahNetes mesh peers run authentic kernels on trusted TPM hardware before gossip sync is accepted.
 
 ## Global Attestation Topology
 
@@ -35,7 +35,7 @@ curl http://127.0.0.1:8999/attestation/quote
 {
   "hardware_id": "sha256-of-vibe-pcr-node",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v30-federated-attested\",\"node_id\":\"host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-over-body",
     "ca_signature": "optional-rsa-over-body"
   }
@@ -70,10 +70,12 @@ Invalid or unregistered hardware receives **403** at the ingress layer when `UTA
 |----------|---------|---------|
 | `UTAH_RA_TLS_ENFORCE` | `1` | Reject mesh sync without valid quote (`0` = dev) |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA pinning |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v29_root_ca` | Quote signing root |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Quote signing root |
+| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus on peer quotes |
 
 ## Related
 
+- [DHT-Federated Attestation](DHT_FEDERATION.md)
+- [PCR Drift Detection](PCR_DRIFT.md)
 - [Hardware Quote Registry](QUOTE_REGISTRY.md)
-- [Hardware Attestation](ATTESTATION.md)
 - [Capability Matrix](CAPABILITY_MATRIX.md)

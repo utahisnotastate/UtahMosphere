@@ -2,6 +2,25 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [30.0] — DHT-Federated Attestation & Drift Healing (2026-06)
+
+### Added
+- `dht_quote_registry.py` — DHT golden measurement consensus ledger
+- `drift_detector.py` — continuous PCR0 monitoring + emergency quarantine
+- `GET /dht/consensus` — export DHT golden registry
+- `POST /dht/challenge` — swarm attestation challenge
+- Swarm packets: `ATTESTATION_CHALLENGE`, `ATTESTATION_RESPONSE`, `DHT_GOLDEN_SYNC`, `QUARANTINE_NOTICE`
+- `emergency_quarantine()` — cryo-stasis all containers on drift
+- `stop_all_containers()` in `utah_container_runtime.py`
+- [DHT-Federated Attestation](DHT_FEDERATION.md), [PCR Drift Detection](PCR_DRIFT.md)
+
+### Changed
+- `utah_swarm_protocol.py` — attestation challenge routing
+- `ra_tls_attest.py` — DHT federation verify on mesh quotes
+- Genesis ISO: `utah_genesis_v30.iso`
+- Build: `omega-build-v30-federated-attested`
+- v29.0 roadmap complete (DHT federation + PCR drift); locale docs updated
+
 ## [29.0] — Remote Attestation Infrastructure (2026-06)
 
 ### Added

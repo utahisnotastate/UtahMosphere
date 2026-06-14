@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UtahX Stream Proxy - v29.0 Remote Attestation
+UtahX Stream Proxy - v30.0 DHT-Federated Attestation
 Native HTTP/1.1 proxy with RA-TLS header verification (replaces Nginx).
 """
 

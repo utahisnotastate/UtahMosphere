@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere RA-TLS Attestation (v29.0)
-TPM quote verification + global quote registry before UtahNetes mesh gossip is accepted.
+UtahMosphere RA-TLS Attestation (v30.0)
+TPM quote verification + DHT-federated golden registry before UtahNetes mesh gossip is accepted.
 """
 
 import hashlib
@@ -22,18 +22,20 @@ except ImportError:
 RA_TLS_ENFORCE = os.environ.get("UTAH_RA_TLS_ENFORCE", "1") != "0"
 KERNEL_ROOT_CA = os.environ.get(
     "UTAH_KERNEL_ROOT_CA",
-    "utahmosphere_omega_build_v29_root_ca",
+    "utahmosphere_omega_build_v30_root_ca",
 ).encode("utf-8")
-BUILD_ID = os.environ.get("UTAH_BUILD_ID", "omega-build-v29-remote-attested")
+BUILD_ID = os.environ.get("UTAH_BUILD_ID", "omega-build-v30-federated-attested")
 QUOTE_STORE = Path(os.environ.get("UTAH_RA_TLS_QUOTE_DIR", "/etc/utahmosphere/security/ra_tls"))
 
 try:
     from quote_registry import quote_registry
     from ra_tls_guard import RATLSGuard, ra_tls_guard
+    from dht_quote_registry import dht_quote_registry
 except ImportError:
     quote_registry = None  # type: ignore
     RATLSGuard = None  # type: ignore
     ra_tls_guard = None  # type: ignore
+    dht_quote_registry = None  # type: ignore
 
 
 class RATLSAttestation:
@@ -126,6 +128,9 @@ class RATLSAttestation:
         hw_id = parsed.get("hardware_id")
         if quote_registry and hw_id and not quote_registry.is_valid_hardware(hw_id):
             return False
+        peer_key = parsed.get("node_id") or hw_id or ""
+        if dht_quote_registry and peer_key and not dht_quote_registry.verify_against_swarm(peer_key, quote):
+            return False
         if ra_tls_guard and not ra_tls_guard.verify_quote_payload(quote, hw_id):
             return False
         if HardwareAttestation and parsed.get("pcr0_digest"):
@@ -150,6 +155,8 @@ class RATLSAttestation:
         )
         if quote_registry:
             enriched["quote_registry"] = quote_registry.export_nodes()
+        if dht_quote_registry:
+            enriched["dht_golden_registry"] = dht_quote_registry.export_golden()
         return enriched
 
     @staticmethod
@@ -161,6 +168,8 @@ class RATLSAttestation:
         }
         if quote_registry:
             base["registry"] = quote_registry.stats()
+        if dht_quote_registry:
+            base["dht_federation"] = dht_quote_registry.stats()
         if ra_tls_guard:
             base["guard"] = RATLSGuard.status()
         return base

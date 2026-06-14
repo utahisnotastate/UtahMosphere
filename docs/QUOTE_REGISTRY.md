@@ -1,6 +1,6 @@
-# Hardware Quote Registry (v29.0)
+# Hardware Quote Registry (v30.0)
 
-The **Hardware Quote Registry** is the distributed source of truth for valid TPM hardware fingerprints across the UtahMosphere swarm. Nodes do not trust IP addresses — they trust **hardware quotes** signed by the Utah-Kernel Root CA and registered in this ledger.
+The **Hardware Quote Registry** is the distributed source of truth for valid TPM hardware fingerprints. **DHT-federated attestation** (v30.0) cross-verifies quotes against the golden measurement ledger in `dht_quote_registry.py`.
 
 ## Topology
 
@@ -87,7 +87,7 @@ curl -X POST http://127.0.0.1:8999/registry/purge \
 |----------|---------|---------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Registry persistence |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA pinning (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v29_root_ca` | Quote signing root |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v30_root_ca` | Quote signing root |
 | `UTAH_KERNEL_ROOT_CA_PATH` | `/etc/utahmosphere/security/utah_root_ca.pem` | PEM public key for CA verify |
 
 Dev skip all attestation layers:
@@ -101,6 +101,7 @@ export UTAH_RA_TLS_GUARD_ENFORCE=0
 
 ## Related
 
+- [DHT-Federated Attestation](DHT_FEDERATION.md)
+- [PCR Drift Detection](PCR_DRIFT.md)
 - [RA-TLS Mesh Attestation](RA_TLS.md)
-- [Hardware Attestation](ATTESTATION.md)
 - [Capability Matrix](CAPABILITY_MATRIX.md)

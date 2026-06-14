@@ -16,16 +16,18 @@ Liveness-probe för lastbalanserare och övervakning.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "29.0",
-  "build": "omega-build-v29-remote-attested",
+  "version": "30.0",
+  "build": "omega-build-v30-federated-attested",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v29_root_ca", "registry": {"active": 1, "purged": 0, "total": 1}},
-    "quote_registry": {"active": 1, "purged": 0, "total": 1}
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v30_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "quote_registry": {"active": 1, "purged": 0, "total": 1},
+    "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
+    "pcr_drift": {"enforce": true, "golden_set": true, "drift_detected": false, "interval_sec": 10}
   }
 }
 ```
@@ -48,7 +50,7 @@ Utfärdar en RA-TLS TPM quote för verifiering av UtahNetes mesh-noder.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v29-remote-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v30-federated-attested\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -105,6 +107,54 @@ Purge compromised hardware ID. Root vibe holder only.
 
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
+```
+
+
+
+
+---
+
+## GET /dht/consensus
+
+Export DHT golden measurement ledger.
+
+**Response `200`:**
+
+```json
+{
+  "golden": {
+    "my-host": {
+      "golden_quote": "sha256-fingerprint",
+      "pcr_digest": "...",
+      "hardware_id": "...",
+      "status": "consensus",
+      "recorded_at": 1718323200.0
+    }
+  },
+  "stats": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}
+}
+```
+
+```bash
+curl http://127.0.0.1:8999/dht/consensus
+```
+
+---
+
+## POST /dht/challenge
+
+Issue attestation challenge to swarm peer.
+
+**Request body:**
+
+```json
+{"peer_hash": "64-char-node-hash"}
+```
+
+**Response `202`:**
+
+```json
+{"status": "challenge_sent", "peer_hash": "abc123..."}
 ```
 
 
@@ -441,6 +491,9 @@ Efter avveckling proxar `GET /app/{app_name}` med samma `X-Client-ID` till conta
 | `{UTAH_DATA_DIR}/rds/ledger.json` | RDS nyckel-värde-lagring |
 | `security/biometric_ledger.json` | Rot-vibe-hash (lokal fallback om `/etc` inte skrivbar) |
 | `tycoon/settlement_ledger.json` |
+| `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
+| `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden ledger |
+| `{UTAH_DATA_DIR}/golden_pcr0.txt` | Golden PCR0 |
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry | | Faktura- och betalningstillstånd |
 
 Standard `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (fallback till lokala kataloger vid behörighetsfel).

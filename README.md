@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v29.0 Remote Attestation Infrastructure)
+# 🌌 UtahMosphere OS (v30.0 DHT-Federated Attestation)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v29.0 completes **global swarm trust**: **Hardware Quote Registry**, **RA-TLS CA pinning**, and **biometric-to-TPM binding** — every node verifies every other node remotely via TPM-signed quotes.
+v30.0 completes the **sovereign trust swarm**: **DHT-federated golden consensus**, **automated PCR drift detection**, and **emergency quarantine** — split-brain nodes cannot fake valid TPM state against swarm-wide measurements.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -104,17 +104,19 @@ docker-compose up -d
 | `UTAH_TPM_LOCK_ENFORCE` | `1` | Seal Vibe-Print to TPM on claim |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes on mesh sync |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning + registry check |
+| `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden consensus on peer quotes |
+| `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR0 drift monitor + emergency quarantine |
 | `UTAH_MEMPOOL_NODES` | 4 defaults | Comma-separated mempool API bases for failover |
 | `UTAH_FLUX_ACOUSTIC_HASH` | — | Root hash for Utah-Flux revocation panel |
 
 ---
 
-## 🛠 Features (v29.0 Remote Attested)
+## 🛠 Features (v30.0 Federated Attested)
 
-- **Quote Registry:** Global hardware fingerprint ledger (`quote_registry.py`)
-- **RA-TLS Guard:** CA pinning + UtahX ingress (`ra_tls_guard.py`)
-- **Biometric-to-TPM:** Claim registers hardware quote in global registry
-- **Full v28 stack:** TPM Locker, RA-TLS mesh, Oceania mempool, nonce signing, AuthGuard, Genesis ISO
+- **DHT Federation:** Golden TPM measurement consensus (`dht_quote_registry.py`)
+- **PCR Drift Healing:** Auto-quarantine on kernel/firmware drift (`drift_detector.py`)
+- **Attestation Challenges:** Swarm `ATTESTATION_CHALLENGE` / `RESPONSE` protocol
+- **Full v29 stack:** Quote registry, RA-TLS guard, TPM Locker, Oceania mempool, Genesis ISO
 
 ---
 

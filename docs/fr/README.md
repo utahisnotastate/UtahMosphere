@@ -14,7 +14,7 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organis�
 | [Attestation RA-TLS du maillage](RA_TLS.md) | Vérification des citations TPM + épinglage CA pour les pairs du maillage |
 | [Attestation matérielle](ATTESTATION.md) | TPM PCR0 + scellement Vibe-Print |
 | [Installateur Genesis ISO](GENESIS_ISO.md) | Image de démarrage UEFI sur clé USB |
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v29.0 Infrastructure d'attestation à distance |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v30.0 Infrastructure d'attestation à distance |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -84,7 +84,7 @@ Mini-projets complets à forker et étendre :
 
 ---
 
-## Fonctionnalités v29.0 Infrastructure d'attestation à distance
+## Fonctionnalités v30.0 Infrastructure d'attestation à distance
 
 - **Registre de citations (`quote_registry.py`) :** registre global des empreintes matérielles TPM ; enregistrement, purge et fusion sur le maillage
 - **Garde RA-TLS (`ra_tls_guard.py`) :** épinglage CA ; ingress UtahX ; vérification OID X.509
@@ -95,6 +95,6 @@ Mini-projets complets à forker et étendre :
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v29 :** `utah_genesis_v29.iso`
+- **Genesis ISO v30 :** `utah_genesis_v30.iso`
 
-Build `omega-build-v29-remote-attested`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v30-federated-attested`. Entrée recommandée : `python3 utahmosphere_master.py`.

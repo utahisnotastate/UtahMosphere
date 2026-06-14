@@ -33,11 +33,17 @@ K_BUCKET_SIZE = 8
 
 
 class UtahSwarmNode:
-    def __init__(self, node_hash: str, on_ledger_sync: Optional[Callable[[dict], None]] = None):
+    def __init__(
+        self,
+        node_hash: str,
+        on_ledger_sync: Optional[Callable[[dict], None]] = None,
+        on_attestation: Optional[Callable[[dict, str, tuple], None]] = None,
+    ):
         self.node_hash = node_hash.zfill(64)[:64]
         self.routing_table: Dict[str, Dict[str, Any]] = {}
         self._lock = threading.Lock()
         self._on_ledger_sync = on_ledger_sync
+        self._on_attestation = on_attestation
         self._bootstrap_swarm_paths()
 
         try:
@@ -182,9 +188,29 @@ class UtahSwarmNode:
 
                 if payload.get("type") == "LEDGER_SYNC" and self._on_ledger_sync:
                     self._on_ledger_sync(payload)
+                    continue
+
+                if payload.get("type") == "DHT_GOLDEN_SYNC" and self._on_ledger_sync:
+                    self._on_ledger_sync(payload)
+                    continue
+
+                if payload.get("type") in (
+                    "ATTESTATION_CHALLENGE",
+                    "ATTESTATION_RESPONSE",
+                    "QUARANTINE_NOTICE",
+                ) and self._on_attestation:
+                    self._on_attestation(payload, source_hash, addr)
+                    continue
 
             except Exception:
                 pass
+
+    def challenge_peer_attestation(self, target_hash: str) -> bool:
+        return self.route_payload_deterministic(target_hash, {
+            "type": "ATTESTATION_CHALLENGE",
+            "challenger": self.node_hash,
+            "timestamp": time.time(),
+        })
 
     def _ping_nearest_neighbors(self):
         while True:

@@ -2,6 +2,22 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [34.0] — UtahClaw & Omni-Glass Chrono-State (2026-06)
+
+### Added
+- `utahclaw/` — ambient runner, holographic memory, epistemic void, kinematic siphon
+- `chrono_state.py` — speculative AI mutation with memory rewind
+- `omni_glass_stream.py` — FluxRelay SSE on port 9091
+- `POST /claw/void`, `GET /claw/status`, `GET /chrono/status`, `GET /siphon/ghost-tune`
+- UtahClaw fast-socket on port 9090
+- [UtahClaw](UTAH_CLAW.md), [Chrono-State](CHRONO_STATE.md), [Omni-Glass UI](OMNI_GLASS_UI.md), [Kinematic Siphon](KINEMATIC_SIPHON.md)
+
+### Changed
+- `omni_glass.py` — state manifold, thought vectors, claw research telemetry
+- `omni_compiler.py` — epistemic void → UtahClaw dispatch; chrono post-deploy
+- Genesis ISO: `utah_genesis_v34.iso`
+- Build: `omega-build-v34-utah-claw`
+
 ## [33.0] — Omni-Compiler & Utah-Omni-Mind (2026-06)
 
 ### Added

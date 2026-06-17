@@ -17,7 +17,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 | [Kvoorumitodistajat](QUORUM_WITNESSES.md) | Monialueiset ISP-katkoksen välimiehet |
 | [Lazarus-automaattinen palautus](LAZARUS_RESTORE.md) | Puhdashuoneen Golden Master -palautus |
 | [Tilan erotusmoottori](STATE_DIFF_ENGINE.md) | Kietoutunut <1 kt mesh-synkronointi |
-| [Ominaisuusmatriisi](CAPABILITY_MATRIX.md) | Kaikille — v33.0 etätodentamisinfra |
+| [Ominaisuusmatriisi](CAPABILITY_MATRIX.md) | Kaikille — v34.0 etätodentamisinfra |
 | [API-viite](API_REFERENCE.md) | Kehittäjille ja operaattoreille |
 | [Paikallisen kehityksen opas](LOCAL_DEVELOPMENT.md) | Kehittäjille Windowsissa, macOS:ssä tai Linuxissa |
 
@@ -74,7 +74,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 
 ---
 
-## UtahMosphere OS v33.0 etätodentamisinfra
+## UtahMosphere OS v34.0 etätodentamisinfra
 
 - **Quote-rekisteri (`quote_registry.py`):** globaali TPM-laitteiston sormenjälkitilasto; rekisteröinti, poisto ja yhdistäminen meshissä
 - **RA-TLS Guard (`ra_tls_guard.py`):** CA-kiinnitys; UtahX-sisääntulo; X.509 OID -vahvistus
@@ -84,7 +84,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 - **Mempool-varajärjestelmä** — `tycoon_failover.py` neljällä alueella (US, EU, global, Oseania)
 - **Biometrinen claim** — komento «Claim node»; TPM-sidottu vibe-vahvistus
 - **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
-- **Genesis ISO v33** — `genesis_iso_builder.py` → `utah_genesis_v33.iso`
+- **Genesis ISO v33** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4 alueen mempool-selvityksellä
 
-Build `omega-build-v33-omni-mind`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.
+Build `omega-build-v34-utah-claw`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.

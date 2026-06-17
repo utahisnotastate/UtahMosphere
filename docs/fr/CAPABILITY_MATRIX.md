@@ -1,6 +1,6 @@
 # Matrice des capacités
 
-UtahMosphere OS **v33.0 Infrastructure d'attestation à distance** — ancres de confiance souveraines : registre global des citations matérielles, épinglage CA RA-TLS, liaison biométrique au TPM.
+UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de confiance souveraines : registre global des citations matérielles, épinglage CA RA-TLS, liaison biométrique au TPM.
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Infrastructure d'attestation à distance** — ancres de
 
 | Point de terminaison | Méthode | Statut | Notes |
 |----------------------|---------|--------|-------|
-| `/health` | GET | **Implémenté** | `build: omega-build-v33-omni-mind` + instantané d'attestation complet |
+| `/health` | GET | **Implémenté** | `build: omega-build-v34-utah-claw` + instantané d'attestation complet |
 | `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS + `hardware_id` |
 | `/registry/quotes` | GET | **Implémenté** | Export du registre global des citations matérielles |
 | `/registry/purge` | POST | **Implémenté** | Purger le matériel compromis |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -44,7 +48,7 @@ UtahMosphere OS **v33.0 Infrastructure d'attestation à distance** — ancres de
 | **Voice Bridge signé** | **Implémenté** | Nonce automatique + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implémenté** | Sécurité maillage + voix |
 | **UtahNetes + Swarm DHT** | **Implémenté** | RA-TLS + gossip signé + fusion du registre |
-| **Genesis ISO v33** | **Implémenté** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **Implémenté** | `utah_genesis_v34.iso` |
 | **Parité cloud complète** | **Implémenté** | S3, Lambda, RDS, UtahX, conteneurs |
 
 ---
@@ -76,7 +80,7 @@ UtahMosphere OS **v33.0 Infrastructure d'attestation à distance** — ancres de
 
 ## Feuille de route
 
-Tous les éléments de la feuille de route v28.0 sont **implémentés** en v33.0 (épinglage CA RA-TLS distant, registre des citations matérielles).
+Tous les éléments de la feuille de route v28.0 sont **implémentés** en v34.0 (épinglage CA RA-TLS distant, registre des citations matérielles).
 
 À venir : fédération DHT des citations matérielles, détection automatisée de la dérive PCR.
 

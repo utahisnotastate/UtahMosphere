@@ -12,6 +12,16 @@ from typing import Any, Dict, Optional
 from omni_glass import omni_glass
 from utah_omni_mind import UTAH_KERNEL_PRIMITIVES, omni_mind
 
+try:
+    from utahclaw.epistemic_void import EpistemicVoid, is_epistemic_void_intent
+    from utahclaw.ambient_runner import ambient_runner
+    from chrono_state import chrono_state
+except ImportError:
+    EpistemicVoid = None  # type: ignore
+    is_epistemic_void_intent = lambda _i: False  # type: ignore
+    ambient_runner = None  # type: ignore
+    chrono_state = None  # type: ignore
+
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 CONTAINER_ROOT = os.path.join(UTAH_DATA_DIR, "containers")
 OMNI_EXEC_ENFORCE = os.environ.get("UTAH_OMNI_EXEC_ENFORCE", "1") != "0"
@@ -44,8 +54,15 @@ def _safe_exec_post_script(script: str, kernel_ref: Any, app_name: str):
         "__builtins__": {"print": print, "len": len, "str": str, "int": int},
     }
     try:
-        exec(script, namespace, namespace)  # noqa: S102 — sovereign agentic deploy by design
-        omni_glass.record("exec", f"post_deploy_script executed for {app_name}")
+        if chrono_state and kernel_ref:
+            import types
+
+            mod = types.ModuleType(f"omni_post_{app_name}")
+            mod.__dict__["handler"] = lambda e, c: {"status": "pre-mutation"}
+            chrono_state.execute_with_rewind(mod, script, {"app": app_name})
+        else:
+            exec(script, namespace, namespace)  # noqa: S102
+        omni_glass.log_thought_vector("Omni-Compiler", f"post_deploy for {app_name}", "exec")
     except Exception as exc:
         omni_glass.record("error", f"post_deploy_script failed: {exc}")
 
@@ -83,12 +100,21 @@ class SovereignOmniCompiler:
 
     @staticmethod
     def process_developer_intent(intent_transcript: str, kernel_ref: Any = None) -> Dict[str, Any]:
-        omni_glass.record("intent", f"Analyzing: {intent_transcript[:120]}")
+        omni_glass.log_thought_vector("Omni-Compiler", f"Analyzing: {intent_transcript[:100]}", "generate_blueprint")
+
+        if is_epistemic_void_intent(intent_transcript) and ambient_runner:
+            omni_glass.log_thought_vector("Omni-Compiler", "Epistemic void — waking UtahClaw", "claw_void")
+            return ambient_runner.dispatch_void(intent_transcript, kernel_ref)
+
         raw = omni_mind.generate_intent_blueprint(UTAH_KERNEL_PRIMITIVES, intent_transcript)
         blueprint = _parse_blueprint(raw)
         if not blueprint:
             omni_glass.record("error", "Omni-Mind output was not valid JSON")
             return {"ok": False, "error": "invalid_blueprint", "raw": raw[:500]}
+
+        if blueprint.get("error") == "UNKNOWN_CAPABILITY" and ambient_runner:
+            return ambient_runner.dispatch_void(intent_transcript, kernel_ref)
+
         return SovereignOmniCompiler.manifest_blueprint(blueprint, kernel_ref)
 
 

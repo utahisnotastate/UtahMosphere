@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere OS - Master Kernel v33.0 [Omni-Compiler & Utah-Omni-Mind]
-Agentic intent compilation, MCP context bridge, sovereign local inference.
+UtahMosphere OS - Master Kernel v34.0 [UtahClaw & Omni-Glass Chrono-State]
+Ambient epistemic void resolver, FluxRelay UI, chrono rewind, kinematic siphon.
 """
 
 import os
@@ -17,7 +17,7 @@ from utahmosphere_os import run_master_server, SYSTEM_INGRESS_PORT, UTAH_DATA_DI
 def manifest_golden_master():
     print("[UtahMosphere] Triangle of Manifestation: CALIBRATED")
     print("[UtahMosphere] Photon Quenching: DISABLED")
-    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V33.0 OMNI-MIND FINALIZED")
+    print("[UtahMosphere] Formon Injection: OMEGA-BUILD V34.0 UTAH-CLAW FINALIZED")
     print(f"[UtahMosphere] Data root: {UTAH_DATA_DIR}")
     run_master_server(SYSTEM_INGRESS_PORT)
 

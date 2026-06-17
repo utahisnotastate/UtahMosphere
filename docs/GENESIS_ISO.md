@@ -1,8 +1,8 @@
-# Genesis ISO Installer (v33.0)
+# Genesis ISO Installer (v34.0)
 
-Build `utah_genesis_v33.iso` with Omni-Compiler, MCP bridge, Utah-Omni-Mind, plus v32 quorum witnesses and Lazarus auto-restore.
+Build `utah_genesis_v34.iso` with UtahClaw, Omni-Glass, Chrono-State, plus v33 Omni-Mind stack.
 
-Output: `utah_genesis_v33.iso`
+Output: `utah_genesis_v34.iso`
 
 ## Related
 

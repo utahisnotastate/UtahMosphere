@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v33.0 Omni-Mind)
+# 🌌 UtahMosphere OS (v34.0 Utah-Claw)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v33.0 delivers the **Agentic Cloud OS**: **Omni-Compiler** intent-to-reality compilation, **MCP context bridge**, and **Utah-Omni-Mind** sovereign inference — no hardcoded GCP features, no mandatory OpenAI dependency.
+v34.0 completes the **Post-Information-Age Civilization Engine**: **UtahClaw** ambient learning, **Omni-Glass** visual telemetry, **Chrono-State** live rewind, and **Kinematic Siphon** native GPU clients.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -106,6 +106,9 @@ docker-compose up -d
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning + registry check |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden measurement ledger |
 | `UTAH_QUORUM_ENFORCE` | `1` | 51%+ majority quorum on peer quotes |
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient void resolver |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State live rewind |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE on 9091 |
 | `UTAH_OMNI_ENFORCE` | `1` | Agentic Omni-Compiler |
 | `UTAH_OMNI_PROVIDER` | `sovereign` | `sovereign` or `openai` |
 | `UTAH_OMNI_MCP_ENFORCE` | `1` | MCP context before compile |
@@ -120,12 +123,13 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features (v33.0 Omni-Mind)
+## 🛠 Features (v34.0 Utah-Claw)
 
-- **Omni-Compiler:** Speak intent → live apps (`omni_compiler.py`)
-- **MCP Bridge:** Context-aware codegen (`mcp_omni_bridge.py`)
-- **Utah-Omni-Mind:** Sovereign UtahVidia inference (`utah_omni_mind.py`)
-- **Full v32 stack:** Witnesses, Lazarus kexec restore, state-diff sync, RA-TLS, Genesis ISO
+- **UtahClaw:** Ambient epistemic void research + MCP tool forging (`utahclaw/`)
+- **Omni-Glass FluxRelay:** SSE visual telemetry on port 9091
+- **Chrono-State:** Live mutation rewind (`chrono_state.py`)
+- **Kinematic Siphon:** Ghost Tune B-Web GPU protocol
+- **Full v33 stack:** Omni-Compiler, MCP, Utah-Omni-Mind, witnesses, Lazarus
 
 ---
 

@@ -16,15 +16,15 @@ Chek si mumuña para load balancers yan monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "33.0",
-  "build": "omega-build-v33-omni-mind",
+  "version": "34.0",
+  "build": "omega-build-v34-utah-claw",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v33_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v34_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
@@ -54,7 +54,7 @@ Ma issue RA-TLS TPM quote para UtahNetes mesh peer verification.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v33-omni-mind\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v34-utah-claw\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -129,6 +129,33 @@ Purge compromised hardware ID. Root vibe holder only.
 
 
 ---
+
+
+
+---
+
+## POST /claw/void
+
+Dispatch UtahClaw epistemic void research.
+
+---
+
+## GET /claw/status
+
+UtahClaw ambient runner status.
+
+---
+
+## GET /chrono/status
+
+Chrono-State rewind engine status.
+
+---
+
+## GET /siphon/ghost-tune
+
+Kinematic Siphon Ghost Tune binary.
+
 
 ## POST /omni/compile
 

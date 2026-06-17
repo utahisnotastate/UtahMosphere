@@ -70,12 +70,19 @@ def main():
     msg = body.get("message", body) if isinstance(body, dict) else str(body)
     print(f"Unlock: {code} {str(msg)[:80]}")
 
-    # Omni-Compiler
+    # Omni-Compiler health check
     code, data = post("/omni/compile", {
         "intent": "I need a live Python web server health check like AWS load balancer",
         "mcp": False,
     })
     print(f"Omni: {code} {str(data)[:100]}")
+
+    # UtahClaw epistemic void
+    code, data = post("/claw/void", {"concept": "Integrate with Stripe GraphQL API"})
+    print(f"Claw: {code} {str(data)[:100]}")
+
+    code, body = get("/siphon/ghost-tune")
+    print(f"Siphon: {code} {len(body)} bytes")
 
     print("=== Verification complete ===")
 

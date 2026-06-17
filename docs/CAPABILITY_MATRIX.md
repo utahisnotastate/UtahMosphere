@@ -1,6 +1,6 @@
 # Capability Matrix
 
-UtahMosphere OS **v33.0 Omni-Mind** — agentic Omni-Compiler, MCP context bridge, sovereign UtahVidia inference.
+UtahMosphere OS **v34.0 Utah-Claw** — ambient epistemic void resolver, Omni-Glass FluxRelay, Chrono-State rewind, Kinematic Siphon.
 
 ---
 
@@ -8,16 +8,15 @@ UtahMosphere OS **v33.0 Omni-Mind** — agentic Omni-Compiler, MCP context bridg
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implemented** | `build: omega-build-v33-omni-mind` |
-| `/omni/compile` | POST | **Implemented** | Agentic intent → live deployment |
-| `/omni/status` | GET | **Implemented** | Omni-Mind + Omni-Glass stats |
-| `/omni/glass` | GET | **Implemented** | Real-time agentic event log |
-| `/witness/status` | GET | **Implemented** | Multi-region witness quorum stats |
-| `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint + golden master |
-| `/lazarus/restore` | POST | **Implemented** | Trigger clean-room auto-restore |
-| `/quorum/consensus` | GET | **Implemented** | Majority-quorum vote ledger |
-| `/command` | POST | **Implemented** | Voice + `compile` / `omni` intents |
-| Full cloud parity | * | **Implemented** | S3, Lambda, RDS, containers |
+| `/health` | GET | **Implemented** | `build: omega-build-v34-utah-claw` |
+| `/claw/void` | POST | **Implemented** | Dispatch UtahClaw research |
+| `/claw/status` | GET | **Implemented** | Ambient runner + forged tools |
+| `/chrono/status` | GET | **Implemented** | Chrono-State rewind stats |
+| `/siphon/ghost-tune` | GET | **Implemented** | B-Web Ghost Tune binary |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/glass` | GET | **Implemented** | Manifold + event log |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| Full v33 stack | * | **Implemented** | Omni-Mind, witnesses, Lazarus |
 
 ---
 
@@ -25,14 +24,13 @@ UtahMosphere OS **v33.0 Omni-Mind** — agentic Omni-Compiler, MCP context bridg
 
 | Component | Status | What works today |
 |-----------|--------|------------------|
-| **Omni-Compiler (`omni_compiler.py`)** | **Implemented** | Intent → blueprint → manifest |
-| **MCP Bridge (`mcp_omni_bridge.py`)** | **Implemented** | Context-aware filesystem MCP |
-| **Utah-Omni-Mind (`utah_omni_mind.py`)** | **Implemented** | Sovereign local inference |
-| **UtahVidia (`utahvidia/`)** | **Implemented** | ZEO-Shield + Osmotic Router |
-| **Omni-Glass (`omni_glass.py`)** | **Implemented** | Agentic action dashboard feed |
-| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania/Asia tie-breakers |
-| **Lazarus Auto-Restore (`lazarus_restore.py`)** | **Implemented** | Golden Master + kexec restore |
-| **Genesis ISO v33** | **Implemented** | `utah_genesis_v33.iso` |
+| **UtahClaw (`utahclaw/`)** | **Implemented** | Non-blocking void research + MCP forge |
+| **Holographic Memory** | **Implemented** | Concept interference patterns |
+| **Chrono-State (`chrono_state.py`)** | **Implemented** | Live mutation rewind |
+| **Omni-Glass FluxRelay** | **Implemented** | SSE stream port 9091 |
+| **Kinematic Siphon** | **Implemented** | Ghost Tune GPU protocol |
+| **Omni-Compiler** | **Implemented** | Void-aware intent compilation |
+| **Genesis ISO v34** | **Implemented** | `utah_genesis_v34.iso` |
 
 ---
 
@@ -40,17 +38,10 @@ UtahMosphere OS **v33.0 Omni-Mind** — agentic Omni-Compiler, MCP context bridg
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `UTAH_OMNI_ENFORCE` | `1` | Enable Omni-Compiler |
-| `UTAH_OMNI_PROVIDER` | `sovereign` | `sovereign` or `openai` |
-| `UTAH_OMNI_MCP_ENFORCE` | `1` | MCP context before compile |
-| `UTAH_OMNI_EXEC_ENFORCE` | `1` | Run post-deploy scripts |
-| `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness quorum |
-| `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Auto-restore after quarantine |
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
+| `UTAH_CLAW_PORT` | `9090` | UtahClaw fast-socket |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State rewind |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE relay |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
-## Roadmap
-
-All v32.0 items **implemented** in v33.0 (Omni-Compiler, MCP, Omni-Mind).
-
-Future: Omni-Glass holographic UI, dedicated MCP Postgres/GitHub servers.
-
-See [Omni-Compiler](OMNI_COMPILER.md), [MCP Bridge](MCP_OMNI_BRIDGE.md), [Utah-Omni-Mind](UTAH_OMNI_MIND.md), [CHANGELOG](CHANGELOG.md).
+See [UtahClaw](UTAH_CLAW.md), [Omni-Glass UI](OMNI_GLASS_UI.md), [CHANGELOG](CHANGELOG.md).

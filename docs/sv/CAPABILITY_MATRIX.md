@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-UtahMosphere OS **v33.0 Omni-Mind** — suverän förtroendekedja komplett.
+UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Omni-Mind** — suverän förtroendekedja komplett.
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | `build: omega-build-v33-omni-mind` + fullständig attesteringsögonblicksbild |
+| `/health` | GET | **Implementerat** | `build: omega-build-v34-utah-claw` + fullständig attesteringsögonblicksbild |
 | `/attestation/quote` | GET | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
 | `/registry/quotes` | GET | **Implementerat** | Globalt register för hårdvarucitat |
 | `/registry/purge` | POST | **Implementerat** | Rensa komprometterad hårdvara |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -50,7 +54,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — suverän förtroendekedja komplett.
 | **Voice Bridge Signed** | **Implementerat** | Automatiskt nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementerat** | Mesh + röstsäkerhet |
 | **UtahNetes + Swarm DHT** | **Implementerat** | RA-TLS + signerad gossip |
-| **Genesis ISO v33** | **Implementerat** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **Implementerat** | `utah_genesis_v34.iso` |
 | **Full molnparitet** | **Implementerat** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -82,7 +86,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — suverän förtroendekedja komplett.
 
 ## Roadmap
 
-Alla roadmap-poster för v28.0 är **implementerade** i v33.0.
+Alla roadmap-poster för v28.0 är **implementerade** i v34.0.
 
 Framtid: fjärr-RA-TLS CA-pinning, tjänst för hardware quote-register.
 

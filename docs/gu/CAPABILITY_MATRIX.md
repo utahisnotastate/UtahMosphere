@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v33.0 Omni-Mind** — kompleto na sovereign trust chain.
+UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Omni-Mind** — kompleto na sovereign trust chain.
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | `build: omega-build-v33-omni-mind` + kompleto na attestation snapshot |
+| `/health` | GET | **Ma implement** | `build: omega-build-v34-utah-claw` + kompleto na attestation snapshot |
 | `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
 | `/registry/quotes` | GET | **Ma implement** | Global hardware quote registry |
 | `/registry/purge` | POST | **Ma implement** | Purge compromised hardware |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -53,7 +57,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — kompleto na sovereign trust chain.
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v33** | **Ma implement** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **Ma implement** | `utah_genesis_v34.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -85,7 +89,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — kompleto na sovereign trust chain.
 
 ## Roadmap
 
-Todu i v28.0 roadmap items **ma implement** gi v33.0.
+Todu i v28.0 roadmap items **ma implement** gi v34.0.
 
 Futuru: remote RA-TLS CA pinning, hardware quote registry service.
 

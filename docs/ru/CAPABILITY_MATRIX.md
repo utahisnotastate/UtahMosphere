@@ -1,6 +1,6 @@
 # Матрица возможностей
 
-UtahMosphere OS **v33.0 Omni-Mind** — суверенная цепочка доверия завершена.
+UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка доверия завершена.
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Omni-Mind** — суверенная цепочка до
 
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
-| `/health` | GET | **Реализовано** | `build: omega-build-v33-omni-mind` + полный снимок аттестации |
+| `/health` | GET | **Реализовано** | `build: omega-build-v34-utah-claw` + полный снимок аттестации |
 | `/attestation/quote` | GET | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
 | `/registry/quotes` | GET | **Реализовано** | Глобальный реестр аппаратных цитат |
 | `/registry/purge` | POST | **Реализовано** | Удаление скомпрометированного оборудования |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -50,7 +54,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — суверенная цепочка до
 | **Voice Bridge Signed** | **Реализовано** | Автоматический nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Реализовано** | Безопасность mesh + голоса |
 | **UtahNetes + Swarm DHT** | **Реализовано** | RA-TLS + подписанный gossip |
-| **Genesis ISO v33** | **Реализовано** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **Реализовано** | `utah_genesis_v34.iso` |
 | **Полная облачная паритетность** | **Реализовано** | S3, Lambda, RDS, UtahX, контейнеры |
 
 ---
@@ -82,7 +86,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — суверенная цепочка до
 
 ## Дорожная карта
 
-Все пункты дорожной карты v28.0 **реализованы** в v33.0.
+Все пункты дорожной карты v28.0 **реализованы** в v34.0.
 
 Будущее: удалённое закрепление RA-TLS CA, сервис реестра hardware quote.
 

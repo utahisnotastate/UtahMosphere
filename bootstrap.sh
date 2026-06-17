@@ -44,6 +44,11 @@ if [[ -d "${REPO_DIR}/utahvidia" ]]; then
   cp -r "${REPO_DIR}/utahvidia" "${INSTALL_ROOT}/" 2>/dev/null || true
 fi
 
+echo "[Omega-Genesis] Initializing UtahClaw Ambient Runner..."
+if [[ -d "${REPO_DIR}/utahclaw" ]]; then
+  cp -r "${REPO_DIR}/utahclaw" "${INSTALL_ROOT}/" 2>/dev/null || true
+fi
+
 if [[ "${UTAH_OMNI_DOWNLOAD_MODEL:-0}" == "1" ]]; then
   echo "[Omega-Genesis] Downloading Akashic Weights (Base Intelligence)..."
   pip3 install huggingface_hub 2>/dev/null || true
@@ -63,6 +68,7 @@ echo "[Omega-Genesis] Installing Golden Master modules..."
 mkdir -p "${INSTALL_ROOT}"
 cp "${REPO_DIR}"/*.py "${INSTALL_ROOT}/"
 cp -r "${REPO_DIR}/utahvidia" "${INSTALL_ROOT}/" 2>/dev/null || true
+cp -r "${REPO_DIR}/utahclaw" "${INSTALL_ROOT}/" 2>/dev/null || true
 chmod +x "${INSTALL_ROOT}/utahmosphere_master.py"
 chmod +x "${INSTALL_ROOT}/genesis_deploy.py"
 

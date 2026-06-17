@@ -11,6 +11,10 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
+| [UtahClaw](UTAH_CLAW.md) | Ambient epistemic void resolver |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Real-time agentic visual telemetry |
+| [Chrono-State](CHRONO_STATE.md) | Live mutation rewind (no CI/CD) |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU client protocol |
 | [Omni-Compiler](OMNI_COMPILER.md) | Agentic intent → live deployment |
 | [MCP Omni-Bridge](MCP_OMNI_BRIDGE.md) | Context-aware code generation |
 | [Utah-Omni-Mind](UTAH_OMNI_MIND.md) | Sovereign local LLM inference |

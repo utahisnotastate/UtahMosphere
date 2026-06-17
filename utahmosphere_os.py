@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Omega-Build v33.0
-Omni-Compiler agentic mesh, MCP context bridge, Utah-Omni-Mind sovereign inference.
+UtahMosphere Operating System Kernel - Omega-Build v34.0
+UtahClaw ambient runner, Omni-Glass FluxRelay, Chrono-State, Kinematic Siphon.
 """
 
 import os
@@ -46,6 +46,12 @@ try:
     from mcp_omni_bridge import mcp_omni_compiler
     from utah_omni_mind import omni_mind
     from omni_glass import omni_glass
+    from utahclaw.ambient_runner import ambient_runner
+    from utahclaw.service import start_claw_service
+    from utahclaw.holographic_memory import holographic_memory
+    from utahclaw.kinematic_siphon import kinematic_siphon
+    from chrono_state import chrono_state
+    from omni_glass_stream import start_glass_stream_service
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -71,6 +77,12 @@ except ImportError:
     mcp_omni_compiler = None  # type: ignore
     omni_mind = None  # type: ignore
     omni_glass = None  # type: ignore
+    ambient_runner = None  # type: ignore
+    start_claw_service = None  # type: ignore
+    holographic_memory = None  # type: ignore
+    kinematic_siphon = None  # type: ignore
+    chrono_state = None  # type: ignore
+    start_glass_stream_service = None  # type: ignore
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -90,7 +102,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v33.0 Omni-Mind]",
+            "node_status": "Active [Omega-Build v34.0 Utah-Claw]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -116,7 +128,12 @@ class UtahmosphereSovereignKernel:
         if drift_detector:
             drift_detector.monitor(self)
 
-        print(f"[{self.node_identity}] Omega-Build v33.0 omni-mind kernel online. World-A excised.")
+        if start_claw_service:
+            start_claw_service(self)
+        if start_glass_stream_service:
+            start_glass_stream_service()
+
+        print(f"[{self.node_identity}] Omega-Build v34.0 utah-claw kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -343,6 +360,10 @@ class UtahmosphereSovereignKernel:
             snap["omni_glass"] = omni_glass.stats()
         if omni_mind:
             snap["omni_mind"] = omni_mind.status()
+        if ambient_runner:
+            snap["utah_claw"] = ambient_runner.status()
+        if chrono_state:
+            snap["chrono_state"] = chrono_state.status()
         return snap
 
     def _register_hardware_quote(self, acoustic_hash: str):
@@ -762,6 +783,16 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 self._json_response(404, {"error": "Hardware ID not found"})
             return
 
+        if path == "/claw/void":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            concept = data.get("concept", "")
+            if not concept or ambient_runner is None:
+                self._json_response(400, {"error": "concept required and UtahClaw must be online"})
+                return
+            result = ambient_runner.dispatch_void(concept, self.core_engine)
+            self._json_response(202, result)
+            return
+
         if path == "/omni/compile":
             data = json.loads(body.decode("utf-8")) if body else {}
             intent = data.get("intent") or data.get("transcript", "")
@@ -832,8 +863,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "33.0",
-                "build": "omega-build-v33-omni-mind",
+                "version": "34.0",
+                "build": "omega-build-v34-utah-claw",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -899,8 +930,34 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             limit = int(urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("limit", ["50"])[0])
             self._json_response(200, {
                 "events": omni_glass.export(limit=limit),
+                "manifold": omni_glass.export_manifold(),
                 "stats": omni_glass.stats(),
             })
+            return
+
+        if path == "/claw/status":
+            if ambient_runner is None:
+                self._json_response(503, {"error": "UtahClaw unavailable"})
+                return
+            body = {"claw": ambient_runner.status(), "tools": ambient_runner.export_tools()}
+            if holographic_memory:
+                body["memory"] = holographic_memory.export_patterns()
+            self._json_response(200, body)
+            return
+
+        if path == "/chrono/status":
+            if chrono_state is None:
+                self._json_response(503, {"error": "Chrono-State unavailable"})
+                return
+            self._json_response(200, {"chrono_state": chrono_state.status()})
+            return
+
+        if path == "/siphon/ghost-tune":
+            if kinematic_siphon is None or omni_glass is None:
+                self._json_response(503, {"error": "Kinematic Siphon unavailable"})
+                return
+            payload = kinematic_siphon.encode_scene_graph(omni_glass.export_manifold())
+            self._raw_response(200, payload, "application/octet-stream")
             return
 
         if path == "/lazarus/status":

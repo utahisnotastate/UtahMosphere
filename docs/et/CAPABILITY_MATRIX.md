@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v33.0 Omni-Mind** — suveräänne usaldusahel on täielik.
+UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Omni-Mind** — suveräänne usaldusahel on täielik.
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | `build: omega-build-v33-omni-mind` + täielik tõendamise hetktõmmis |
+| `/health` | GET | **Rakendatud** | `build: omega-build-v34-utah-claw` + täielik tõendamise hetktõmmis |
 | `/attestation/quote` | GET | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
 | `/registry/quotes` | GET | **Rakendatud** | Globaalne riistvara tsitaadi register |
 | `/registry/purge` | POST | **Rakendatud** | Kompromiteeritud riistvara eemaldamine |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -50,7 +54,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — suveräänne usaldusahel on täielik.
 | **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
 | **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
-| **Genesis ISO v33** | **Rakendatud** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **Rakendatud** | `utah_genesis_v34.iso` |
 | **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
@@ -82,7 +86,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — suveräänne usaldusahel on täielik.
 
 ## Teekaart
 
-Kõik v28.0 teekaardi punktid on v33.0-s **rakendatud**.
+Kõik v28.0 teekaardi punktid on v34.0-s **rakendatud**.
 
 Tulevik: kaug-RA-TLS CA kinnitamine, riistvara quote registriteenus.
 

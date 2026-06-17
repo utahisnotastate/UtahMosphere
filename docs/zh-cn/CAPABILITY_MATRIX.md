@@ -1,6 +1,6 @@
 # 能力矩阵
 
-UtahMosphere OS **v33.0 Omni-Mind** — 主权信任链已全部完成。
+UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 
 ---
 
@@ -8,10 +8,14 @@ UtahMosphere OS **v33.0 Omni-Mind** — 主权信任链已全部完成。
 
 | 端点 | 方法 | 状态 | 说明 |
 |------|------|------|------|
-| `/health` | GET | **已实现** | `build: omega-build-v33-omni-mind` + 完整 attestation 快照 |
+| `/health` | GET | **已实现** | `build: omega-build-v34-utah-claw` + 完整 attestation 快照 |
 | `/attestation/quote` | GET | **已实现** | RA-TLS TPM 引用，用于网格对等节点验证 |
 | `/registry/quotes` | GET | **已实现** | 全局硬件引用注册表 |
 | `/registry/purge` | POST | **已实现** | 清除受损硬件 |
+| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
+| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Implemented** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/status` | GET | **Implemented** | Omni-Mind stats |
 | `/omni/glass` | GET | **Implemented** | Agentic event log |
@@ -42,7 +46,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — 主权信任链已全部完成。
 | **签名语音桥** | **已实现** | 自动 nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **已实现** | 网格 + 语音安全 |
 | **UtahNetes + Swarm DHT** | **已实现** | RA-TLS + 签名 gossip |
-| **Genesis ISO v33** | **已实现** | `utah_genesis_v33.iso` |
+| **Genesis ISO v33** | **已实现** | `utah_genesis_v34.iso` |
 | **完整云 parity** | **已实现** | S3、Lambda、RDS、UtahX、容器 |
 
 ---
@@ -74,7 +78,7 @@ UtahMosphere OS **v33.0 Omni-Mind** — 主权信任链已全部完成。
 
 ## 路线图
 
-v28.0 路线图所有项目已在 v33.0 **实现**。
+v28.0 路线图所有项目已在 v34.0 **实现**。
 
 未来：远程 RA-TLS CA 固定、硬件引用注册服务。
 

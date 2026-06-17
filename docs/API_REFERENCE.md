@@ -16,8 +16,8 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "33.0",
-  "build": "omega-build-v33-omni-mind",
+  "version": "34.0",
+  "build": "omega-build-v34-utah-claw",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
@@ -111,6 +111,44 @@ Purge a compromised hardware ID from the global registry. Root vibe holder only.
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
 ```
+
+---
+
+## POST /claw/void
+
+Dispatch UtahClaw to research an epistemic void (unknown capability).
+
+```bash
+curl -X POST http://127.0.0.1:8999/claw/void \
+  -H "Content-Type: application/json" \
+  -d '{"concept": "Integrate with Stripe GraphQL API"}'
+```
+
+**Response `202`:** `{"ok": true, "status": "claw_dispatched", ...}`
+
+See [UtahClaw](UTAH_CLAW.md).
+
+---
+
+## GET /claw/status
+
+UtahClaw ambient runner, forged tools, holographic memory.
+
+---
+
+## GET /chrono/status
+
+Chrono-State rewind engine status.
+
+See [Chrono-State](CHRONO_STATE.md).
+
+---
+
+## GET /siphon/ghost-tune
+
+Kinematic Siphon Ghost Tune binary (`application/octet-stream`).
+
+See [Kinematic Siphon](KINEMATIC_SIPHON.md).
 
 ---
 

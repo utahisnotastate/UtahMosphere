@@ -9,6 +9,8 @@ Välkommen till UtahMosphere OS dokumentation. **v35.0 Omni-Desk** — suverän 
 | Dokument | Bäst för |
 |----------|----------|
 | [Omni-Desk](OMNI_DESK.md) | Suverän holografisk skrivbord |
+| [Cursor epigenetiskt IDE](CURSOR_EPIGENETIC.md) | Level 6 Archivist, Command Deck-knappar |
+| [Omni-Viewport-tillägg](OMNI_VIEWPORT_EXTENSION.md) | GUI-knappar + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Epistemisk tomrums-lösare |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Realtidsvisuell telemetri |
 | [Chrono-State](CHRONO_STATE.md) | Live-mutationsåterspolning |

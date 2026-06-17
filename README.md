@@ -64,6 +64,8 @@ pip install -r requirements.txt
 python3 utahmosphere_master.py
 ```
 
+**Cursor extension (Windows):** `.\scripts\install-omni-viewport.ps1` then reload — activity bar → **Omni-Viewport**.
+
 Verify Omega-Build:
 
 ```bash

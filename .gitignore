@@ -35,3 +35,4 @@ swarm/
 !.cursor/mcp.json
 !.cursor/user.example.json
 !docker-compose.yaml
+extensions/**/*.vsix

@@ -9,6 +9,8 @@ Bienvenido al centro de documentación de UtahMosphere OS **v35.0 Omni-Desk** �
 | Documento | Ideal para |
 |-----------|------------|
 | [Omni-Desk](OMNI_DESK.md) | Escritorio holográfico soberano |
+| [IDE epigenética de Cursor](CURSOR_EPIGENETIC.md) | Archivist nivel 6, botones Command Deck |
+| [Extensión Omni-Viewport](OMNI_VIEWPORT_EXTENSION.md) | Botones GUI + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Resolvedor de vacío epistémico |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Telemetría visual en tiempo real |
 | [Chrono-State](CHRONO_STATE.md) | Rebobinado de mutación en vivo |

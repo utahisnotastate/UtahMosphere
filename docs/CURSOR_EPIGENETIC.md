@@ -89,7 +89,7 @@ zeo_akashic_adr.log_schism_decision
 ## Setup
 
 1. `pip install -r requirements.txt` (includes `mcp`)
-2. **Developer: Install Extension from Location** → `extensions/utah-omni-viewport`
+2. Install extension: `.\scripts\install-omni-viewport.ps1` (Windows) or **Developer: Install Extension from Location** → `extensions/utah-omni-viewport`
 3. `Ctrl+Shift+J` → enable all `utah_*` and `zeo_*` MCP servers
 4. **Developer: Reload Window**
 5. Activity bar → **Omni-Viewport** → Command Deck

@@ -15,6 +15,11 @@ All notable changes to UtahMosphere OS are documented here.
 - Protocol triggers moved from slash commands to Omni-Viewport buttons
 - `.gitignore` — allow project JSON; exclude personal `.cursor/user.json` and workspace editor settings
 
+### Polished (35.1.1)
+- `scripts/install-omni-viewport.ps1` — one-command Cursor extension install (Windows)
+- Locale portal indexes link Cursor Epigenetic + Omni-Viewport guides (8 languages)
+- Extension `package.json` repository metadata; `.vscodeignore` for clean VSIX builds
+
 ## [35.0] — Omni-Desk Genesis Suite (2026-06)
 
 ### Added

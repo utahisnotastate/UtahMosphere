@@ -6,18 +6,22 @@ Source: `extensions/utah-omni-viewport/`
 
 ## Install
 
-### Cursor (recommended)
+### Windows (recommended)
+
+```powershell
+.\scripts\install-omni-viewport.ps1
+```
+
+Reload Cursor, then open the **Omni-Viewport** icon in the activity bar.
+
+### Cursor / VS Code
 
 1. Open the repo in Cursor.
 2. `Ctrl+Shift+P` → **Developer: Install Extension from Location**
 3. Select `extensions/utah-omni-viewport`
 4. Reload the window.
 
-### VS Code (development)
-
-```bash
-code --extensionDevelopmentPath=extensions/utah-omni-viewport
-```
+Verify: `cursor --list-extensions` should show `utahmosphere.utah-omni-viewport`.
 
 ## Activity bar panels
 

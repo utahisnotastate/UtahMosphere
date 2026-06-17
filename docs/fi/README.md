@@ -11,6 +11,8 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 | Dokumentti | Parhaiten |
 |------------|-----------|
 | [Omni-Desk](OMNI_DESK.md) | Suvereeni holografinen työpöytä |
+| [Cursorin epigeneettinen IDE](CURSOR_EPIGENETIC.md) | Level 6 Archivist, Command Deck -painikkeet |
+| [Omni-Viewport -laajennus](OMNI_VIEWPORT_EXTENSION.md) | GUI-painikkeet + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Epistemisen tyhjiön ratkaisija |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaaliaikainen visuaalinen telemetria |
 | [Chrono-State](CHRONO_STATE.md) | Live-mutaation kelaus |

@@ -6,7 +6,7 @@ Epigenetic IDE: **Archivist memory**, **Command Deck buttons**, **Inspiration Fo
 
 ## Install extension
 
-`Ctrl+Shift+P` → **Developer: Install Extension from Location** → `extensions/utah-omni-viewport`
+`.\scripts\install-omni-viewport.ps1` (Windows) → Reload Window → activity bar **Omni-Viewport**
 
 ## MCP sensory mesh
 

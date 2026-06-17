@@ -9,6 +9,8 @@
 | Документ | Для кого |
 |----------|----------|
 | [Omni-Desk](OMNI_DESK.md) | Суверенный голографический рабочий стол |
+| [Эпигенетическая IDE Cursor](CURSOR_EPIGENETIC.md) | Level 6 Archivist, кнопки Command Deck |
+| [Расширение Omni-Viewport](OMNI_VIEWPORT_EXTENSION.md) | GUI-кнопки + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Решатель эпистемической пустоты |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Визуальная телеметрия в реальном времени |
 | [Chrono-State](CHRONO_STATE.md) | Откат мутаций без CI/CD |

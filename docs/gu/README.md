@@ -9,6 +9,8 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v35.0 Omni-D
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
 | [Omni-Desk](OMNI_DESK.md) | Sovereign holographic desktop |
+| [Cursor Epigenetic IDE](CURSOR_EPIGENETIC.md) | Level 6 Archivist, Command Deck buttons |
+| [Omni-Viewport Extension](OMNI_VIEWPORT_EXTENSION.md) | GUI buttons + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Epistemic void resolver |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Real-time agentic visual telemetry |
 | [Chrono-State](CHRONO_STATE.md) | Live mutation rewind |

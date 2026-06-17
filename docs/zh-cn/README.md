@@ -9,6 +9,8 @@
 | 文档 | 最适合 |
 |------|--------|
 | [Omni-Desk](OMNI_DESK.md) | 主权全息桌面 |
+| [Cursor 表观遗传 IDE](CURSOR_EPIGENETIC.md) | Level 6 Archivist，Command Deck 按钮 |
+| [Omni-Viewport 扩展](OMNI_VIEWPORT_EXTENSION.md) | GUI 按钮 + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | 认识论空白解析器 |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | 实时智能体可视化遥测 |
 | [Chrono-State](CHRONO_STATE.md) | 实时变异回滚 |

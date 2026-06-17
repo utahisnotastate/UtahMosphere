@@ -9,6 +9,8 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v35.0 Omni-Desk** �
 | Dokument | Sobib kõige paremini |
 |----------|----------------------|
 | [Omni-Desk](OMNI_DESK.md) | Suveräänne holograafiline töölaud |
+| [Cursor epigeneetiline IDE](CURSOR_EPIGENETIC.md) | Level 6 Archivist, Command Decki nupud |
+| [Omni-Viewporti laiendus](OMNI_VIEWPORT_EXTENSION.md) | GUI nupud + Inspiration Forge |
 | [UtahClaw](UTAH_CLAW.md) | Epistemilise tühimiku lahendaja |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaalajas agentide visualiseerimine |
 | [Chrono-State](CHRONO_STATE.md) | Otsemutatsiooni tagasikerimine |

@@ -1,6 +1,6 @@
 # Capability Matrix
 
-UtahMosphere OS **v34.0 Utah-Claw** — ambient epistemic void resolver, Omni-Glass FluxRelay, Chrono-State rewind, Kinematic Siphon.
+UtahMosphere OS **v35.0 Omni-Desk** — sovereign holographic desktop, five Genesis agentic apps, full v34 Utah-Claw stack.
 
 ---
 
@@ -8,15 +8,18 @@ UtahMosphere OS **v34.0 Utah-Claw** — ambient epistemic void resolver, Omni-Gl
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implemented** | `build: omega-build-v34-utah-claw` |
+| `/health` | GET | **Implemented** | `build: omega-build-v35-omni-desk` |
+| `/desk/apps` | GET | **Implemented** | Genesis Suite registry |
+| `/desk/status` | GET | **Implemented** | Omni-Desk sessions + desk dir |
+| `/desk/ui` | GET | **Implemented** | Holographic desktop HTML |
+| `/desk/intent` | POST | **Implemented** | Route Genesis app intent |
 | `/claw/void` | POST | **Implemented** | Dispatch UtahClaw research |
 | `/claw/status` | GET | **Implemented** | Ambient runner + forged tools |
 | `/chrono/status` | GET | **Implemented** | Chrono-State rewind stats |
 | `/siphon/ghost-tune` | GET | **Implemented** | B-Web Ghost Tune binary |
 | `/omni/compile` | POST | **Implemented** | Agentic intent compile |
 | `/omni/glass` | GET | **Implemented** | Manifold + event log |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| Full v33 stack | * | **Implemented** | Omni-Mind, witnesses, Lazarus |
+| Full v34 stack | * | **Implemented** | UtahClaw, Omni-Glass, witnesses, Lazarus |
 
 ---
 
@@ -24,13 +27,13 @@ UtahMosphere OS **v34.0 Utah-Claw** — ambient epistemic void resolver, Omni-Gl
 
 | Component | Status | What works today |
 |-----------|--------|------------------|
-| **UtahClaw (`utahclaw/`)** | **Implemented** | Non-blocking void research + MCP forge |
-| **Holographic Memory** | **Implemented** | Concept interference patterns |
-| **Chrono-State (`chrono_state.py`)** | **Implemented** | Live mutation rewind |
+| **Omni-Desk (`omni_desk.py`)** | **Implemented** | Five Genesis apps on port 9092 |
+| **Feature Harvester** | **Implemented** | `POST /harvest` + `claw_harvester` app |
+| **UtahClaw (`utahclaw/`)** | **Implemented** | Void research + codebase harvest |
 | **Omni-Glass FluxRelay** | **Implemented** | SSE stream port 9091 |
+| **Chrono-State** | **Implemented** | Live mutation rewind |
 | **Kinematic Siphon** | **Implemented** | Ghost Tune GPU protocol |
-| **Omni-Compiler** | **Implemented** | Void-aware intent compilation |
-| **Genesis ISO v34** | **Implemented** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Implemented** | `utah_genesis_v35.iso` |
 
 ---
 
@@ -38,10 +41,9 @@ UtahMosphere OS **v34.0 Utah-Claw** — ambient epistemic void resolver, Omni-Gl
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
-| `UTAH_CLAW_PORT` | `9090` | UtahClaw fast-socket |
-| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State rewind |
-| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE relay |
-| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk holographic desktop |
+| `UTAH_OMNI_DESK_PORT` | `9092` | Desk fast-socket |
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw + harvester |
+| `UTAH_OMNI_ENFORCE` | `1` | WebForge / AppSmith / Notebook |
 
-See [UtahClaw](UTAH_CLAW.md), [Omni-Glass UI](OMNI_GLASS_UI.md), [CHANGELOG](CHANGELOG.md).
+See [Omni-Desk](OMNI_DESK.md), [UtahClaw](UTAH_CLAW.md), [CHANGELOG](CHANGELOG.md).

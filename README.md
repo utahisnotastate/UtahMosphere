@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v34.0 Utah-Claw)
+# 🌌 UtahMosphere OS (v35.0 Omni-Desk)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v34.0 completes the **Post-Information-Age Civilization Engine**: **UtahClaw** ambient learning, **Omni-Glass** visual telemetry, **Chrono-State** live rewind, and **Kinematic Siphon** native GPU clients.
+v35.0 manifests the **Omni-Desk** — a GPU-accelerated holographic desktop with five **Genesis Applications**. We do not download apps; we manifest them via Omni-Compiler and UtahClaw.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -107,6 +107,8 @@ docker-compose up -d
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden measurement ledger |
 | `UTAH_QUORUM_ENFORCE` | `1` | 51%+ majority quorum on peer quotes |
 | `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient void resolver |
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk Genesis Suite (port 9092) |
+| `UTAH_OMNI_DESK_PORT` | `9092` | Holographic desktop fast-socket |
 | `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State live rewind |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE on 9091 |
 | `UTAH_OMNI_ENFORCE` | `1` | Agentic Omni-Compiler |
@@ -123,13 +125,12 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features (v34.0 Utah-Claw)
+## 🛠 Features (v35.0 Omni-Desk)
 
-- **UtahClaw:** Ambient epistemic void research + MCP tool forging (`utahclaw/`)
-- **Omni-Glass FluxRelay:** SSE visual telemetry on port 9091
-- **Chrono-State:** Live mutation rewind (`chrono_state.py`)
-- **Kinematic Siphon:** Ghost Tune B-Web GPU protocol
-- **Full v33 stack:** Omni-Compiler, MCP, Utah-Omni-Mind, witnesses, Lazarus
+- **Omni-Desk:** Five Genesis apps — WebForge, ZEO-Canvas, AppSmith, Holo-Notebook, Claw-Harvester
+- **Sovereign App Store:** Manifest apps via `POST /desk/intent` — no World-A store taxes
+- **Feature Harvester:** Horizontal gene transfer across your codebases
+- **Full v34 stack:** UtahClaw, Omni-Glass, Chrono-State, Kinematic Siphon, witnesses, Lazarus
 
 ---
 

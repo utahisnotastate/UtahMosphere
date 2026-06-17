@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
+UtahMosphere OS **v35.0 Omni-Desk** — suverän förtroendekedja komplett.
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | `build: omega-build-v34-utah-claw` + fullständig attesteringsögonblicksbild |
+| `/desk/apps` | GET | **Implementerat** | Genesis Suite-register |
+| `/desk/status` | GET | **Implementerat** | Omni-Desk-status |
+| `/desk/ui` | GET | **Implementerat** | Holografiskt skrivbord HTML |
+| `/desk/intent` | POST | **Implementerat** | Genesis-app intent |
+| `/health` | GET | **Implementerat** | `build: omega-build-v35-omni-desk` + fullständig attesteringsögonblicksbild |
 | `/attestation/quote` | GET | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
 | `/registry/quotes` | GET | **Implementerat** | Globalt register för hårdvarucitat |
 | `/registry/purge` | POST | **Implementerat** | Rensa komprometterad hårdvara |
@@ -54,7 +58,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 | **Voice Bridge Signed** | **Implementerat** | Automatiskt nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementerat** | Mesh + röstsäkerhet |
 | **UtahNetes + Swarm DHT** | **Implementerat** | RA-TLS + signerad gossip |
-| **Genesis ISO v34** | **Implementerat** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Implementerat** | `utah_genesis_v35.iso` |
 | **Full molnparitet** | **Implementerat** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -65,7 +69,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Rekommenderas** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Miljö
 
@@ -84,6 +88,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 | `UTAH_RA_TLS_ENFORCE` | `1` | Kräv RA-TLS quote i mesh |
 | `UTAH_MEMPOOL_NODES` | 4 standardvärden | Åsidosätt mempool-failoverlista |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
 | `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State-återspolning |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE-ström |

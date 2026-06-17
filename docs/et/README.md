@@ -1,6 +1,6 @@
 # UtahMosphere dokumentatsiooni portaal
 
-Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v34.0 Utah-Claw** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
+Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v35.0 Omni-Desk** — suveräänne usaldusahel: TPM Locker, RA-TLS mesh-tõendamine, Okeaania mempool ja automaatne häälsild allkirjastatud nonce-ga. Sisu on jaotatud **sihtgruppide**, **praktiliste õpetuste**, **retseptide** ja **algprojektide** kaupa.
 
 ---
 
@@ -8,6 +8,7 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v34.0 Utah-Claw** �
 
 | Dokument | Sobib kõige paremini |
 |----------|----------------------|
+| [Omni-Desk](OMNI_DESK.md) | Suveräänne holograafiline töölaud |
 | [UtahClaw](UTAH_CLAW.md) | Epistemilise tühimiku lahendaja |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaalajas agentide visualiseerimine |
 | [Chrono-State](CHRONO_STATE.md) | Otsemutatsiooni tagasikerimine |
@@ -74,12 +75,12 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v34.0 Utah-Claw** �
 
 ## UtahMosphere OS v34.0
 
-- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v34-utah-claw`
+- **Suveräänne servplatvorm** Pythonis — port `8999`, `build: omega-build-v35-omni-desk`
 - **TPM Locker** — `tpm_lock.py` pitstab Vibe-Print PCR0-sse claim-il
 - **RA-TLS mesh-tõendamine** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Hääljuurutus** — Voice Bridge kutsub automaatselt `GET /nonce` ja allkirjastab
 - **Mempool varuühendus** — `tycoon_failover.py` neljas piirkonnas (USA, EL, globaalne, Okeaania)
 - **Biomeetriline claim** — käsk «Claim node»; TPM-iga seotud vibe kontroll
 - **Sõlme tühistamine** — `POST /admin/revoke-node` ja Utah-Flux paneel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v35.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4-piirkonnilise mempool arveldusega

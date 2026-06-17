@@ -10,6 +10,7 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organis�
 
 | Document | Idéal pour |
 |----------|------------|
+| [Omni-Desk](OMNI_DESK.md) | Bureau holographique souverain |
 | [UtahClaw](UTAH_CLAW.md) | Résolveur de vide épistémique |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Télémétrie visuelle en temps réel |
 | [Chrono-State](CHRONO_STATE.md) | Rembobinage de mutation live |
@@ -102,6 +103,6 @@ Mini-projets complets à forker et étendre :
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v34 :** `utah_genesis_v34.iso`
+- **Genesis ISO v35 :** `utah_genesis_v35.iso`
 
-Build `omega-build-v34-utah-claw`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v35-omni-desk`. Entrée recommandée : `python3 utahmosphere_master.py`.

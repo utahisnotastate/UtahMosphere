@@ -1,6 +1,6 @@
 # 能力矩阵
 
-UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
+UtahMosphere OS **v35.0 Omni-Desk** — 主权信任链已全部完成。
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 
 | 端点 | 方法 | 状态 | 说明 |
 |------|------|------|------|
-| `/health` | GET | **已实现** | `build: omega-build-v34-utah-claw` + 完整 attestation 快照 |
+| `/desk/apps` | GET | **已实现** | Genesis Suite 注册表 |
+| `/desk/status` | GET | **已实现** | Omni-Desk 状态 |
+| `/desk/ui` | GET | **已实现** | 全息桌面 HTML |
+| `/desk/intent` | POST | **已实现** | Genesis 应用意图 |
+| `/health` | GET | **已实现** | `build: omega-build-v35-omni-desk` + 完整 attestation 快照 |
 | `/attestation/quote` | GET | **已实现** | RA-TLS TPM 引用，用于网格对等节点验证 |
 | `/registry/quotes` | GET | **已实现** | 全局硬件引用注册表 |
 | `/registry/purge` | POST | **已实现** | 清除受损硬件 |
@@ -46,7 +50,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 | **签名语音桥** | **已实现** | 自动 nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **已实现** | 网格 + 语音安全 |
 | **UtahNetes + Swarm DHT** | **已实现** | RA-TLS + 签名 gossip |
-| **Genesis ISO v34** | **已实现** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **已实现** | `utah_genesis_v35.iso` |
 | **完整云 parity** | **已实现** | S3、Lambda、RDS、UtahX、容器 |
 
 ---
@@ -57,7 +61,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 |------|------|
 | `python3 utahmosphere_master.py` | **推荐** |
 | `sudo bash bootstrap.sh` | **生产**（TPM + tpm2-tools） |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## 环境变量
 
@@ -76,6 +80,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 | `UTAH_RA_TLS_ENFORCE` | `1` | 网格上要求 RA-TLS 引用 |
 | `UTAH_MEMPOOL_NODES` | 4 个默认值 | 覆盖内存池故障转移列表 |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | UtahClaw 环境运行器 |
 | `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State 回滚 |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE 流 |

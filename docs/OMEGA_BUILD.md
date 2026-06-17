@@ -183,6 +183,7 @@ Silent failover across mempool.space, signet, and blockstream.info regional APIs
 
 ## Related Docs
 
+- [Omni-Desk](OMNI_DESK.md) — sovereign holographic desktop + Genesis Suite (v35)
 - [UtahClaw](UTAH_CLAW.md) — ambient epistemic void resolver (v34)
 - [Omni-Glass UI](OMNI_GLASS_UI.md) — real-time agentic telemetry (v34)
 - [Chrono-State](CHRONO_STATE.md) — live mutation rewind (v34)

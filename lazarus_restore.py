@@ -140,7 +140,7 @@ class LazarusRestore:
         if ok:
             print("[Lazarus] State Restored. Resuming compute from memory checkpoints.")
             if hasattr(kernel_ref, "ui_state"):
-                kernel_ref.ui_state["node_status"] = "Active [Lazarus Auto-Restored v34.0]"
+                kernel_ref.ui_state["node_status"] = "Active [Lazarus Auto-Restored v35.0]"
                 kernel_ref.ui_state["cluster_health"] = "Resilient"
                 kernel_ref.trigger_flux_ui_render()
             LazarusRestore._execute_kexec_boot()

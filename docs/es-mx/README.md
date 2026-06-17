@@ -1,6 +1,6 @@
 # Portal de documentación UtahMosphere
 
-Bienvenido al centro de documentación de UtahMosphere OS **v34.0 Utah-Claw** — plataforma soberana edge bare-metal unificada, puerto **8999**. La v34.0 completa la cadena de confianza soberana: **bloqueo TPM Vibe-Print**, **attestation RA-TLS de malla**, **failover mempool de 4 regiones** y **firma automática de nonce de voz** — del silicio al enjambre global. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
+Bienvenido al centro de documentación de UtahMosphere OS **v35.0 Omni-Desk** — plataforma soberana edge bare-metal unificada, puerto **8999**. La v34.0 completa la cadena de confianza soberana: **bloqueo TPM Vibe-Print**, **attestation RA-TLS de malla**, **failover mempool de 4 regiones** y **firma automática de nonce de voz** — del silicio al enjambre global. El contenido está organizado por **perfil de audiencia**, **tutoriales prácticos**, **recetas listas para copiar y pegar** y **proyectos de arranque**.
 
 ---
 
@@ -8,6 +8,7 @@ Bienvenido al centro de documentación de UtahMosphere OS **v34.0 Utah-Claw** �
 
 | Documento | Ideal para |
 |-----------|------------|
+| [Omni-Desk](OMNI_DESK.md) | Escritorio holográfico soberano |
 | [UtahClaw](UTAH_CLAW.md) | Resolvedor de vacío epistémico |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Telemetría visual en tiempo real |
 | [Chrono-State](CHRONO_STATE.md) | Rebobinado de mutación en vivo |
@@ -15,7 +16,7 @@ Bienvenido al centro de documentación de UtahMosphere OS **v34.0 Utah-Claw** �
 | [Testigos de quórum](QUORUM_WITNESSES.md) | Desempates multi-región ante caídas ISP |
 | [Restauración Lazarus](LAZARUS_RESTORE.md) | Restauración Golden Master en sala limpia |
 | [Motor de delta de estado](STATE_DIFF_ENGINE.md) | Sincronización mesh entrelazada <1 KB |
-| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — v34.0 Utah-Claw vs. trabajo futuro |
+| [Matriz de capacidades](CAPABILITY_MATRIX.md) | Todos — v35.0 Omni-Desk vs. trabajo futuro |
 | [Referencia de API](API_REFERENCE.md) | Desarrolladores y operadores |
 | [Guía de desarrollo local](LOCAL_DEVELOPMENT.md) | Desarrolladores en Windows, macOS o Linux |
 
@@ -85,7 +86,7 @@ Mini-proyectos completos para bifurcar y extender:
 
 ---
 
-## Funciones v34.0 Utah-Claw
+## Funciones v35.0 Omni-Desk
 
 - **TPM Locker:** Vibe-Print sellado al PCR0 vía `tpm2_create` / `tpm2_unseal` (`tpm_lock.py`)
 - **RA-TLS:** citas TPM en gossip de malla; verificación de pares antes de sync (`ra_tls_attest.py`)
@@ -94,6 +95,6 @@ Mini-proyectos completos para bifurcar y extender:
 - **Voice Bridge firmado:** `GET /nonce` automático + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS:** paridad cloud completa
 - **AuthGuard + Nonce-Guard + revocación Utah-Flux:** gobernanza de malla
-- **Genesis ISO v34:** `utah_genesis_v34.iso`
+- **Genesis ISO v35:** `utah_genesis_v35.iso`
 
-Build `omega-build-v34-utah-claw`. Entrada recomendada: `python3 utahmosphere_master.py`.
+Build `omega-build-v35-omni-desk`. Entrada recomendada: `python3 utahmosphere_master.py`.

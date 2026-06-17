@@ -196,5 +196,86 @@ MCP_TOOL = {{
         with self._lock:
             return list(self._completed[-50:])
 
+    def harvest_codebase(self, repo_path: str, kernel_ref: Any = None) -> Dict[str, Any]:
+        """Scan a codebase, extract reusable features, forge MCP tools, hot-swap into registry."""
+        if not CLAW_ENFORCE:
+            return {"ok": False, "error": "claw_disabled"}
+
+        root = Path(repo_path).expanduser().resolve()
+        if not root.is_dir():
+            return {"ok": False, "error": f"not_a_directory: {repo_path}"}
+
+        if omni_glass:
+            omni_glass.log_thought_vector("UtahClaw-Harvester", f"Scanning {root.name}", path=str(root))
+            omni_glass.log_claw_research(f"harvest:{root.name}", "scanning")
+
+        patterns = [
+            (r"\bjwt\b|\bjsonwebtoken\b|\bauth\b.*\btoken\b", "jwt_auth"),
+            (r"\bstripe\b|\bpayment\b|\bcheckout\b", "payments"),
+            (r"\bgraphql\b", "graphql_client"),
+            (r"\boauth\b|\bopenid\b", "oauth_flow"),
+            (r"\bcache\b|\bredis\b", "caching"),
+        ]
+
+        harvested: List[Dict[str, Any]] = []
+        py_files = list(root.rglob("*.py"))[:80]
+
+        for py_file in py_files:
+            try:
+                text = py_file.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            rel = str(py_file.relative_to(root))
+            for regex, feature in patterns:
+                if re.search(regex, text, re.I):
+                    concept = f"Harvested {feature} from {rel}"
+                    docs = f"# Harvested from {rel}\n\n```python\n{text[:6000]}\n```\n"
+                    code = self.forge_mcp_tool(concept, docs)
+                    tool_path = self.inject_into_lazarus(concept, code)
+                    entry = {
+                        "concept": concept,
+                        "feature": feature,
+                        "source": rel,
+                        "tool_path": str(tool_path),
+                        "harvested_at": time.time(),
+                    }
+                    harvested.append(entry)
+                    with self._lock:
+                        self._completed.append(entry)
+                    if omni_glass:
+                        omni_glass.log_claw_research(concept, "harvested")
+                    break
+
+        with self._lock:
+            self._save_registry()
+
+        if omni_glass:
+            omni_glass.notify_feature_ready(
+                f"harvest:{root.name}",
+                f"{len(harvested)} MCP tools",
+            )
+
+        threading.Thread(
+            target=self._dispatch_harvest_voids,
+            args=(harvested, kernel_ref),
+            daemon=True,
+            name=f"claw-harvest-{root.name}",
+        ).start()
+
+        return {
+            "ok": True,
+            "status": "Harvester deployed. Monitoring codebase.",
+            "repo_path": str(root),
+            "files_scanned": len(py_files),
+            "features_harvested": len(harvested),
+            "tools": harvested[:20],
+        }
+
+    def _dispatch_harvest_voids(self, harvested: List[Dict[str, Any]], kernel_ref: Any):
+        for item in harvested[:5]:
+            concept = item.get("concept", "")
+            if concept:
+                self.dispatch_void(concept, kernel_ref)
+
 
 ambient_runner = AmbientRunner()

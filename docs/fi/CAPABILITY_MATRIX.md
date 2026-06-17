@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 
 | Päätepiste | Metodi | Tila | Huomiot |
 |------------|--------|------|---------|
-| `/health` | GET | **Toteutettu** | `build: omega-build-v34-utah-claw` + täydellinen todentamistilannekuva |
+| `/desk/apps` | GET | **Toteutettu** | Genesis Suite -rekisteri |
+| `/desk/status` | GET | **Toteutettu** | Omni-Desk-tila |
+| `/desk/ui` | GET | **Toteutettu** | Holografinen työpöytä HTML |
+| `/desk/intent` | POST | **Toteutettu** | Genesis-sovelluksen intent |
+| `/health` | GET | **Toteutettu** | `build: omega-build-v35-omni-desk` + täydellinen todentamistilannekuva |
 | `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote + `hardware_id` |
 | `/registry/quotes` | GET | **Toteutettu** | Globaalin laitteisto quote -rekisterin vienti |
 | `/registry/purge` | POST | **Toteutettu** | Poista vaarantunut laitteisto |
@@ -48,7 +52,7 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 | **Voice Bridge Signed** | **Toteutettu** | Automaattinen nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Toteutettu** | Mesh + ääniturvallisuus |
 | **UtahNetes + Swarm DHT** | **Toteutettu** | RA-TLS + allekirjoitettu gossip + rekisterin yhdistäminen |
-| **Genesis ISO v34** | **Toteutettu** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Toteutettu** | `utah_genesis_v35.iso` |
 | **Täysi pilvipariteetti** | **Toteutettu** | S3, Lambda, RDS, UtahX, kontit |
 
 ---
@@ -59,7 +63,7 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 |-----------|------|
 | `python3 utahmosphere_master.py` | **Suositeltu** |
 | `sudo bash bootstrap.sh` | **Tuotanto** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Ympäristö
 

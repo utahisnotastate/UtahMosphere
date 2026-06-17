@@ -2,6 +2,21 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [35.0] — Omni-Desk Genesis Suite (2026-06)
+
+### Added
+- `omni_desk.py` — Material-UI inspired holographic desktop on port **9092**
+- Five Genesis apps: WebForge, ZEO-Canvas, AppSmith, Holo-Notebook, Claw-Harvester
+- `GET /desk/apps`, `GET /desk/status`, `GET /desk/ui`, `POST /desk/intent`
+- `ambient_runner.harvest_codebase()` + `POST /harvest` on UtahClaw port 9090
+- [Omni-Desk](OMNI_DESK.md) guide + 8 locale translations
+
+### Changed
+- Build: `omega-build-v35-omni-desk`
+- Genesis ISO: `utah_genesis_v35.iso`
+- RA-TLS root CA: `utahmosphere_omega_build_v35_root_ca`
+- `examples/omega-build-verify/verify.py` — desk probes
+
 ## [34.0] — UtahClaw & Omni-Glass Chrono-State (2026-06)
 
 ### Added

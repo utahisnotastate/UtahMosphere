@@ -1,6 +1,6 @@
 # Портал документации UtahMosphere
 
-Добро пожаловать в центр документации UtahMosphere OS. **v34.0 Utah-Claw** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
+Добро пожаловать в центр документации UtahMosphere OS. **v35.0 Omni-Desk** — суверенная цепочка доверия: TPM Locker, RA-TLS mesh-аттестация, mempool Океании и Voice Bridge с автоподписанием nonce. Материалы организованы по **ролям аудитории**, **практическим руководствам**, **готовым рецептам** и **стартовым проектам**.
 
 ---
 
@@ -8,6 +8,7 @@
 
 | Документ | Для кого |
 |----------|----------|
+| [Omni-Desk](OMNI_DESK.md) | Суверенный голографический рабочий стол |
 | [UtahClaw](UTAH_CLAW.md) | Решатель эпистемической пустоты |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Визуальная телеметрия в реальном времени |
 | [Chrono-State](CHRONO_STATE.md) | Откат мутаций без CI/CD |
@@ -86,14 +87,14 @@
 
 ## Ключевые характеристики UtahMosphere OS v34.0
 
-- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v34-utah-claw`
+- **Суверенное периферийное облако** на Python — порт `8999`, `build: omega-build-v35-omni-desk`
 - **TPM Locker** — `tpm_lock.py` запечатывает Vibe-Print в PCR0 при claim
 - **RA-TLS mesh-аттестация** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Голосовое развёртывание** — Voice Bridge автоматически вызывает `GET /nonce` и подписывает
 - **Failover mempool** — `tycoon_failover.py` в 4 регионах (US, EU, global, Океания)
 - **Биометрическое закрепление узла** — команда «Claim node»; TPM-привязанная проверка vibe
 - **Отзыв узлов** — `POST /admin/revoke-node` и панель Utah-Flux
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v35.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` с расчётом через mempool в 4 регионах
 
 ---

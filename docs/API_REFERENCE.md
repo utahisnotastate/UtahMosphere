@@ -16,21 +16,22 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "34.0",
-  "build": "omega-build-v34-utah-claw",
+  "version": "35.0",
+  "build": "omega-build-v35-omni-desk",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v34_root_ca"},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v35_root_ca"},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "omni_mind": {"provider": "sovereign", "engine": "utahvidia"},
     "omni_glass": {"events": 0},
     "utah_claw": {"enforce": true, "pending": 0},
+    "omni_desk": {"enforce": true, "genesis_apps": 5},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }
@@ -112,6 +113,36 @@ Purge a compromised hardware ID from the global registry. Root vibe holder only.
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
 ```
+
+---
+
+## GET /desk/apps
+
+Genesis Suite application registry (five agentic apps).
+
+```bash
+curl http://127.0.0.1:8999/desk/apps
+```
+
+## GET /desk/status
+
+Omni-Desk session history and data paths.
+
+## GET /desk/ui
+
+Holographic desktop HTML (Material-UI inspired Genesis cards). Returns `text/html`.
+
+## POST /desk/intent
+
+Route intent to a Genesis app (`web_forge`, `zeo_canvas`, `app_smith`, `holo_notebook`, `claw_harvester`).
+
+```bash
+curl -X POST http://127.0.0.1:8999/desk/intent \
+  -H "Content-Type: application/json" \
+  -d '{"app_id": "zeo_canvas", "payload": {"prompt": "aurora over salt flats"}}'
+```
+
+See [Omni-Desk](OMNI_DESK.md).
 
 ---
 

@@ -26,19 +26,35 @@ def _start_claw_http_server(kernel_ref: Any = None):
             self.wfile.write(payload)
 
         def do_POST(self):
-            if self.path != "/void":
-                self.send_response(404)
-                self.end_headers()
-                return
             length = int(self.headers.get("Content-Length", 0))
             raw = self.rfile.read(length) if length else b"{}"
-            data = json.loads(raw.decode("utf-8"))
-            concept = data.get("concept", "")
-            if not concept:
-                self._json(400, {"error": "concept required"})
+            try:
+                data = json.loads(raw.decode("utf-8"))
+            except json.JSONDecodeError:
+                self._json(400, {"error": "invalid json"})
                 return
-            result = ambient_runner.dispatch_void(concept, kernel_ref)
-            self._json(202, result)
+
+            if self.path == "/void":
+                concept = data.get("concept", "")
+                if not concept:
+                    self._json(400, {"error": "concept required"})
+                    return
+                result = ambient_runner.dispatch_void(concept, kernel_ref)
+                self._json(202, result)
+                return
+
+            if self.path == "/harvest":
+                repo_path = data.get("path") or data.get("repo_path", "")
+                if not repo_path:
+                    self._json(400, {"error": "path required"})
+                    return
+                result = ambient_runner.harvest_codebase(repo_path, kernel_ref)
+                code = 202 if result.get("ok") else 422
+                self._json(code, result)
+                return
+
+            self.send_response(404)
+            self.end_headers()
 
         def do_GET(self):
             if self.path == "/health":

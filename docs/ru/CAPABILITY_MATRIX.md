@@ -1,6 +1,6 @@
 # Матрица возможностей
 
-UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка доверия завершена.
+UtahMosphere OS **v35.0 Omni-Desk** — суверенная цепочка доверия завершена.
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка до
 
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
-| `/health` | GET | **Реализовано** | `build: omega-build-v34-utah-claw` + полный снимок аттестации |
+| `/desk/apps` | GET | **Реализовано** | Реестр Genesis Suite |
+| `/desk/status` | GET | **Реализовано** | Статус Omni-Desk |
+| `/desk/ui` | GET | **Реализовано** | HTML голографического рабочего стола |
+| `/desk/intent` | POST | **Реализовано** | Intent Genesis-приложения |
+| `/health` | GET | **Реализовано** | `build: omega-build-v35-omni-desk` + полный снимок аттестации |
 | `/attestation/quote` | GET | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
 | `/registry/quotes` | GET | **Реализовано** | Глобальный реестр аппаратных цитат |
 | `/registry/purge` | POST | **Реализовано** | Удаление скомпрометированного оборудования |
@@ -54,7 +58,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка до
 | **Voice Bridge Signed** | **Реализовано** | Автоматический nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Реализовано** | Безопасность mesh + голоса |
 | **UtahNetes + Swarm DHT** | **Реализовано** | RA-TLS + подписанный gossip |
-| **Genesis ISO v34** | **Реализовано** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Реализовано** | `utah_genesis_v35.iso` |
 | **Полная облачная паритетность** | **Реализовано** | S3, Lambda, RDS, UtahX, контейнеры |
 
 ---
@@ -65,7 +69,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка до
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Рекомендуется** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Переменные окружения
 
@@ -84,6 +88,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — суверенная цепочка до
 | `UTAH_RA_TLS_ENFORCE` | `1` | Требовать RA-TLS quote в mesh |
 | `UTAH_MEMPOOL_NODES` | 4 по умолчанию | Переопределить список failover mempool |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | Фоновый UtahClaw |
 | `UTAH_CHRONO_ENFORCE` | `1` | Откат Chrono-State |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | SSE-поток Omni-Glass |

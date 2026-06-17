@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 
 | Point de terminaison | Méthode | Statut | Notes |
 |----------------------|---------|--------|-------|
-| `/health` | GET | **Implémenté** | `build: omega-build-v34-utah-claw` + instantané d'attestation complet |
+| `/desk/apps` | GET | **Implémenté** | Registre Genesis Suite |
+| `/desk/status` | GET | **Implémenté** | État Omni-Desk |
+| `/desk/ui` | GET | **Implémenté** | HTML bureau holographique |
+| `/desk/intent` | POST | **Implémenté** | Intent application Genesis |
+| `/health` | GET | **Implémenté** | `build: omega-build-v35-omni-desk` + instantané d'attestation complet |
 | `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS + `hardware_id` |
 | `/registry/quotes` | GET | **Implémenté** | Export du registre global des citations matérielles |
 | `/registry/purge` | POST | **Implémenté** | Purger le matériel compromis |
@@ -48,7 +52,7 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 | **Voice Bridge signé** | **Implémenté** | Nonce automatique + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implémenté** | Sécurité maillage + voix |
 | **UtahNetes + Swarm DHT** | **Implémenté** | RA-TLS + gossip signé + fusion du registre |
-| **Genesis ISO v34** | **Implémenté** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Implémenté** | `utah_genesis_v35.iso` |
 | **Parité cloud complète** | **Implémenté** | S3, Lambda, RDS, UtahX, conteneurs |
 
 ---
@@ -59,7 +63,7 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 |---------|--------|
 | `python3 utahmosphere_master.py` | **Recommandé** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Variables d'environnement
 
@@ -78,6 +82,7 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Épinglage CA à l'ingress UtahX |
 | `UTAH_MEMPOOL_NODES` | 4 valeurs par défaut | Remplacer la liste de basculement mempool |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | Runner ambient UtahClaw |
 | `UTAH_CHRONO_ENFORCE` | `1` | Rembobinage Chrono-State |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Flux SSE Omni-Glass |

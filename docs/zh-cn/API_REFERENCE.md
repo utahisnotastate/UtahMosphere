@@ -16,15 +16,15 @@
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "34.0",
-  "build": "omega-build-v34-utah-claw",
+  "version": "35.0",
+  "build": "omega-build-v35-omni-desk",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v34_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v35_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
@@ -32,6 +32,7 @@
     "omni_mind": {"provider": "sovereign", "engine": "utahvidia"},
     "omni_glass": {"events": 0},
     "utah_claw": {"enforce": true, "pending": 0},
+    "omni_desk": {"enforce": true, "genesis_apps": 5},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
@@ -56,7 +57,7 @@ curl http://127.0.0.1:8999/health
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v34-utah-claw\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v35-omni-desk\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }

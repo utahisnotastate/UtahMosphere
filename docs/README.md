@@ -11,6 +11,7 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
+| [Omni-Desk](OMNI_DESK.md) | Sovereign holographic desktop + Genesis Suite |
 | [UtahClaw](UTAH_CLAW.md) | Ambient epistemic void resolver |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Real-time agentic visual telemetry |
 | [Chrono-State](CHRONO_STATE.md) | Live mutation rewind (no CI/CD) |

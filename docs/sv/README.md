@@ -1,6 +1,6 @@
 # UtahMosphere-dokumentationsportal
 
-Välkommen till UtahMosphere OS dokumentation. **v34.0 Utah-Claw** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
+Välkommen till UtahMosphere OS dokumentation. **v35.0 Omni-Desk** — suverän förtroendekedja: TPM Locker, RA-TLS mesh-attestering, Oceanien mempool och Voice Bridge med automatisk nonce-signering. Innehållet är organiserat efter **roll**, **guider**, **recept** och **startprojekt**.
 
 ---
 
@@ -8,6 +8,7 @@ Välkommen till UtahMosphere OS dokumentation. **v34.0 Utah-Claw** — suverän 
 
 | Dokument | Bäst för |
 |----------|----------|
+| [Omni-Desk](OMNI_DESK.md) | Suverän holografisk skrivbord |
 | [UtahClaw](UTAH_CLAW.md) | Epistemisk tomrums-lösare |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Realtidsvisuell telemetri |
 | [Chrono-State](CHRONO_STATE.md) | Live-mutationsåterspolning |
@@ -74,12 +75,12 @@ Välkommen till UtahMosphere OS dokumentation. **v34.0 Utah-Claw** — suverän 
 
 ## UtahMosphere OS v34.0
 
-- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v34-utah-claw`
+- **Suverän edge-plattform** i Python — port `8999`, `build: omega-build-v35-omni-desk`
 - **TPM Locker** — `tpm_lock.py` förseglar Vibe-Print till PCR0 vid claim
 - **RA-TLS mesh-attestering** — `ra_tls_attest.py` + `GET /attestation/quote`
 - **Röstdriftsättning** — Voice Bridge anropar automatiskt `GET /nonce` och signerar
 - **Mempool-failover** — `tycoon_failover.py` i 4 regioner (US, EU, global, Oceanien)
 - **Biometrisk claim** — kommandot «Claim node»; TPM-bunden vibe-verifiering
 - **Nodåterkallande** — `POST /admin/revoke-node` och Utah-Flux-panel
-- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
+- **Genesis ISO** — `genesis_iso_builder.py` → `utah_genesis_v35.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` med mempool-avveckling i 4 regioner

@@ -13,8 +13,8 @@ from pathlib import Path
 
 REPO_DIR = Path(__file__).resolve().parent
 ISO_STAGING = Path(os.environ.get("ISO_STAGING", "/tmp/utah_iso"))
-ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v34.iso"))
-ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V34")
+ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v35.iso"))
+ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V35")
 
 ALPINE_BASE = os.environ.get(
     "UTAH_ALPINE_NETBOOT_URL",
@@ -92,12 +92,12 @@ def stage_sovereign_stack(staging: Path):
     for py_file in REPO_DIR.glob("*.py"):
         shutil.copy2(py_file, staging / "utahmosphere" / py_file.name)
 
-    readme = """UtahMosphere Genesis ISO v34.0
+    readme = """UtahMosphere Genesis ISO v35.0
 ================================
-Multi-region quorum witnesses, Lazarus auto-restore, entangled state-diff sync.
+Omni-Desk Genesis Suite, UtahClaw feature harvester, Omni-Glass, Chrono-State.
 Boot menu auto-runs bootstrap.sh via autoinstall= kernel parameter.
 Manual path: mount media and run: sudo bash bootstrap.sh
-Kernel manifests on port 8999 after reboot.
+Kernel manifests on port 8999; Omni-Desk on port 9092 after reboot.
 """
     (staging / "README.txt").write_text(readme, encoding="utf-8")
 

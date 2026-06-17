@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
+UtahMosphere OS **v35.0 Omni-Desk** — cadena de confianza soberana completa.
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | `build: omega-build-v34-utah-claw` + instantánea de attestation completa |
+| `/desk/apps` | GET | **Implementado** | Registro Genesis Suite |
+| `/desk/status` | GET | **Implementado** | Estado Omni-Desk |
+| `/desk/ui` | GET | **Implementado** | HTML escritorio holográfico |
+| `/desk/intent` | POST | **Implementado** | Intent app Genesis |
+| `/health` | GET | **Implementado** | `build: omega-build-v35-omni-desk` + instantánea de attestation completa |
 | `/attestation/quote` | GET | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
 | `/registry/quotes` | GET | **Implementado** | Registro global de citas de hardware |
 | `/registry/purge` | POST | **Implementado** | Eliminar hardware comprometido |
@@ -54,7 +58,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 | **Voice Bridge firmado** | **Implementado** | Nonce automático + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementado** | Seguridad de malla + voz |
 | **UtahNetes + Swarm DHT** | **Implementado** | RA-TLS + gossip firmado |
-| **Genesis ISO v34** | **Implementado** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Implementado** | `utah_genesis_v35.iso` |
 | **Paridad cloud completa** | **Implementado** | S3, Lambda, RDS, UtahX, contenedores |
 
 ---
@@ -84,6 +88,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 | `UTAH_RA_TLS_ENFORCE` | `1` | Exigir citas RA-TLS en la malla |
 | `UTAH_MEMPOOL_NODES` | 4 valores predeterminados | Reemplazar lista de failover mempool |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | Runner ambient UtahClaw |
 | `UTAH_CHRONO_ENFORCE` | `1` | Rebobinado Chrono-State |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Flujo SSE Omni-Glass |

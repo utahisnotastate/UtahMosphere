@@ -10,6 +10,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 
 | Dokumentti | Parhaiten |
 |------------|-----------|
+| [Omni-Desk](OMNI_DESK.md) | Suvereeni holografinen työpöytä |
 | [UtahClaw](UTAH_CLAW.md) | Epistemisen tyhjiön ratkaisija |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaaliaikainen visuaalinen telemetria |
 | [Chrono-State](CHRONO_STATE.md) | Live-mutaation kelaus |
@@ -88,7 +89,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 - **Mempool-varajärjestelmä** — `tycoon_failover.py` neljällä alueella (US, EU, global, Oseania)
 - **Biometrinen claim** — komento «Claim node»; TPM-sidottu vibe-vahvistus
 - **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
-- **Genesis ISO v34** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
+- **Genesis ISO v35** — `genesis_iso_builder.py` → `utah_genesis_v35.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4 alueen mempool-selvityksellä
 
-Build `omega-build-v34-utah-claw`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.
+Build `omega-build-v35-omni-desk`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.

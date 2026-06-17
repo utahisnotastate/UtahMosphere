@@ -84,6 +84,15 @@ def main():
     code, body = get("/siphon/ghost-tune")
     print(f"Siphon: {code} {len(body)} bytes")
 
+    # Omni-Desk Genesis Suite
+    code, body = get("/desk/apps")
+    print(f"Desk apps: {code} {body.decode()[:100]}")
+    code, data = post("/desk/intent", {
+        "app_id": "zeo_canvas",
+        "payload": {"prompt": "sovereign aurora over salt flats"},
+    })
+    print(f"Desk ZEO: {code} {str(data)[:100]}")
+
     print("=== Verification complete ===")
 
 

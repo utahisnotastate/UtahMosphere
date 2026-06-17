@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
+UtahMosphere OS **v35.0 Omni-Desk** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | `build: omega-build-v34-utah-claw` + kompleto na attestation snapshot |
+| `/desk/apps` | GET | **Ma implement** | Genesis Suite registry |
+| `/desk/status` | GET | **Ma implement** | Omni-Desk status |
+| `/desk/ui` | GET | **Ma implement** | Holographic desktop HTML |
+| `/desk/intent` | POST | **Ma implement** | Genesis app intent |
+| `/health` | GET | **Ma implement** | `build: omega-build-v35-omni-desk` + kompleto na attestation snapshot |
 | `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
 | `/registry/quotes` | GET | **Ma implement** | Global hardware quote registry |
 | `/registry/purge` | POST | **Ma implement** | Purge compromised hardware |
@@ -57,7 +61,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v34** | **Ma implement** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Ma implement** | `utah_genesis_v35.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -68,7 +72,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 |--------|--------|
 | `python3 utahmosphere_master.py` | **Ma recommend** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Environment
 
@@ -87,6 +91,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 | `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes gi mesh |
 | `UTAH_MEMPOOL_NODES` | 4 defaults | Override mempool failover list |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
 | `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State rewind |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE stream |

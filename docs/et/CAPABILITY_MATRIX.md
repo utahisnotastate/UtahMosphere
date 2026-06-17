@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
+UtahMosphere OS **v35.0 Omni-Desk** — suveräänne usaldusahel on täielik.
 
 ---
 
@@ -8,7 +8,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | `build: omega-build-v34-utah-claw` + täielik tõendamise hetktõmmis |
+| `/desk/apps` | GET | **Rakendatud** | Genesis Suite register |
+| `/desk/status` | GET | **Rakendatud** | Omni-Desk olek |
+| `/desk/ui` | GET | **Rakendatud** | Holograafiline töölaud HTML |
+| `/desk/intent` | POST | **Rakendatud** | Genesis rakenduse kavatsus |
+| `/health` | GET | **Rakendatud** | `build: omega-build-v35-omni-desk` + täielik tõendamise hetktõmmis |
 | `/attestation/quote` | GET | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
 | `/registry/quotes` | GET | **Rakendatud** | Globaalne riistvara tsitaadi register |
 | `/registry/purge` | POST | **Rakendatud** | Kompromiteeritud riistvara eemaldamine |
@@ -54,7 +58,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 | **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
 | **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
-| **Genesis ISO v34** | **Rakendatud** | `utah_genesis_v34.iso` |
+| **Genesis ISO v35** | **Rakendatud** | `utah_genesis_v35.iso` |
 | **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
@@ -65,7 +69,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 |--------|------|
 | `python3 utahmosphere_master.py` | **Soovitatav** |
 | `sudo bash bootstrap.sh` | **Tootmine** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v34 ISO** |
+| `python3 genesis_iso_builder.py` | **v35 ISO** |
 
 ## Keskkond
 
@@ -84,6 +88,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 | `UTAH_RA_TLS_ENFORCE` | `1` | Nõua RA-TLS quote mesh-is |
 | `UTAH_MEMPOOL_NODES` | 4 vaikimisi | Mempool varuühenduse loendi alistamine |
 
+| `UTAH_OMNI_DESK_ENFORCE` | `1` | Omni-Desk |
 | `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
 | `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State tagasikerimine |
 | `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE voog |

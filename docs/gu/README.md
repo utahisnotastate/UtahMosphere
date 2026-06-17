@@ -1,6 +1,6 @@
 # Portal Dokumentasion UtahMosphere
 
-Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v34.0 Utah-Claw** — unifikådo na bare-metal sovereign edge platform, port **8999**. I v34.0 ma kompleta i sovereign trust chain: **TPM Vibe-Print lock**, **RA-TLS mesh attestation**, **4-region mempool failover**, yan **automatic voice nonce signing** — ginen silicon asta global swarm. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
+Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v35.0 Omni-Desk** — unifikådo na bare-metal sovereign edge platform, port **8999**. I v34.0 ma kompleta i sovereign trust chain: **TPM Vibe-Print lock**, **RA-TLS mesh attestation**, **4-region mempool failover**, yan **automatic voice nonce signing** — ginen silicon asta global swarm. Ma organisat i kontenidu pot **rol siha**, **leksion paso-paso**, **recepta kodu**, yan **proyektu inicio**.
 
 ---
 
@@ -8,6 +8,7 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v34.0 Utah-C
 
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
+| [Omni-Desk](OMNI_DESK.md) | Sovereign holographic desktop |
 | [UtahClaw](UTAH_CLAW.md) | Epistemic void resolver |
 | [Omni-Glass UI](OMNI_GLASS_UI.md) | Real-time agentic visual telemetry |
 | [Chrono-State](CHRONO_STATE.md) | Live mutation rewind |
@@ -15,7 +16,7 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v34.0 Utah-C
 | [Quorum Witnesses](QUORUM_WITNESSES.md) | Multi-region ISP-outage tie-breakers |
 | [Lazarus Auto-Restore](LAZARUS_RESTORE.md) | Clean-room Golden Master restoration |
 | [State-Diff Engine](STATE_DIFF_ENGINE.md) | Entangled <1KB mesh synchronization |
-| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — v34.0 Utah-Claw vs. trabahu futuru |
+| [Matrisis Kapasidad](CAPABILITY_MATRIX.md) | Todu — v35.0 Omni-Desk vs. trabahu futuru |
 | [Referensia API](API_REFERENCE.md) | Desarrollador siha yan operadot siha |
 | [Guia Desarrollu Lokal](LOCAL_DEVELOPMENT.md) | Desarrollador siha gi Windows, macOS, pat Linux |
 
@@ -85,7 +86,7 @@ Mini-proyectos kompleto para copia yan extend:
 
 ---
 
-## Features v34.0 Utah-Claw
+## Features v35.0 Omni-Desk
 
 - **TPM Locker:** Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` (`tpm_lock.py`)
 - **RA-TLS:** TPM quotes gi mesh gossip; peer verification antes sync (`ra_tls_attest.py`)
@@ -94,6 +95,6 @@ Mini-proyectos kompleto para copia yan extend:
 - **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
 - **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
-- **Genesis ISO v34:** `utah_genesis_v34.iso`
+- **Genesis ISO v35:** `utah_genesis_v35.iso`
 
-Build `omega-build-v34-utah-claw`. Ma recommend na entry: `python3 utahmosphere_master.py`.
+Build `omega-build-v35-omni-desk`. Ma recommend na entry: `python3 utahmosphere_master.py`.

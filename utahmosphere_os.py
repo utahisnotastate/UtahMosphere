@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Omega-Build v34.0
-UtahClaw ambient runner, Omni-Glass FluxRelay, Chrono-State, Kinematic Siphon.
+UtahMosphere Operating System Kernel - Omega-Build v35.0
+Omni-Desk Genesis Suite, UtahClaw, Omni-Glass FluxRelay, Chrono-State, Kinematic Siphon.
 """
 
 import os
@@ -52,6 +52,7 @@ try:
     from utahclaw.kinematic_siphon import kinematic_siphon
     from chrono_state import chrono_state
     from omni_glass_stream import start_glass_stream_service
+    from omni_desk import omni_desk, start_desk_service
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -83,6 +84,8 @@ except ImportError:
     kinematic_siphon = None  # type: ignore
     chrono_state = None  # type: ignore
     start_glass_stream_service = None  # type: ignore
+    omni_desk = None  # type: ignore
+    start_desk_service = None  # type: ignore
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -102,7 +105,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v34.0 Utah-Claw]",
+            "node_status": "Active [Omega-Build v35.0 Omni-Desk]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -132,8 +135,10 @@ class UtahmosphereSovereignKernel:
             start_claw_service(self)
         if start_glass_stream_service:
             start_glass_stream_service()
+        if start_desk_service:
+            start_desk_service(self)
 
-        print(f"[{self.node_identity}] Omega-Build v34.0 utah-claw kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v35.0 omni-desk kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -364,6 +369,8 @@ class UtahmosphereSovereignKernel:
             snap["utah_claw"] = ambient_runner.status()
         if chrono_state:
             snap["chrono_state"] = chrono_state.status()
+        if omni_desk:
+            snap["omni_desk"] = omni_desk.status()
         return snap
 
     def _register_hardware_quote(self, acoustic_hash: str):
@@ -793,6 +800,20 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(202, result)
             return
 
+        if path == "/desk/intent":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            app_id = data.get("app_id", "")
+            payload = data.get("payload") or data
+            if not app_id or omni_desk is None:
+                self._json_response(400, {"error": "app_id required and Omni-Desk must be online"})
+                return
+            try:
+                result = omni_desk.route_intent_sync(app_id, payload, self.core_engine)
+                self._json_response(200 if result.get("ok", True) else 422, result)
+            except Exception as exc:
+                self._json_response(500, {"error": str(exc)})
+            return
+
         if path == "/omni/compile":
             data = json.loads(body.decode("utf-8")) if body else {}
             intent = data.get("intent") or data.get("transcript", "")
@@ -863,8 +884,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "34.0",
-                "build": "omega-build-v34-utah-claw",
+                "version": "35.0",
+                "build": "omega-build-v35-omni-desk",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -958,6 +979,28 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 return
             payload = kinematic_siphon.encode_scene_graph(omni_glass.export_manifold())
             self._raw_response(200, payload, "application/octet-stream")
+            return
+
+        if path == "/desk/status":
+            if omni_desk is None:
+                self._json_response(503, {"error": "Omni-Desk unavailable"})
+                return
+            self._json_response(200, {"omni_desk": omni_desk.status()})
+            return
+
+        if path == "/desk/apps":
+            if omni_desk is None:
+                self._json_response(503, {"error": "Omni-Desk unavailable"})
+                return
+            self._json_response(200, omni_desk.list_apps())
+            return
+
+        if path == "/desk/ui":
+            if omni_desk is None:
+                self._json_response(503, {"error": "Omni-Desk unavailable"})
+                return
+            html = omni_desk.render_ui_html().encode("utf-8")
+            self._raw_response(200, html, "text/html; charset=utf-8")
             return
 
         if path == "/lazarus/status":

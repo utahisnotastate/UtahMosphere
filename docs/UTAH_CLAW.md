@@ -40,6 +40,16 @@ curl -X POST http://127.0.0.1:8999/claw/void \
 
 Same payload — returns `202` immediately while research runs in background.
 
+### POST http://127.0.0.1:9090/harvest (Feature Harvester)
+
+```bash
+curl -X POST http://127.0.0.1:9090/harvest \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/path/to/your/repo"}'
+```
+
+Scans Python files, extracts auth/payment/graphql patterns, forges MCP tools.
+
 ### GET /claw/status
 
 Pending research, forged tools, holographic memory stats.

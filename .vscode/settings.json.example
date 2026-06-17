@@ -1,0 +1,6 @@
+{
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "utahOmniViewport.kernelBase": "http://127.0.0.1:8999",
+  "utahOmniViewport.pythonPath": "py"
+}

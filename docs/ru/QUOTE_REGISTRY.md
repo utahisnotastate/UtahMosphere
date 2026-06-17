@@ -49,7 +49,7 @@ UtahX ingress ----------------------> ra_tls_guard.verify_http_headers()
 |------------|--------------|------------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Персистентность |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | Корень подписи |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v34_root_ca` | Корень подписи |
 
 Dev:
 

@@ -39,16 +39,6 @@ echo "[Omega-Genesis] Synthesizing data paths..."
 mkdir -p /var/lib/utahmosphere/{containers,utahx_mesh,s3,lambda,rds,tycoon,swarm,models}
 mkdir -p /etc/utahmosphere/security
 
-echo "[Omega-Genesis] Initializing UtahVidia Sovereign Core..."
-if [[ -d "${REPO_DIR}/utahvidia" ]]; then
-  cp -r "${REPO_DIR}/utahvidia" "${INSTALL_ROOT}/" 2>/dev/null || true
-fi
-
-echo "[Omega-Genesis] Initializing UtahClaw Ambient Runner..."
-if [[ -d "${REPO_DIR}/utahclaw" ]]; then
-  cp -r "${REPO_DIR}/utahclaw" "${INSTALL_ROOT}/" 2>/dev/null || true
-fi
-
 if [[ "${UTAH_OMNI_DOWNLOAD_MODEL:-0}" == "1" ]]; then
   echo "[Omega-Genesis] Downloading Akashic Weights (Base Intelligence)..."
   pip3 install huggingface_hub 2>/dev/null || true

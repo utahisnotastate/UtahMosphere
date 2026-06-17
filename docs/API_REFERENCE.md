@@ -24,12 +24,13 @@ Liveness probe for load balancers and monitoring.
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v33_root_ca"},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v34_root_ca"},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "omni_mind": {"provider": "sovereign", "engine": "utahvidia"},
     "omni_glass": {"events": 0},
+    "utah_claw": {"enforce": true, "pending": 0},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }
@@ -53,7 +54,7 @@ Issue an RA-TLS TPM quote for UtahNetes mesh peer verification.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v32-lazarus-self-healing\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v34-utah-claw\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }

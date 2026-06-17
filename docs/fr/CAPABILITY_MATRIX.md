@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 | `/attestation/quote` | GET | **Implémenté** | Citation TPM RA-TLS + `hardware_id` |
 | `/registry/quotes` | GET | **Implémenté** | Export du registre global des citations matérielles |
 | `/registry/purge` | POST | **Implémenté** | Purger le matériel compromis |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **Implémenté** | Dispatch du vide épistémique |
+| `/claw/status` | GET | **Implémenté** | Stats du runner UtahClaw |
+| `/chrono/status` | GET | **Implémenté** | État Chrono-State |
+| `/siphon/ghost-tune` | GET | **Implémenté** | Binaire Ghost Tune |
+| `/omni/compile` | POST | **Implémenté** | Compilation d'intention agentique |
+| `/omni/status` | GET | **Implémenté** | Stats Omni-Mind |
+| `/omni/glass` | GET | **Implémenté** | Journal d'événements agentiques |
 | `/witness/status` | GET | **Implémenté** | Témoins multi-régions |
 | `/lazarus/status` | GET | **Implémenté** | Point de contrôle Lazarus |
 | `/lazarus/restore` | POST | **Implémenté** | Restauration Golden Master |
@@ -48,7 +48,7 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 | **Voice Bridge signé** | **Implémenté** | Nonce automatique + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implémenté** | Sécurité maillage + voix |
 | **UtahNetes + Swarm DHT** | **Implémenté** | RA-TLS + gossip signé + fusion du registre |
-| **Genesis ISO v33** | **Implémenté** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Implémenté** | `utah_genesis_v34.iso` |
 | **Parité cloud complète** | **Implémenté** | S3, Lambda, RDS, UtahX, conteneurs |
 
 ---
@@ -59,7 +59,7 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 |---------|--------|
 | `python3 utahmosphere_master.py` | **Recommandé** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## Variables d'environnement
 
@@ -77,6 +77,11 @@ UtahMosphere OS **v34.0 Infrastructure d'attestation à distance** — ancres de
 | `UTAH_PCR_DRIFT_ENFORCE` | `1` | PCR drift monitor |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Épinglage CA à l'ingress UtahX |
 | `UTAH_MEMPOOL_NODES` | 4 valeurs par défaut | Remplacer la liste de basculement mempool |
+
+| `UTAH_CLAW_ENFORCE` | `1` | Runner ambient UtahClaw |
+| `UTAH_CHRONO_ENFORCE` | `1` | Rembobinage Chrono-State |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Flux SSE Omni-Glass |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## Feuille de route
 

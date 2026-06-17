@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 | `/attestation/quote` | GET | **Toteutettu** | RA-TLS TPM quote + `hardware_id` |
 | `/registry/quotes` | GET | **Toteutettu** | Globaalin laitteisto quote -rekisterin vienti |
 | `/registry/purge` | POST | **Toteutettu** | Poista vaarantunut laitteisto |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **Toteutettu** | Epistemisen tyhjiön käsittely |
+| `/claw/status` | GET | **Toteutettu** | UtahClaw-käynnistimen tilastot |
+| `/chrono/status` | GET | **Toteutettu** | Chrono-State-tila |
+| `/siphon/ghost-tune` | GET | **Toteutettu** | Ghost Tune -binääri |
+| `/omni/compile` | POST | **Toteutettu** | Agenttisen intentin käännös |
+| `/omni/status` | GET | **Toteutettu** | Omni-Mind-tilastot |
+| `/omni/glass` | GET | **Toteutettu** | Agenttisten tapahtumien loki |
 | `/witness/status` | GET | **Toteutettu** | Monialueiset todistajat |
 | `/lazarus/status` | GET | **Toteutettu** | Lazarus-tarkistuspiste |
 | `/lazarus/restore` | POST | **Toteutettu** | Golden Master -palautus |
@@ -48,7 +48,7 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 | **Voice Bridge Signed** | **Toteutettu** | Automaattinen nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Toteutettu** | Mesh + ääniturvallisuus |
 | **UtahNetes + Swarm DHT** | **Toteutettu** | RA-TLS + allekirjoitettu gossip + rekisterin yhdistäminen |
-| **Genesis ISO v33** | **Toteutettu** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Toteutettu** | `utah_genesis_v34.iso` |
 | **Täysi pilvipariteetti** | **Toteutettu** | S3, Lambda, RDS, UtahX, kontit |
 
 ---
@@ -59,7 +59,7 @@ UtahMosphere OS **v34.0 Etätodentamisinfra** — suvereenit luottamusankkurit: 
 |-----------|------|
 | `python3 utahmosphere_master.py` | **Suositeltu** |
 | `sudo bash bootstrap.sh` | **Tuotanto** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## Ympäristö
 

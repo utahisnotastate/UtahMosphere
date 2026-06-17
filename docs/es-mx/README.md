@@ -8,6 +8,10 @@ Bienvenido al centro de documentación de UtahMosphere OS **v34.0 Utah-Claw** �
 
 | Documento | Ideal para |
 |-----------|------------|
+| [UtahClaw](UTAH_CLAW.md) | Resolvedor de vacío epistémico |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Telemetría visual en tiempo real |
+| [Chrono-State](CHRONO_STATE.md) | Rebobinado de mutación en vivo |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Cliente GPU Ghost Tune |
 | [Testigos de quórum](QUORUM_WITNESSES.md) | Desempates multi-región ante caídas ISP |
 | [Restauración Lazarus](LAZARUS_RESTORE.md) | Restauración Golden Master en sala limpia |
 | [Motor de delta de estado](STATE_DIFF_ENGINE.md) | Sincronización mesh entrelazada <1 KB |
@@ -90,6 +94,6 @@ Mini-proyectos completos para bifurcar y extender:
 - **Voice Bridge firmado:** `GET /nonce` automático + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS:** paridad cloud completa
 - **AuthGuard + Nonce-Guard + revocación Utah-Flux:** gobernanza de malla
-- **Genesis ISO v33:** `utah_genesis_v34.iso`
+- **Genesis ISO v34:** `utah_genesis_v34.iso`
 
 Build `omega-build-v34-utah-claw`. Entrada recomendada: `python3 utahmosphere_master.py`.

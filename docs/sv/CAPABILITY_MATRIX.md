@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 | `/attestation/quote` | GET | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
 | `/registry/quotes` | GET | **Implementerat** | Globalt register för hårdvarucitat |
 | `/registry/purge` | POST | **Implementerat** | Rensa komprometterad hårdvara |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **Implementerat** | Epistemisk tomrums-dispatch |
+| `/claw/status` | GET | **Implementerat** | UtahClaw-runnerstatistik |
+| `/chrono/status` | GET | **Implementerat** | Chrono-State-status |
+| `/siphon/ghost-tune` | GET | **Implementerat** | Ghost Tune-binär |
+| `/omni/compile` | POST | **Implementerat** | Agentisk intentkompilering |
+| `/omni/status` | GET | **Implementerat** | Omni-Mind-statistik |
+| `/omni/glass` | GET | **Implementerat** | Agentisk händelselogg |
 | `/witness/status` | GET | **Implementerat** | Flerregions vittnen |
 | `/lazarus/status` | GET | **Implementerat** | Lazarus-kontrollpunkt |
 | `/lazarus/restore` | POST | **Implementerat** | Golden Master-återställning |
@@ -43,18 +43,18 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 | **Kvorumvittnen (`quorum_witness.py`)** | **Implementerat** | USA/EU/Oceanien/Asien-domare |
 | **Lazarus-återställning (`lazarus_restore.py`)** | **Implementerat** | Golden Master + atomisk kexec-återställning |
 | **Tillståndsdiff (`state_diff_engine.py`)** | **Implementerat** | Entanglade mesh-deltor |
-| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
-| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
-| **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
-| **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
-| **RA-TLS Guard (`ra_tls_guard.py`)** | **Implemented** | CA pinning; UtahX ingress |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Implementerat** | 51%+ vote consensus |
+| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implementerat** | Swarm consensus verify |
+| **PCR Drift (`drift_detector.py`)** | **Implementerat** | Auto-quarantine on drift |
+| **Quote Registry (`quote_registry.py`)** | **Implementerat** | Register, purge, merge hardware quotes |
+| **RA-TLS Guard (`ra_tls_guard.py`)** | **Implementerat** | CA pinning; UtahX ingress |
 | **RA-TLS (`ra_tls_attest.py`)** | **Implementerat** | TPM quote i mesh-gossip; nodverifiering före synk |
 | **Mempool-failover (`tycoon_failover.py`)** | **Implementerat** | US / EU / global / **Oceanien** failover i 4 regioner |
 | **Hårdvaruattestering (`attestation_guard.py`)** | **Implementerat** | Bootstrap PCR0-grind |
 | **Voice Bridge Signed** | **Implementerat** | Automatiskt nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementerat** | Mesh + röstsäkerhet |
 | **UtahNetes + Swarm DHT** | **Implementerat** | RA-TLS + signerad gossip |
-| **Genesis ISO v33** | **Implementerat** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Implementerat** | `utah_genesis_v34.iso` |
 | **Full molnparitet** | **Implementerat** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -65,7 +65,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 |-------|--------|
 | `python3 utahmosphere_master.py` | **Rekommenderas** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## Miljö
 
@@ -83,6 +83,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — suverän förtroendekedja komplett.
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Kräv RA-TLS quote i mesh |
 | `UTAH_MEMPOOL_NODES` | 4 standardvärden | Åsidosätt mempool-failoverlista |
+
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State-återspolning |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE-ström |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## Roadmap
 

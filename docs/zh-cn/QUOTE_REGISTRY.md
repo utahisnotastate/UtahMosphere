@@ -49,7 +49,7 @@ UtahX ingress ----------------------> ra_tls_guard.verify_http_headers()
 |------|--------|------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | 注册表持久化 |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX 入口 + CA（`0` = 开发） |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | 引用签名根 |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v34_root_ca` | 引用签名根 |
 
 开发环境：
 

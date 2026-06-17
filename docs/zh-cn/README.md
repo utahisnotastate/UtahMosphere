@@ -8,6 +8,10 @@
 
 | 文档 | 最适合 |
 |------|--------|
+| [UtahClaw](UTAH_CLAW.md) | 认识论空白解析器 |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | 实时智能体可视化遥测 |
+| [Chrono-State](CHRONO_STATE.md) | 实时变异回滚 |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU 客户端 |
 | [仲裁见证节点](QUORUM_WITNESSES.md) | 多区域 ISP 中断决胜仲裁 |
 | [Lazarus 自动恢复](LAZARUS_RESTORE.md) | 洁净室 Golden Master 恢复 |
 | [状态差分引擎](STATE_DIFF_ENGINE.md) | 纠缠态 <1KB mesh 同步 |
@@ -90,6 +94,6 @@
 - **签名语音桥：** 自动 `GET /nonce` + HMAC（`voice_bridge_signed.py`）
 - **UtahX / ContainerEngine / S3 / Lambda / RDS：** 完整云 parity
 - **AuthGuard + Nonce-Guard + Utah-Flux 撤销：** 网格治理
-- **Genesis ISO v33：** `utah_genesis_v34.iso`
+- **Genesis ISO v34：** `utah_genesis_v34.iso`
 
 构建标识 `omega-build-v34-utah-claw`。推荐入口：`python3 utahmosphere_master.py`。

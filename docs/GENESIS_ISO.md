@@ -1,6 +1,6 @@
 # Genesis ISO Installer (v34.0)
 
-Build `utah_genesis_v34.iso` with UtahClaw, Omni-Glass, Chrono-State, plus v33 Omni-Mind stack.
+Build `utah_genesis_v34.iso` with the full v34 Utah-Claw stack: UtahClaw, Omni-Glass FluxRelay, Chrono-State, Kinematic Siphon, and the v33 Omni-Mind / witness / Lazarus subsystems.
 
 Output: `utah_genesis_v34.iso`
 

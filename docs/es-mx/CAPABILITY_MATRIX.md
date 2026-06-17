@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 | `/attestation/quote` | GET | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
 | `/registry/quotes` | GET | **Implementado** | Registro global de citas de hardware |
 | `/registry/purge` | POST | **Implementado** | Eliminar hardware comprometido |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **Implementado** | Despacho de vacío epistémico |
+| `/claw/status` | GET | **Implementado** | Estadísticas del runner UtahClaw |
+| `/chrono/status` | GET | **Implementado** | Estado de Chrono-State |
+| `/siphon/ghost-tune` | GET | **Implementado** | Binario Ghost Tune |
+| `/omni/compile` | POST | **Implementado** | Compilación de intención agéntica |
+| `/omni/status` | GET | **Implementado** | Estadísticas Omni-Mind |
+| `/omni/glass` | GET | **Implementado** | Registro de eventos agénticos |
 | `/witness/status` | GET | **Implementado** | Testigos multi-región |
 | `/lazarus/status` | GET | **Implementado** | Punto de control Lazarus |
 | `/lazarus/restore` | POST | **Implementado** | Restauración Golden Master |
@@ -43,18 +43,18 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 | **Testigos de quórum (`quorum_witness.py`)** | **Implementado** | Desempates EE.UU./UE/Oceanía/Asia |
 | **Restauración Lazarus (`lazarus_restore.py`)** | **Implementado** | Golden Master + restauración kexec atómica |
 | **Delta de estado (`state_diff_engine.py`)** | **Implementado** | Deltas mesh entrelazados |
-| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
-| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
-| **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
-| **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
-| **RA-TLS Guard (`ra_tls_guard.py`)** | **Implemented** | CA pinning; UtahX ingress |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Implementado** | 51%+ vote consensus |
+| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implementado** | Swarm consensus verify |
+| **PCR Drift (`drift_detector.py`)** | **Implementado** | Auto-quarantine on drift |
+| **Quote Registry (`quote_registry.py`)** | **Implementado** | Register, purge, merge hardware quotes |
+| **RA-TLS Guard (`ra_tls_guard.py`)** | **Implementado** | CA pinning; UtahX ingress |
 | **RA-TLS (`ra_tls_attest.py`)** | **Implementado** | Cita TPM en gossip de malla; verificación de pares antes de sync |
 | **Failover mempool (`tycoon_failover.py`)** | **Implementado** | Failover US / EU / global / **Oceanía** en 4 regiones |
 | **Attestation de hardware (`attestation_guard.py`)** | **Implementado** | Puerta PCR0 en bootstrap |
 | **Voice Bridge firmado** | **Implementado** | Nonce automático + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementado** | Seguridad de malla + voz |
 | **UtahNetes + Swarm DHT** | **Implementado** | RA-TLS + gossip firmado |
-| **Genesis ISO v33** | **Implementado** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Implementado** | `utah_genesis_v34.iso` |
 | **Paridad cloud completa** | **Implementado** | S3, Lambda, RDS, UtahX, contenedores |
 
 ---
@@ -83,6 +83,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — cadena de confianza soberana completa.
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Exigir citas RA-TLS en la malla |
 | `UTAH_MEMPOOL_NODES` | 4 valores predeterminados | Reemplazar lista de failover mempool |
+
+| `UTAH_CLAW_ENFORCE` | `1` | Runner ambient UtahClaw |
+| `UTAH_CHRONO_ENFORCE` | `1` | Rebobinado Chrono-State |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Flujo SSE Omni-Glass |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## Hoja de ruta
 

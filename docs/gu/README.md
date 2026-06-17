@@ -8,6 +8,10 @@ Håfa adai ya bien binidu gi sentro dokumentasion UtahMosphere OS **v34.0 Utah-C
 
 | Dokumentu | Mas maolek para |
 |-----------|-----------------|
+| [UtahClaw](UTAH_CLAW.md) | Epistemic void resolver |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Real-time agentic visual telemetry |
+| [Chrono-State](CHRONO_STATE.md) | Live mutation rewind |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU client |
 | [Quorum Witnesses](QUORUM_WITNESSES.md) | Multi-region ISP-outage tie-breakers |
 | [Lazarus Auto-Restore](LAZARUS_RESTORE.md) | Clean-room Golden Master restoration |
 | [State-Diff Engine](STATE_DIFF_ENGINE.md) | Entangled <1KB mesh synchronization |
@@ -90,6 +94,6 @@ Mini-proyectos kompleto para copia yan extend:
 - **Voice Bridge Signed:** Auto `GET /nonce` + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS:** Full cloud parity
 - **AuthGuard + Nonce-Guard + Utah-Flux Revocation:** Mesh governance
-- **Genesis ISO v33:** `utah_genesis_v34.iso`
+- **Genesis ISO v34:** `utah_genesis_v34.iso`
 
 Build `omega-build-v34-utah-claw`. Ma recommend na entry: `python3 utahmosphere_master.py`.

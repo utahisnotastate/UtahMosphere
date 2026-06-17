@@ -183,6 +183,10 @@ Silent failover across mempool.space, signet, and blockstream.info regional APIs
 
 ## Related Docs
 
+- [UtahClaw](UTAH_CLAW.md) — ambient epistemic void resolver (v34)
+- [Omni-Glass UI](OMNI_GLASS_UI.md) — real-time agentic telemetry (v34)
+- [Chrono-State](CHRONO_STATE.md) — live mutation rewind (v34)
+- [Omni-Compiler](OMNI_COMPILER.md) — agentic intent deployment (v33+)
 - [API Reference](API_REFERENCE.md)
 - [Capability Matrix](CAPABILITY_MATRIX.md)
 - [Technical Deep-Dive](TECHNICAL_DEEP_DIVE.md)

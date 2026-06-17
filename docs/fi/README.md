@@ -10,6 +10,10 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 
 | Dokumentti | Parhaiten |
 |------------|-----------|
+| [UtahClaw](UTAH_CLAW.md) | Epistemisen tyhjiön ratkaisija |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaaliaikainen visuaalinen telemetria |
+| [Chrono-State](CHRONO_STATE.md) | Live-mutaation kelaus |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU -asiakas |
 | [Laitteisto quote -rekisteri](QUOTE_REGISTRY.md) | Globaali TPM-laitteiston sormenjälkitilasto |
 | [RA-TLS mesh-todentaminen](RA_TLS.md) | TPM quote -vahvistus + CA-kiinnitys mesh-solmuille |
 | [Laitteiston todentaminen](ATTESTATION.md) | TPM PCR0 + Vibe-Print-sinetti |
@@ -84,7 +88,7 @@ Tervetuloa UtahMosphere OS -dokumentaatioon. Sisältö on jaettu **rooleihin**, 
 - **Mempool-varajärjestelmä** — `tycoon_failover.py` neljällä alueella (US, EU, global, Oseania)
 - **Biometrinen claim** — komento «Claim node»; TPM-sidottu vibe-vahvistus
 - **Solmun peruutus** — `POST /admin/revoke-node` ja Utah-Flux-paneeli
-- **Genesis ISO v33** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
+- **Genesis ISO v34** — `genesis_iso_builder.py` → `utah_genesis_v34.iso`
 - **Tycoon HTTP 402** — `GET /app/{name}` 4 alueen mempool-selvityksellä
 
 Build `omega-build-v34-utah-claw`. Suositeltu käynnistys: `python3 utahmosphere_master.py`.

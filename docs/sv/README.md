@@ -8,6 +8,10 @@ Välkommen till UtahMosphere OS dokumentation. **v34.0 Utah-Claw** — suverän 
 
 | Dokument | Bäst för |
 |----------|----------|
+| [UtahClaw](UTAH_CLAW.md) | Epistemisk tomrums-lösare |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Realtidsvisuell telemetri |
+| [Chrono-State](CHRONO_STATE.md) | Live-mutationsåterspolning |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU-klient |
 | [Kvorumvittnen](QUORUM_WITNESSES.md) | Flerregions ISP-avbrottsdomare |
 | [Lazarus autoåterställning](LAZARUS_RESTORE.md) | Renrums Golden Master-återställning |
 | [Tillståndsdiff-motor](STATE_DIFF_ENGINE.md) | Entanglad <1 KB mesh-synk |

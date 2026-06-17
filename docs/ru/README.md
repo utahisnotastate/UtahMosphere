@@ -8,6 +8,10 @@
 
 | Документ | Для кого |
 |----------|----------|
+| [UtahClaw](UTAH_CLAW.md) | Решатель эпистемической пустоты |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Визуальная телеметрия в реальном времени |
+| [Chrono-State](CHRONO_STATE.md) | Откат мутаций без CI/CD |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Протокол Ghost Tune для GPU |
 | [Кворум-свидетели](QUORUM_WITNESSES.md) | Арбитры при региональных сбоях ISP |
 | [Автовосстановление Lazarus](LAZARUS_RESTORE.md) | Восстановление Golden Master в чистой комнате |
 | [Движок дельты состояния](STATE_DIFF_ENGINE.md) | Запутанная mesh-синхронизация <1 КБ |

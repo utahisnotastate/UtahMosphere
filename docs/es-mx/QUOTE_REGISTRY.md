@@ -49,7 +49,7 @@ Ver [Referencia API](API_REFERENCE.md): `GET /registry/quotes`, `POST /registry/
 |----------|----------------|-----------|
 | `UTAH_QUOTE_REGISTRY_PATH` | `{UTAH_DATA_DIR}/quote_registry.json` | Persistencia del registro |
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | Ingress UtahX + CA (`0` = dev) |
-| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v32_root_ca` | Raíz de firma de citas |
+| `UTAH_KERNEL_ROOT_CA` | `utahmosphere_omega_build_v34_root_ca` | Raíz de firma de citas |
 
 Dev:
 

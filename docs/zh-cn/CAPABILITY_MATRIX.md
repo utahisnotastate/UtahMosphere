@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 | `/attestation/quote` | GET | **已实现** | RA-TLS TPM 引用，用于网格对等节点验证 |
 | `/registry/quotes` | GET | **已实现** | 全局硬件引用注册表 |
 | `/registry/purge` | POST | **已实现** | 清除受损硬件 |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **已实现** | 认识论空白调度 |
+| `/claw/status` | GET | **已实现** | UtahClaw 运行器统计 |
+| `/chrono/status` | GET | **已实现** | Chrono-State 状态 |
+| `/siphon/ghost-tune` | GET | **已实现** | Ghost Tune 二进制 |
+| `/omni/compile` | POST | **已实现** | 智能体意图编译 |
+| `/omni/status` | GET | **已实现** | Omni-Mind 统计 |
+| `/omni/glass` | GET | **已实现** | 智能体事件日志 |
 | `/witness/status` | GET | **已实现** | 多区域见证节点 |
 | `/lazarus/status` | GET | **已实现** | Lazarus 检查点 |
 | `/lazarus/restore` | POST | **已实现** | Golden Master 恢复 |
@@ -46,7 +46,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 | **签名语音桥** | **已实现** | 自动 nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **已实现** | 网格 + 语音安全 |
 | **UtahNetes + Swarm DHT** | **已实现** | RA-TLS + 签名 gossip |
-| **Genesis ISO v33** | **已实现** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **已实现** | `utah_genesis_v34.iso` |
 | **完整云 parity** | **已实现** | S3、Lambda、RDS、UtahX、容器 |
 
 ---
@@ -57,7 +57,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 |------|------|
 | `python3 utahmosphere_master.py` | **推荐** |
 | `sudo bash bootstrap.sh` | **生产**（TPM + tpm2-tools） |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## 环境变量
 
@@ -75,6 +75,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — 主权信任链已全部完成。
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | 网格上要求 RA-TLS 引用 |
 | `UTAH_MEMPOOL_NODES` | 4 个默认值 | 覆盖内存池故障转移列表 |
+
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw 环境运行器 |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State 回滚 |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE 流 |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## 路线图
 

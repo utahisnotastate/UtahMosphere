@@ -12,16 +12,16 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 | `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
 | `/registry/quotes` | GET | **Ma implement** | Global hardware quote registry |
 | `/registry/purge` | POST | **Ma implement** | Purge compromised hardware |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
-| `/witness/status` | GET | **Implemented** | Multi-region witnesses |
-| `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint |
-| `/lazarus/restore` | POST | **Implemented** | Golden Master restore |
+| `/claw/void` | POST | **Ma implement** | Epistemic void dispatch |
+| `/claw/status` | GET | **Ma implement** | UtahClaw runner stats |
+| `/chrono/status` | GET | **Ma implement** | Chrono-State status |
+| `/siphon/ghost-tune` | GET | **Ma implement** | Ghost Tune binary |
+| `/omni/compile` | POST | **Ma implement** | Agentic intent compile |
+| `/omni/status` | GET | **Ma implement** | Omni-Mind stats |
+| `/omni/glass` | GET | **Ma implement** | Agentic event log |
+| `/witness/status` | GET | **Ma implement** | Multi-region witnesses |
+| `/lazarus/status` | GET | **Ma implement** | Lazarus checkpoint |
+| `/lazarus/restore` | POST | **Ma implement** | Golden Master restore |
 | `/quorum/consensus` | GET | **Ma implement** | Majority-quorum ledger |
 | `/dht/consensus` | GET | **Ma implement** | DHT golden ledger |
 | `/dht/challenge` | POST | **Ma implement** | Swarm attestation challenge |
@@ -40,24 +40,24 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Ma implement** | Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` |
-| **Omni-Compiler (`omni_compiler.py`)** | **Implemented** | Intent → deployment |
-| **MCP Bridge (`mcp_omni_bridge.py`)** | **Implemented** | Context-aware MCP |
-| **Utah-Omni-Mind (`utah_omni_mind.py`)** | **Implemented** | Sovereign inference |
-| **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania tie-breakers |
-| **Lazarus Restore (`lazarus_restore.py`)** | **Implemented** | Auto-restore after quarantine |
-| **State-Diff (`state_diff_engine.py`)** | **Implemented** | Entangled mesh deltas |
-| **Quorum Engine (`dht_consensus_engine.py`)** | **Implemented** | 51%+ vote consensus |
-| **DHT Golden Registry (`dht_quote_registry.py`)** | **Implemented** | Swarm consensus verify |
-| **PCR Drift (`drift_detector.py`)** | **Implemented** | Auto-quarantine on drift |
-| **Quote Registry (`quote_registry.py`)** | **Implemented** | Register, purge, merge hardware quotes |
-| **RA-TLS Guard (`ra_tls_guard.py`)** | **Implemented** | CA pinning; UtahX ingress |
+| **Omni-Compiler (`omni_compiler.py`)** | **Ma implement** | Intent → deployment |
+| **MCP Bridge (`mcp_omni_bridge.py`)** | **Ma implement** | Context-aware MCP |
+| **Utah-Omni-Mind (`utah_omni_mind.py`)** | **Ma implement** | Sovereign inference |
+| **Quorum Witnesses (`quorum_witness.py`)** | **Ma implement** | US/EU/Oceania tie-breakers |
+| **Lazarus Restore (`lazarus_restore.py`)** | **Ma implement** | Auto-restore after quarantine |
+| **State-Diff (`state_diff_engine.py`)** | **Ma implement** | Entangled mesh deltas |
+| **Quorum Engine (`dht_consensus_engine.py`)** | **Ma implement** | 51%+ vote consensus |
+| **DHT Golden Registry (`dht_quote_registry.py`)** | **Ma implement** | Swarm consensus verify |
+| **PCR Drift (`drift_detector.py`)** | **Ma implement** | Auto-quarantine on drift |
+| **Quote Registry (`quote_registry.py`)** | **Ma implement** | Register, purge, merge hardware quotes |
+| **RA-TLS Guard (`ra_tls_guard.py`)** | **Ma implement** | CA pinning; UtahX ingress |
 | **RA-TLS (`ra_tls_attest.py`)** | **Ma implement** | TPM quote gi mesh gossip; peer verification antes sync |
 | **Mempool Failover (`tycoon_failover.py`)** | **Ma implement** | US / EU / global / **Oceania** 4-region failover |
 | **Hardware Attestation (`attestation_guard.py`)** | **Ma implement** | Bootstrap PCR0 gate |
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v33** | **Ma implement** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Ma implement** | `utah_genesis_v34.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -68,7 +68,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 |--------|--------|
 | `python3 utahmosphere_master.py` | **Ma recommend** |
 | `sudo bash bootstrap.sh` | **Prod** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## Environment
 
@@ -86,6 +86,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — kompleto na sovereign trust chain.
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Require RA-TLS quotes gi mesh |
 | `UTAH_MEMPOOL_NODES` | 4 defaults | Override mempool failover list |
+
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State rewind |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE stream |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## Roadmap
 

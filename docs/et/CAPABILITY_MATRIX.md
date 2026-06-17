@@ -12,13 +12,13 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 | `/attestation/quote` | GET | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
 | `/registry/quotes` | GET | **Rakendatud** | Globaalne riistvara tsitaadi register |
 | `/registry/purge` | POST | **Rakendatud** | Kompromiteeritud riistvara eemaldamine |
-| `/claw/void` | POST | **Implemented** | Epistemic void dispatch |
-| `/claw/status` | GET | **Implemented** | UtahClaw runner stats |
-| `/chrono/status` | GET | **Implemented** | Chrono-State status |
-| `/siphon/ghost-tune` | GET | **Implemented** | Ghost Tune binary |
-| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
-| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
-| `/omni/glass` | GET | **Implemented** | Agentic event log |
+| `/claw/void` | POST | **Rakendatud** | Epistemilise tühimiku käsitlemine |
+| `/claw/status` | GET | **Rakendatud** | UtahClawi käivitaja olek |
+| `/chrono/status` | GET | **Rakendatud** | Chrono-State olek |
+| `/siphon/ghost-tune` | GET | **Rakendatud** | Ghost Tune binaar |
+| `/omni/compile` | POST | **Rakendatud** | Agentliku kavatsuse kompileerimine |
+| `/omni/status` | GET | **Rakendatud** | Omni-Mind statistika |
+| `/omni/glass` | GET | **Rakendatud** | Agentide sündmuste logi |
 | `/witness/status` | GET | **Rakendatud** | Mitmeregiooni tunnistajad |
 | `/lazarus/status` | GET | **Rakendatud** | Lazarus kontrollpunkt |
 | `/lazarus/restore` | POST | **Rakendatud** | Golden Master taastamine |
@@ -54,7 +54,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 | **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
 | **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
-| **Genesis ISO v33** | **Rakendatud** | `utah_genesis_v34.iso` |
+| **Genesis ISO v34** | **Rakendatud** | `utah_genesis_v34.iso` |
 | **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
@@ -65,7 +65,7 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 |--------|------|
 | `python3 utahmosphere_master.py` | **Soovitatav** |
 | `sudo bash bootstrap.sh` | **Tootmine** (TPM + tpm2-tools) |
-| `python3 genesis_iso_builder.py` | **v32 ISO** |
+| `python3 genesis_iso_builder.py` | **v34 ISO** |
 
 ## Keskkond
 
@@ -83,6 +83,11 @@ UtahMosphere OS **v34.0 Utah-Claw** — suveräänne usaldusahel on täielik.
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning |
 | `UTAH_RA_TLS_ENFORCE` | `1` | Nõua RA-TLS quote mesh-is |
 | `UTAH_MEMPOOL_NODES` | 4 vaikimisi | Mempool varuühenduse loendi alistamine |
+
+| `UTAH_CLAW_ENFORCE` | `1` | UtahClaw ambient runner |
+| `UTAH_CHRONO_ENFORCE` | `1` | Chrono-State tagasikerimine |
+| `UTAH_OMNI_GLASS_STREAM` | `1` | Omni-Glass SSE voog |
+| `UTAH_OMNI_ENFORCE` | `1` | Omni-Compiler |
 
 ## Teekaart
 

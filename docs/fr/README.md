@@ -10,6 +10,10 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organis�
 
 | Document | Idéal pour |
 |----------|------------|
+| [UtahClaw](UTAH_CLAW.md) | Résolveur de vide épistémique |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Télémétrie visuelle en temps réel |
+| [Chrono-State](CHRONO_STATE.md) | Rembobinage de mutation live |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Client GPU Ghost Tune |
 | [Registre des citations matérielles](QUOTE_REGISTRY.md) | Registre global des empreintes matérielles TPM |
 | [Attestation RA-TLS du maillage](RA_TLS.md) | Vérification des citations TPM + épinglage CA pour les pairs du maillage |
 | [Attestation matérielle](ATTESTATION.md) | TPM PCR0 + scellement Vibe-Print |
@@ -98,6 +102,6 @@ Mini-projets complets à forker et étendre :
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v33 :** `utah_genesis_v34.iso`
+- **Genesis ISO v34 :** `utah_genesis_v34.iso`
 
 Build `omega-build-v34-utah-claw`. Entrée recommandée : `python3 utahmosphere_master.py`.

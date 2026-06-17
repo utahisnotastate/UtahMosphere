@@ -29,7 +29,9 @@ Liveness-probe för lastbalanserare och övervakning.
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
-    "omni_mind": {"provider": "sovereign"},
+    "omni_mind": {"provider": "sovereign", "engine": "utahvidia"},
+    "omni_glass": {"events": 0},
+    "utah_claw": {"enforce": true, "pending": 0},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }

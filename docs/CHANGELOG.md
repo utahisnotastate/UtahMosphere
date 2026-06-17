@@ -17,6 +17,7 @@ All notable changes to UtahMosphere OS are documented here.
 - `omni_compiler.py` — epistemic void → UtahClaw dispatch; chrono post-deploy
 - Genesis ISO: `utah_genesis_v34.iso`
 - Build: `omega-build-v34-utah-claw`
+- Documentation: v34 guides translated (8 locales); API health JSON + quote registry CA sync
 
 ## [33.0] — Omni-Compiler & Utah-Omni-Mind (2026-06)
 

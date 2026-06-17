@@ -8,6 +8,10 @@ Tere tulemast UtahMosphere OS dokumentatsiooni keskusesse. **v34.0 Utah-Claw** �
 
 | Dokument | Sobib kõige paremini |
 |----------|----------------------|
+| [UtahClaw](UTAH_CLAW.md) | Epistemilise tühimiku lahendaja |
+| [Omni-Glass UI](OMNI_GLASS_UI.md) | Reaalajas agentide visualiseerimine |
+| [Chrono-State](CHRONO_STATE.md) | Otsemutatsiooni tagasikerimine |
+| [Kinematic Siphon](KINEMATIC_SIPHON.md) | Ghost Tune GPU klient |
 | [Kvoorumi tunnistajad](QUORUM_WITNESSES.md) | Mitmeregiooni ISP-katkestuse vahekohtunikud |
 | [Lazarus automaatne taastamine](LAZARUS_RESTORE.md) | Puhastoa Golden Master taastamine |
 | [Oleku-erinevuse mootor](STATE_DIFF_ENGINE.md) | Põimunud <1KB mesh-sünkroniseerimine |

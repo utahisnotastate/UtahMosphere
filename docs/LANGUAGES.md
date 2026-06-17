@@ -14,6 +14,6 @@ UtahMosphere documentation is available in separate, single-language sites. Each
 | Mexico (Español) | [docs/es-mx/README.md](es-mx/README.md) |
 | China (简体中文) | [docs/zh-cn/README.md](zh-cn/README.md) |
 
-Each localized site includes 16+ documents. v35 [Omni-Desk](OMNI_DESK.md) and v34 guides are translated in every locale folder. English-only deep dives such as [Hardware Attestation](ATTESTATION.md) and [Omega-Build](OMEGA_BUILD.md) remain in the root `docs/` portal.
+Each localized site includes 16+ documents. v35 [Omni-Desk](OMNI_DESK.md), [Cursor Epigenetic IDE](CURSOR_EPIGENETIC.md), and [Omni-Viewport Extension](OMNI_VIEWPORT_EXTENSION.md) guides are translated in every locale folder. English-only deep dives such as [Hardware Attestation](ATTESTATION.md) and [Omega-Build](OMEGA_BUILD.md) remain in the root `docs/` portal.
 
 Code examples (`templates/`, `examples/`, `starter-projects/`) remain in English because they are source code.

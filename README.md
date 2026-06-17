@@ -26,6 +26,8 @@ v35.0 manifests the **Omni-Desk** — a GPU-accelerated holographic desktop with
 
 ### Reference
 
+- [Cursor Epigenetic IDE (Level 6)](docs/CURSOR_EPIGENETIC.md) — Archivist memory, Command Deck buttons, God-Eye + Deployer MCP
+- [Omni-Viewport Extension](docs/OMNI_VIEWPORT_EXTENSION.md) — GUI protocols + cross-codebase Inspiration Forge
 - [Omega-Build Golden Master Final](docs/OMEGA_BUILD.md) — unified kernel architecture
 - [Genesis ISO Installer](docs/GENESIS_ISO.md) — flash-drive UEFI boot image (`mk_iso.sh`)
 - [OTA Lazarus Channel](docs/OTA_LAZARUS.md) — over-the-air swarm kernel updates

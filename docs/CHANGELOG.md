@@ -2,6 +2,19 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [35.1] — Omni-Viewport Extension & Cursor Level 6 (2026-06)
+
+### Added
+- `extensions/utah-omni-viewport/` — Command Deck + Inspiration Forge GUI (no slash commands)
+- `scripts/inspiration_scanner.py` — cross-codebase pattern mining for feature planning
+- MCP bridges: `utahclaw_mcp_bridge.py`, `mcp_godeye.py`, `mcp_deployer.py`, `mcp_zeo_entropy.py`, `mcp_akashic_adr.py`
+- `.cursorrules`, `.cursor/memory.md`, `.cursor/mcp.json`, ADR store, Level-6 skills
+- [Cursor Epigenetic IDE](CURSOR_EPIGENETIC.md), [Omni-Viewport Extension](OMNI_VIEWPORT_EXTENSION.md) + 8 locale translations
+
+### Changed
+- Protocol triggers moved from slash commands to Omni-Viewport buttons
+- `.gitignore` — allow project JSON; exclude personal `.cursor/user.json` and workspace editor settings
+
 ## [35.0] — Omni-Desk Genesis Suite (2026-06)
 
 ### Added

@@ -1,0 +1,96 @@
+{
+  "name": "utah-omni-viewport",
+  "displayName": "Utah Omni-Viewport",
+  "description": "Command Deck buttons and Inspiration Forge for UtahMosphere — no slash commands required.",
+  "version": "1.0.0",
+  "publisher": "utahmosphere",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other", "Machine Learning"],
+  "activationEvents": [
+    "onView:utahOmniViewport.commandDeck",
+    "onView:utahOmniViewport.inspirationForge",
+    "onCommand:utahOmniViewport.openCommandDeck",
+    "onCommand:utahOmniViewport.openInspirationForge"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "utah-omni-viewport",
+          "title": "Omni-Viewport",
+          "icon": "media/utah-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "utah-omni-viewport": [
+        {
+          "type": "webview",
+          "id": "utahOmniViewport.commandDeck",
+          "name": "Command Deck"
+        },
+        {
+          "type": "webview",
+          "id": "utahOmniViewport.inspirationForge",
+          "name": "Inspiration Forge"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "utahOmniViewport.openCommandDeck",
+        "title": "Utah: Open Command Deck",
+        "category": "Utah Omni-Viewport"
+      },
+      {
+        "command": "utahOmniViewport.openInspirationForge",
+        "title": "Utah: Open Inspiration Forge",
+        "category": "Utah Omni-Viewport"
+      },
+      {
+        "command": "utahOmniViewport.dispatchCascade",
+        "title": "Utah: Cascade Sync",
+        "category": "Utah Omni-Viewport"
+      },
+      {
+        "command": "utahOmniViewport.dispatchEntropyPurge",
+        "title": "Utah: Entropy Purge",
+        "category": "Utah Omni-Viewport"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "utahOmniViewport.openCommandDeck"
+        },
+        {
+          "command": "utahOmniViewport.openInspirationForge"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Utah Omni-Viewport",
+      "properties": {
+        "utahOmniViewport.kernelBase": {
+          "type": "string",
+          "default": "http://127.0.0.1:8999",
+          "description": "UtahMosphere kernel URL for live MCP-style actions."
+        },
+        "utahOmniViewport.pythonPath": {
+          "type": "string",
+          "default": "py",
+          "description": "Python executable for inspiration scanner (use py on Windows)."
+        },
+        "utahOmniViewport.inspirationRoots": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Saved codebase roots for Inspiration Forge (personal — workspace settings only)."
+        }
+      }
+    }
+  }
+}

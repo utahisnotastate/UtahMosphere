@@ -1,0 +1,50 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 12px;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground);
+  background: var(--vscode-sideBar-background);
+}
+.panel h1 { font-size: 1.1rem; margin: 0 0 4px; }
+.sub { opacity: 0.75; font-size: 0.85rem; margin: 0 0 12px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.proto-btn, .primary, .secondary {
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.proto-btn, .primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+.proto-btn:hover, .primary:hover { filter: brightness(1.08); }
+.secondary {
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+}
+.full { width: 100%; margin-top: 8px; }
+.input, .textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--vscode-input-border);
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+}
+.textarea { min-height: 72px; resize: vertical; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.output {
+  margin-top: 10px;
+  padding: 8px;
+  max-height: 200px;
+  overflow: auto;
+  font-size: 0.75rem;
+  background: var(--vscode-textCodeBlock-background);
+  border-radius: 6px;
+  white-space: pre-wrap;
+}

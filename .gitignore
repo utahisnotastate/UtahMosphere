@@ -1,8 +1,14 @@
 # IDEs and Editors
 .idea/
 .vscode/
+!.vscode/settings.json.example
+!.vscode/settings.json.example
 *.swp
 *.swo
+
+# Personal Cursor settings (never commit — use workspace User settings)
+.cursor/user.json
+.cursor/local.json
 
 # Python
 __pycache__/
@@ -24,5 +30,8 @@ security/
 tycoon/
 swarm/
 *.json
-!docker-compose.yaml
 !package.json
+!extensions/**/package.json
+!.cursor/mcp.json
+!.cursor/user.example.json
+!docker-compose.yaml

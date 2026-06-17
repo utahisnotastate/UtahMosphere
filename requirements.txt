@@ -6,4 +6,4 @@ cryptography
 
 # Optional — Omni-Compiler frontier provider / MCP stdio bridge
 # openai>=1.0.0
-# mcp>=1.0.0
+mcp>=1.0.0

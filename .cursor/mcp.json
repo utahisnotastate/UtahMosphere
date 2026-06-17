@@ -1,0 +1,47 @@
+{
+  "mcpServers": {
+    "utahclaw_ambient_mesh": {
+      "command": "py",
+      "args": ["scripts/utahclaw_mcp_bridge.py"],
+      "env": {
+        "UTAH_CLAW_BASE": "http://127.0.0.1:9090",
+        "UTAH_DATA_DIR": ".utah-data",
+        "UTAH_REPO_ROOT": "."
+      }
+    },
+    "utah_godeye": {
+      "command": "py",
+      "args": ["scripts/mcp_godeye.py"],
+      "env": {
+        "UTAH_REPO_ROOT": "."
+      }
+    },
+    "utah_deployer": {
+      "command": "py",
+      "args": ["scripts/mcp_deployer.py"],
+      "env": {
+        "UTAH_KERNEL_BASE": "http://127.0.0.1:8999",
+        "UTAH_REPO_ROOT": "."
+      }
+    },
+    "zeo_entropy": {
+      "command": "py",
+      "args": ["scripts/mcp_zeo_entropy.py"],
+      "env": {
+        "UTAH_REPO_ROOT": ".",
+        "ZEO_ENTROPY_THRESHOLD": "4"
+      }
+    },
+    "zeo_akashic_adr": {
+      "command": "py",
+      "args": ["scripts/mcp_akashic_adr.py"],
+      "env": {
+        "UTAH_REPO_ROOT": "."
+      }
+    },
+    "utahmosphere_workspace": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    }
+  }
+}

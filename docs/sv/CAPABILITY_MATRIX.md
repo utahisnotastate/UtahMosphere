@@ -1,6 +1,6 @@
 # Kapacitetsmatris
 
-UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja komplett.
+UtahMosphere OS **v33.0 Omni-Mind** — suverän förtroendekedja komplett.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 
 | Endpoint | Metod | Status | Noteringar |
 |----------|-------|--------|------------|
-| `/health` | GET | **Implementerat** | `build: omega-build-v32-lazarus-self-healing` + fullständig attesteringsögonblicksbild |
+| `/health` | GET | **Implementerat** | `build: omega-build-v33-omni-mind` + fullständig attesteringsögonblicksbild |
 | `/attestation/quote` | GET | **Implementerat** | RA-TLS TPM quote för mesh-nodverifiering |
 | `/registry/quotes` | GET | **Implementerat** | Globalt register för hårdvarucitat |
 | `/registry/purge` | POST | **Implementerat** | Rensa komprometterad hårdvara |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| `/omni/glass` | GET | **Implemented** | Agentic event log |
 | `/witness/status` | GET | **Implementerat** | Flerregions vittnen |
 | `/lazarus/status` | GET | **Implementerat** | Lazarus-kontrollpunkt |
 | `/lazarus/restore` | POST | **Implementerat** | Golden Master-återställning |
@@ -47,7 +50,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 | **Voice Bridge Signed** | **Implementerat** | Automatiskt nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementerat** | Mesh + röstsäkerhet |
 | **UtahNetes + Swarm DHT** | **Implementerat** | RA-TLS + signerad gossip |
-| **Genesis ISO v32** | **Implementerat** | `utah_genesis_v32.iso` |
+| **Genesis ISO v33** | **Implementerat** | `utah_genesis_v33.iso` |
 | **Full molnparitet** | **Implementerat** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -79,7 +82,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suverän förtroendekedja kom
 
 ## Roadmap
 
-Alla roadmap-poster för v28.0 är **implementerade** i v32.0.
+Alla roadmap-poster för v28.0 är **implementerade** i v33.0.
 
 Framtid: fjärr-RA-TLS CA-pinning, tjänst för hardware quote-register.
 

@@ -1,6 +1,6 @@
 # Матрица возможностей
 
-UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепочка доверия завершена.
+UtahMosphere OS **v33.0 Omni-Mind** — суверенная цепочка доверия завершена.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 
 | Конечная точка | Метод | Статус | Примечания |
 |----------------|-------|--------|------------|
-| `/health` | GET | **Реализовано** | `build: omega-build-v32-lazarus-self-healing` + полный снимок аттестации |
+| `/health` | GET | **Реализовано** | `build: omega-build-v33-omni-mind` + полный снимок аттестации |
 | `/attestation/quote` | GET | **Реализовано** | RA-TLS TPM quote для проверки mesh-узлов |
 | `/registry/quotes` | GET | **Реализовано** | Глобальный реестр аппаратных цитат |
 | `/registry/purge` | POST | **Реализовано** | Удаление скомпрометированного оборудования |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| `/omni/glass` | GET | **Implemented** | Agentic event log |
 | `/witness/status` | GET | **Реализовано** | Кворум-свидетели в нескольких регионах |
 | `/lazarus/status` | GET | **Реализовано** | Контрольная точка Lazarus |
 | `/lazarus/restore` | POST | **Реализовано** | Восстановление Golden Master |
@@ -47,7 +50,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 | **Voice Bridge Signed** | **Реализовано** | Автоматический nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Реализовано** | Безопасность mesh + голоса |
 | **UtahNetes + Swarm DHT** | **Реализовано** | RA-TLS + подписанный gossip |
-| **Genesis ISO v32** | **Реализовано** | `utah_genesis_v32.iso` |
+| **Genesis ISO v33** | **Реализовано** | `utah_genesis_v33.iso` |
 | **Полная облачная паритетность** | **Реализовано** | S3, Lambda, RDS, UtahX, контейнеры |
 
 ---
@@ -79,7 +82,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — суверенная цепо
 
 ## Дорожная карта
 
-Все пункты дорожной карты v28.0 **реализованы** в v32.0.
+Все пункты дорожной карты v28.0 **реализованы** в v33.0.
 
 Будущее: удалённое закрепление RA-TLS CA, сервис реестра hardware quote.
 

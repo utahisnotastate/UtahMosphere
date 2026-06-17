@@ -36,12 +36,33 @@ pip3 install -r "${REPO_DIR}/requirements.txt" 2>/dev/null || pip3 install numpy
 chmod +x "${REPO_DIR}/mk_iso.sh" 2>/dev/null || true
 
 echo "[Omega-Genesis] Synthesizing data paths..."
-mkdir -p /var/lib/utahmosphere/{containers,utahx_mesh,s3,lambda,rds,tycoon,swarm}
+mkdir -p /var/lib/utahmosphere/{containers,utahx_mesh,s3,lambda,rds,tycoon,swarm,models}
 mkdir -p /etc/utahmosphere/security
+
+echo "[Omega-Genesis] Initializing UtahVidia Sovereign Core..."
+if [[ -d "${REPO_DIR}/utahvidia" ]]; then
+  cp -r "${REPO_DIR}/utahvidia" "${INSTALL_ROOT}/" 2>/dev/null || true
+fi
+
+if [[ "${UTAH_OMNI_DOWNLOAD_MODEL:-0}" == "1" ]]; then
+  echo "[Omega-Genesis] Downloading Akashic Weights (Base Intelligence)..."
+  pip3 install huggingface_hub 2>/dev/null || true
+  if command -v huggingface-cli >/dev/null 2>&1; then
+    huggingface-cli download \
+      QuantFactory/Meta-Llama-3-8B-Instruct-GGUF \
+      Meta-Llama-3-8B-Instruct.Q4_K_M.gguf \
+      --local-dir /var/lib/utahmosphere/models \
+      --local-dir-use-symlinks False || true
+    if [[ -f /var/lib/utahmosphere/models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf ]]; then
+      ln -sf Meta-Llama-3-8B-Instruct.Q4_K_M.gguf /var/lib/utahmosphere/models/utah-frontier-v1.safetensors
+    fi
+  fi
+fi
 
 echo "[Omega-Genesis] Installing Golden Master modules..."
 mkdir -p "${INSTALL_ROOT}"
 cp "${REPO_DIR}"/*.py "${INSTALL_ROOT}/"
+cp -r "${REPO_DIR}/utahvidia" "${INSTALL_ROOT}/" 2>/dev/null || true
 chmod +x "${INSTALL_ROOT}/utahmosphere_master.py"
 chmod +x "${INSTALL_ROOT}/genesis_deploy.py"
 

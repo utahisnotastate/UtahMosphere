@@ -11,6 +11,9 @@ Welcome to the UtahMosphere OS documentation hub. Content is organized by **audi
 | Document | Best for |
 |----------|----------|
 | [Omega-Build Golden Master](OMEGA_BUILD.md) | Everyone — unified kernel architecture |
+| [Omni-Compiler](OMNI_COMPILER.md) | Agentic intent → live deployment |
+| [MCP Omni-Bridge](MCP_OMNI_BRIDGE.md) | Context-aware code generation |
+| [Utah-Omni-Mind](UTAH_OMNI_MIND.md) | Sovereign local LLM inference |
 | [Quorum Witnesses](QUORUM_WITNESSES.md) | Multi-region ISP-outage tie-breakers |
 | [Lazarus Auto-Restore](LAZARUS_RESTORE.md) | Clean-room Golden Master restoration |
 | [State-Diff Engine](STATE_DIFF_ENGINE.md) | Entangled <1KB mesh synchronization |

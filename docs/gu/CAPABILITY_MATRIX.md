@@ -1,6 +1,6 @@
 # Matrisis Kapasidad
 
-UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust chain.
+UtahMosphere OS **v33.0 Omni-Mind** — kompleto na sovereign trust chain.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 
 | Endpoint | Method | Status | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Ma implement** | `build: omega-build-v32-lazarus-self-healing` + kompleto na attestation snapshot |
+| `/health` | GET | **Ma implement** | `build: omega-build-v33-omni-mind` + kompleto na attestation snapshot |
 | `/attestation/quote` | GET | **Ma implement** | RA-TLS TPM quote para mesh peer verification |
 | `/registry/quotes` | GET | **Ma implement** | Global hardware quote registry |
 | `/registry/purge` | POST | **Ma implement** | Purge compromised hardware |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| `/omni/glass` | GET | **Implemented** | Agentic event log |
 | `/witness/status` | GET | **Implemented** | Multi-region witnesses |
 | `/lazarus/status` | GET | **Implemented** | Lazarus checkpoint |
 | `/lazarus/restore` | POST | **Implemented** | Golden Master restore |
@@ -33,6 +36,9 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 | Component | Status | Håfa mumuña på'go |
 |-----------|--------|-------------------|
 | **TPM Locker (`tpm_lock.py`)** | **Ma implement** | Vibe-Print sealed gi PCR0 via `tpm2_create` / `tpm2_unseal` |
+| **Omni-Compiler (`omni_compiler.py`)** | **Implemented** | Intent → deployment |
+| **MCP Bridge (`mcp_omni_bridge.py`)** | **Implemented** | Context-aware MCP |
+| **Utah-Omni-Mind (`utah_omni_mind.py`)** | **Implemented** | Sovereign inference |
 | **Quorum Witnesses (`quorum_witness.py`)** | **Implemented** | US/EU/Oceania tie-breakers |
 | **Lazarus Restore (`lazarus_restore.py`)** | **Implemented** | Auto-restore after quarantine |
 | **State-Diff (`state_diff_engine.py`)** | **Implemented** | Entangled mesh deltas |
@@ -47,7 +53,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 | **Voice Bridge Signed** | **Ma implement** | Auto nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Ma implement** | Mesh + voice security |
 | **UtahNetes + Swarm DHT** | **Ma implement** | RA-TLS + signed gossip |
-| **Genesis ISO v32** | **Ma implement** | `utah_genesis_v32.iso` |
+| **Genesis ISO v33** | **Ma implement** | `utah_genesis_v33.iso` |
 | **Full cloud parity** | **Ma implement** | S3, Lambda, RDS, UtahX, containers |
 
 ---
@@ -79,7 +85,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — kompleto na sovereign trust c
 
 ## Roadmap
 
-Todu i v28.0 roadmap items **ma implement** gi v32.0.
+Todu i v28.0 roadmap items **ma implement** gi v33.0.
 
 Futuru: remote RA-TLS CA pinning, hardware quote registry service.
 

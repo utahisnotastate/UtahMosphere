@@ -1,6 +1,6 @@
 # Võimekuste maatriks
 
-UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on täielik.
+UtahMosphere OS **v33.0 Omni-Mind** — suveräänne usaldusahel on täielik.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on t
 
 | Lõpp-punkt | Meetod | Olek | Märkused |
 |------------|--------|------|----------|
-| `/health` | GET | **Rakendatud** | `build: omega-build-v32-lazarus-self-healing` + täielik tõendamise hetktõmmis |
+| `/health` | GET | **Rakendatud** | `build: omega-build-v33-omni-mind` + täielik tõendamise hetktõmmis |
 | `/attestation/quote` | GET | **Rakendatud** | RA-TLS TPM quote mesh-sõlmede kontrolliks |
 | `/registry/quotes` | GET | **Rakendatud** | Globaalne riistvara tsitaadi register |
 | `/registry/purge` | POST | **Rakendatud** | Kompromiteeritud riistvara eemaldamine |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| `/omni/glass` | GET | **Implemented** | Agentic event log |
 | `/witness/status` | GET | **Rakendatud** | Mitmeregiooni tunnistajad |
 | `/lazarus/status` | GET | **Rakendatud** | Lazarus kontrollpunkt |
 | `/lazarus/restore` | POST | **Rakendatud** | Golden Master taastamine |
@@ -47,7 +50,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on t
 | **Voice Bridge Signed** | **Rakendatud** | Automaatne nonce + HMAC |
 | **AuthGuard + Nonce-Guard** | **Rakendatud** | Mesh + hääle turvalisus |
 | **UtahNetes + Swarm DHT** | **Rakendatud** | RA-TLS + allkirjastatud gossip |
-| **Genesis ISO v32** | **Rakendatud** | `utah_genesis_v32.iso` |
+| **Genesis ISO v33** | **Rakendatud** | `utah_genesis_v33.iso` |
 | **Täielik pilve pariteet** | **Rakendatud** | S3, Lambda, RDS, UtahX, konteinerid |
 
 ---
@@ -79,7 +82,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — suveräänne usaldusahel on t
 
 ## Teekaart
 
-Kõik v28.0 teekaardi punktid on v32.0-s **rakendatud**.
+Kõik v28.0 teekaardi punktid on v33.0-s **rakendatud**.
 
 Tulevik: kaug-RA-TLS CA kinnitamine, riistvara quote registriteenus.
 

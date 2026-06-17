@@ -13,8 +13,8 @@ from pathlib import Path
 
 REPO_DIR = Path(__file__).resolve().parent
 ISO_STAGING = Path(os.environ.get("ISO_STAGING", "/tmp/utah_iso"))
-ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v32.iso"))
-ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V32")
+ISO_OUTPUT = Path(os.environ.get("ISO_OUTPUT", REPO_DIR / "utah_genesis_v33.iso"))
+ISO_LABEL = os.environ.get("ISO_LABEL", "UTAH_GENESIS_V33")
 
 ALPINE_BASE = os.environ.get(
     "UTAH_ALPINE_NETBOOT_URL",
@@ -92,7 +92,7 @@ def stage_sovereign_stack(staging: Path):
     for py_file in REPO_DIR.glob("*.py"):
         shutil.copy2(py_file, staging / "utahmosphere" / py_file.name)
 
-    readme = """UtahMosphere Genesis ISO v32.0
+    readme = """UtahMosphere Genesis ISO v33.0
 ================================
 Multi-region quorum witnesses, Lazarus auto-restore, entangled state-diff sync.
 Boot menu auto-runs bootstrap.sh via autoinstall= kernel parameter.

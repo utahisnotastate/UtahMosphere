@@ -1,6 +1,6 @@
 # Matriz de capacidades
 
-UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana completa.
+UtahMosphere OS **v33.0 Omni-Mind** — cadena de confianza soberana completa.
 
 ---
 
@@ -8,10 +8,13 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 
 | Endpoint | Método | Estado | Notas |
 |----------|--------|--------|-------|
-| `/health` | GET | **Implementado** | `build: omega-build-v32-lazarus-self-healing` + instantánea de attestation completa |
+| `/health` | GET | **Implementado** | `build: omega-build-v33-omni-mind` + instantánea de attestation completa |
 | `/attestation/quote` | GET | **Implementado** | Cita TPM RA-TLS para verificación de pares en la malla |
 | `/registry/quotes` | GET | **Implementado** | Registro global de citas de hardware |
 | `/registry/purge` | POST | **Implementado** | Eliminar hardware comprometido |
+| `/omni/compile` | POST | **Implemented** | Agentic intent compile |
+| `/omni/status` | GET | **Implemented** | Omni-Mind stats |
+| `/omni/glass` | GET | **Implemented** | Agentic event log |
 | `/witness/status` | GET | **Implementado** | Testigos multi-región |
 | `/lazarus/status` | GET | **Implementado** | Punto de control Lazarus |
 | `/lazarus/restore` | POST | **Implementado** | Restauración Golden Master |
@@ -47,7 +50,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 | **Voice Bridge firmado** | **Implementado** | Nonce automático + HMAC |
 | **AuthGuard + Nonce-Guard** | **Implementado** | Seguridad de malla + voz |
 | **UtahNetes + Swarm DHT** | **Implementado** | RA-TLS + gossip firmado |
-| **Genesis ISO v32** | **Implementado** | `utah_genesis_v32.iso` |
+| **Genesis ISO v33** | **Implementado** | `utah_genesis_v33.iso` |
 | **Paridad cloud completa** | **Implementado** | S3, Lambda, RDS, UtahX, contenedores |
 
 ---
@@ -79,7 +82,7 @@ UtahMosphere OS **v32.0 Lazarus Self-Healing** — cadena de confianza soberana 
 
 ## Hoja de ruta
 
-Todos los elementos de la hoja de ruta v28.0 están **implementados** en v32.0.
+Todos los elementos de la hoja de ruta v28.0 están **implementados** en v33.0.
 
 Futuro: fijación de CA RA-TLS remota, servicio de registro de citas de hardware.
 

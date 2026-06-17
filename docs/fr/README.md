@@ -17,7 +17,7 @@ Bienvenue sur le hub de documentation d'UtahMosphere OS. Le contenu est organis�
 | [Témoins de quorum](QUORUM_WITNESSES.md) | Arbitrage multi-régions en cas de panne ISP |
 | [Restauration Lazarus](LAZARUS_RESTORE.md) | Restauration Golden Master en salle blanche |
 | [Moteur de delta d'état](STATE_DIFF_ENGINE.md) | Sync mesh entrelacée <1 Ko |
-| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v32.0 Infrastructure d'attestation à distance |
+| [Matrice des capacités](CAPABILITY_MATRIX.md) | Tous — v33.0 Infrastructure d'attestation à distance |
 | [Référence API](API_REFERENCE.md) | Développeurs et opérateurs |
 | [Guide de développement local](LOCAL_DEVELOPMENT.md) | Développeurs sous Windows, macOS ou Linux |
 
@@ -87,7 +87,7 @@ Mini-projets complets à forker et étendre :
 
 ---
 
-## Fonctionnalités v32.0 Infrastructure d'attestation à distance
+## Fonctionnalités v33.0 Infrastructure d'attestation à distance
 
 - **Registre de citations (`quote_registry.py`) :** registre global des empreintes matérielles TPM ; enregistrement, purge et fusion sur le maillage
 - **Garde RA-TLS (`ra_tls_guard.py`) :** épinglage CA ; ingress UtahX ; vérification OID X.509
@@ -98,6 +98,6 @@ Mini-projets complets à forker et étendre :
 - **Voice Bridge signé :** `GET /nonce` automatique + HMAC (`voice_bridge_signed.py`)
 - **UtahX / ContainerEngine / S3 / Lambda / RDS :** parité cloud complète
 - **AuthGuard + Nonce-Guard + révocation Utah-Flux :** gouvernance du maillage
-- **Genesis ISO v32 :** `utah_genesis_v32.iso`
+- **Genesis ISO v33 :** `utah_genesis_v33.iso`
 
-Build `omega-build-v32-lazarus-self-healing`. Entrée recommandée : `python3 utahmosphere_master.py`.
+Build `omega-build-v33-omni-mind`. Entrée recommandée : `python3 utahmosphere_master.py`.

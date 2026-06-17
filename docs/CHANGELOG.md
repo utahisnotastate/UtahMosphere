@@ -2,6 +2,24 @@
 
 All notable changes to UtahMosphere OS are documented here.
 
+## [33.0] — Omni-Compiler & Utah-Omni-Mind (2026-06)
+
+### Added
+- `omni_compiler.py` — agentic intent → blueprint → live deployment
+- `mcp_omni_bridge.py` — MCP context-aware compile loop
+- `utah_omni_mind.py` + `utahvidia/` — sovereign local inference (ZEO-Shield, Osmotic Router)
+- `omni_primitives.py` — kernel tool-calling primitives
+- `omni_glass.py` — Omni-Glass real-time agentic event log
+- `POST /omni/compile`, `GET /omni/status`, `GET /omni/glass`
+- [Omni-Compiler](OMNI_COMPILER.md), [MCP Bridge](MCP_OMNI_BRIDGE.md), [Utah-Omni-Mind](UTAH_OMNI_MIND.md)
+
+### Changed
+- Voice `/command` — `compile` / `omni` intents route to Omni-Compiler
+- `bootstrap.sh` — optional Akashic model download (`UTAH_OMNI_DOWNLOAD_MODEL=1`)
+- Genesis ISO: `utah_genesis_v33.iso`
+- Build: `omega-build-v33-omni-mind`
+- v32.0 roadmap complete; all locale docs updated
+
 ## [32.0] — Multi-Region Witnesses & Lazarus Auto-Restore (2026-06)
 
 ### Added

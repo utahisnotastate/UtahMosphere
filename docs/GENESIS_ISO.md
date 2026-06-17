@@ -1,8 +1,8 @@
-# Genesis ISO Installer (v32.0)
+# Genesis ISO Installer (v33.0)
 
-Build `utah_genesis_v32.iso` with multi-region quorum witnesses, Lazarus auto-restore, and entangled state-diff sync.
+Build `utah_genesis_v33.iso` with Omni-Compiler, MCP bridge, Utah-Omni-Mind, plus v32 quorum witnesses and Lazarus auto-restore.
 
-Output: `utah_genesis_v32.iso`
+Output: `utah_genesis_v33.iso`
 
 ## Related
 

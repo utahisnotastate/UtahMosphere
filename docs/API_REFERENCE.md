@@ -16,18 +16,20 @@ Liveness probe for load balancers and monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "32.0",
-  "build": "omega-build-v32-lazarus-self-healing",
+  "version": "33.0",
+  "build": "omega-build-v33-omni-mind",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca"},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v33_root_ca"},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
+    "omni_mind": {"provider": "sovereign", "engine": "utahvidia"},
+    "omni_glass": {"events": 0},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
 }
@@ -109,6 +111,40 @@ Purge a compromised hardware ID from the global registry. Root vibe holder only.
 ```json
 {"status": "purged", "hardware_id": "abc123..."}
 ```
+
+---
+
+## POST /omni/compile
+
+Compile natural-language developer intent into a live container deployment.
+
+```bash
+curl -X POST http://127.0.0.1:8999/omni/compile \
+  -H "Content-Type: application/json" \
+  -d '{"intent": "Python health check API like an AWS load balancer probe"}'
+```
+
+**Response `200`:**
+
+```json
+{"ok": true, "app_name": "omni-health", "files": ["handler.py"], "message": "Application anchored on port 8201..."}
+```
+
+See [Omni-Compiler](OMNI_COMPILER.md).
+
+---
+
+## GET /omni/status
+
+Omni-Mind provider, model path, and Omni-Glass stats.
+
+---
+
+## GET /omni/glass
+
+Real-time agentic event log (`?limit=50`).
+
+See [MCP Omni-Bridge](MCP_OMNI_BRIDGE.md).
 
 ---
 
@@ -568,6 +604,7 @@ Revoke a delegated node from `authorized_nodes[]`. Root vibe holder only. Utah-F
 | `{UTAH_DATA_DIR}/quote_registry.json` | Global hardware quote registry |
 | `{UTAH_DATA_DIR}/dht_golden_registry.json` | DHT golden measurement ledger |
 | `{UTAH_DATA_DIR}/lazarus_golden_checkpoint.json` | Lazarus Golden Master checkpoint |
+| `{UTAH_DATA_DIR}/omni_glass_log.json` | Omni-Glass agentic event log |
 | `{UTAH_DATA_DIR}/quorum_witness.json` | Multi-region witness registry |
 
 Default `UTAH_DATA_DIR`: `/var/lib/utahmosphere` (falls back to local dirs on permission errors).

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UtahMosphere RA-TLS Guard (v32.0)
+UtahMosphere RA-TLS Guard (v33.0)
 CA pinning + TPM quote OID verification against global quote registry.
 """
 
@@ -29,7 +29,7 @@ RA_TLS_GUARD_ENFORCE = os.environ.get("UTAH_RA_TLS_GUARD_ENFORCE", "1") != "0"
 ROOT_CA_PATH = Path(os.environ.get("UTAH_KERNEL_ROOT_CA_PATH", "/etc/utahmosphere/security/utah_root_ca.pem"))
 KERNEL_ROOT_CA = os.environ.get(
     "UTAH_KERNEL_ROOT_CA",
-    "utahmosphere_omega_build_v32_root_ca",
+    "utahmosphere_omega_build_v33_root_ca",
 ).encode("utf-8")
 TPM_QUOTE_OID = ObjectIdentifier("1.3.6.1.4.1.99999") if HAS_CRYPTO else "1.3.6.1.4.1.99999"
 

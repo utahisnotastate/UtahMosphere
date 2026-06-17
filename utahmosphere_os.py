@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-UtahMosphere Operating System Kernel - Omega-Build v32.0
-Multi-region quorum witnesses, Lazarus auto-restore, entangled state-diff sync.
+UtahMosphere Operating System Kernel - Omega-Build v33.0
+Omni-Compiler agentic mesh, MCP context bridge, Utah-Omni-Mind sovereign inference.
 """
 
 import os
@@ -42,6 +42,10 @@ try:
     from quorum_witness import quorum_witness
     from lazarus_restore import LazarusRestore
     from state_diff_engine import encode_delta, apply_state_delta, state_hash, should_use_delta
+    from omni_compiler import SovereignOmniCompiler
+    from mcp_omni_bridge import mcp_omni_compiler
+    from utah_omni_mind import omni_mind
+    from omni_glass import omni_glass
 except ImportError:
     print("[Critical] Sovereign modules missing. Ensure all .py components are present.")
     ledger_guard = None
@@ -63,6 +67,10 @@ except ImportError:
     apply_state_delta = None  # type: ignore
     state_hash = None  # type: ignore
     should_use_delta = None  # type: ignore
+    SovereignOmniCompiler = None  # type: ignore
+    mcp_omni_compiler = None  # type: ignore
+    omni_mind = None  # type: ignore
+    omni_glass = None  # type: ignore
 
 UTAH_DATA_DIR = os.environ.get("UTAH_DATA_DIR", "/var/lib/utahmosphere")
 UTAHX_CONF_ROOT = os.path.join(UTAH_DATA_DIR, "utahx_mesh")
@@ -82,7 +90,7 @@ class UtahmosphereSovereignKernel:
         ).encode("utf-8")
 
         self.ui_state = {
-            "node_status": "Active [Omega-Build v32.0 Lazarus Self-Healing]",
+            "node_status": "Active [Omega-Build v33.0 Omni-Mind]",
             "active_workloads": 0,
             "last_voice_command": "Omega-Genesis Protocol Initialized",
             "cluster_health": "Resilient",
@@ -108,7 +116,7 @@ class UtahmosphereSovereignKernel:
         if drift_detector:
             drift_detector.monitor(self)
 
-        print(f"[{self.node_identity}] Omega-Build v32.0 lazarus self-healing kernel online. World-A excised.")
+        print(f"[{self.node_identity}] Omega-Build v33.0 omni-mind kernel online. World-A excised.")
 
     def _node_hash(self) -> str:
         if ledger_guard and ledger_guard.ledger.get("root_vibe_hash"):
@@ -331,6 +339,10 @@ class UtahmosphereSovereignKernel:
             snap["witness"] = quorum_witness.stats()
         if LazarusRestore:
             snap["lazarus"] = LazarusRestore.status()
+        if omni_glass:
+            snap["omni_glass"] = omni_glass.stats()
+        if omni_mind:
+            snap["omni_mind"] = omni_mind.status()
         return snap
 
     def _register_hardware_quote(self, acoustic_hash: str):
@@ -539,6 +551,25 @@ class UtahmosphereSovereignKernel:
             except Exception as e:
                 return f"Patch routing error: {str(e)}"
 
+        elif "compile" in tokens or "omni" in transcript.lower():
+            intent_str = transcript
+            for marker in ("compile", "build", "create", "give me"):
+                if marker in transcript.lower():
+                    intent_str = transcript.lower().split(marker, 1)[-1].strip(" :")
+                    break
+            if SovereignOmniCompiler is None:
+                return "Omni-Compiler unavailable."
+            if os.environ.get("UTAH_OMNI_MCP_ENFORCE", "1") != "0" and mcp_omni_compiler:
+                result = mcp_omni_compiler.execute_intent_sync(intent_str, kernel_ref=self)
+            else:
+                result = SovereignOmniCompiler.process_developer_intent(intent_str, kernel_ref=self)
+            if result.get("ok"):
+                self.ui_state["active_workloads"] = len(self.cluster_registry["tenants"])
+                self.ui_state["mutation_count"] += 1
+                self.trigger_flux_ui_render()
+                return result.get("message", f"Omni-compiled {result.get('app_name')}")
+            return f"Omni-Compiler error: {result.get('error', 'unknown')}"
+
         elif "status" in tokens or "grid" in tokens:
             return json.dumps(self.cluster_registry)
 
@@ -731,6 +762,21 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
                 self._json_response(404, {"error": "Hardware ID not found"})
             return
 
+        if path == "/omni/compile":
+            data = json.loads(body.decode("utf-8")) if body else {}
+            intent = data.get("intent") or data.get("transcript", "")
+            if not intent or SovereignOmniCompiler is None:
+                self._json_response(400, {"error": "intent required and Omni-Compiler must be online"})
+                return
+            use_mcp = data.get("mcp", True) and mcp_omni_compiler is not None
+            if use_mcp:
+                mcp_cmd = data.get("mcp_server_command")
+                result = mcp_omni_compiler.execute_intent_sync(intent, mcp_cmd, self.core_engine)
+            else:
+                result = SovereignOmniCompiler.process_developer_intent(intent, self.core_engine)
+            self._json_response(200 if result.get("ok") else 422, result)
+            return
+
         if path == "/lazarus/restore":
             if LazarusRestore is None:
                 self._json_response(503, {"error": "Lazarus restore unavailable"})
@@ -786,8 +832,8 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "status": "healthy",
                 "node": self.core_engine.node_identity,
-                "version": "32.0",
-                "build": "omega-build-v32-lazarus-self-healing",
+                "version": "33.0",
+                "build": "omega-build-v33-omni-mind",
                 "attestation": self.core_engine._attestation_snapshot(),
             })
             return
@@ -833,6 +879,27 @@ class SovereignIngressMultiplexer(http.server.BaseHTTPRequestHandler):
             self._json_response(200, {
                 "witnesses": quorum_witness.export_witnesses(),
                 "stats": quorum_witness.stats(),
+            })
+            return
+
+        if path == "/omni/status":
+            if omni_mind is None:
+                self._json_response(503, {"error": "Omni-Mind unavailable"})
+                return
+            self._json_response(200, {
+                "omni_mind": omni_mind.status(),
+                "omni_glass": omni_glass.stats() if omni_glass else {},
+            })
+            return
+
+        if path == "/omni/glass":
+            if omni_glass is None:
+                self._json_response(503, {"error": "Omni-Glass unavailable"})
+                return
+            limit = int(urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("limit", ["50"])[0])
+            self._json_response(200, {
+                "events": omni_glass.export(limit=limit),
+                "stats": omni_glass.stats(),
             })
             return
 

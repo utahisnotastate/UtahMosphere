@@ -16,19 +16,20 @@ Chek si mumuña para load balancers yan monitoring.
 {
   "status": "healthy",
   "node": "my-hostname",
-  "version": "32.0",
-  "build": "omega-build-v32-lazarus-self-healing",
+  "version": "33.0",
+  "build": "omega-build-v33-omni-mind",
   "attestation": {
     "tpm_present": false,
     "provisioned": false,
     "sealed": false,
     "enforce": true,
     "tpm_lock": {"sealed": false, "binding_ok": true, "enforce": true},
-    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v32_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
+    "ra_tls": {"enforce": true, "kernel_root_ca": "utahmosphere_omega_build_v33_root_ca", "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true}},
     "quote_registry": {"active": 1, "purged": 0, "total": 1},
     "dht_federation": {"consensus": 1, "quarantined": 0, "total": 1, "enforce": true},
     "quorum": {"quorum_reached": 1, "threshold": 0.51, "enforce": true},
     "witness": {"witnesses": 4, "threshold": 0.51, "enforce": true, "regions": ["us-east", "eu-west", "oceania-apac", "asia-east"]},
+    "omni_mind": {"provider": "sovereign"},
     "lazarus": {"auto_restore": true, "kexec_enforce": true, "checkpoint_exists": true},
     "pcr_drift": {"enforce": true, "rollback_enforce": true, "golden_set": true, "drift_detected": false}
   }
@@ -53,7 +54,7 @@ Ma issue RA-TLS TPM quote para UtahNetes mesh peer verification.
 {
   "hardware_id": "sha256-hardware-fingerprint",
   "ra_tls_quote": {
-    "body": "{\"build\":\"omega-build-v32-lazarus-self-healing\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
+    "body": "{\"build\":\"omega-build-v33-omni-mind\",\"node_id\":\"my-host\",\"hardware_id\":\"...\",\"pcr0_digest\":\"...\",\"vibe_hash\":\"...\"}",
     "signature": "hmac-sha256-hex",
     "ca_signature": "optional-rsa-hex"
   }
@@ -124,6 +125,31 @@ Purge compromised hardware ID. Root vibe holder only.
 
 
 ---
+
+
+
+---
+
+## POST /omni/compile
+
+Agentic intent compilation.
+
+```bash
+curl -X POST http://127.0.0.1:8999/omni/compile -H "Content-Type: application/json" -d '{"intent": "health check API"}'
+```
+
+---
+
+## GET /omni/status
+
+Omni-Mind status.
+
+---
+
+## GET /omni/glass
+
+Omni-Glass agentic event log.
+
 
 ## GET /witness/status
 

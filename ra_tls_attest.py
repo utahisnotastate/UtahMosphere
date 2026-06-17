@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-UtahMosphere RA-TLS Attestation (v32.0)
+UtahMosphere RA-TLS Attestation (v33.0)
 Witness-verified entangled state sync + quorum before mesh gossip is accepted.
 """
 
@@ -22,9 +22,9 @@ except ImportError:
 RA_TLS_ENFORCE = os.environ.get("UTAH_RA_TLS_ENFORCE", "1") != "0"
 KERNEL_ROOT_CA = os.environ.get(
     "UTAH_KERNEL_ROOT_CA",
-    "utahmosphere_omega_build_v32_root_ca",
+    "utahmosphere_omega_build_v33_root_ca",
 ).encode("utf-8")
-BUILD_ID = os.environ.get("UTAH_BUILD_ID", "omega-build-v32-lazarus-self-healing")
+BUILD_ID = os.environ.get("UTAH_BUILD_ID", "omega-build-v33-omni-mind")
 QUOTE_STORE = Path(os.environ.get("UTAH_RA_TLS_QUOTE_DIR", "/etc/utahmosphere/security/ra_tls"))
 
 try:

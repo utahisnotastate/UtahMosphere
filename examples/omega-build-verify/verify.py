@@ -70,6 +70,13 @@ def main():
     msg = body.get("message", body) if isinstance(body, dict) else str(body)
     print(f"Unlock: {code} {str(msg)[:80]}")
 
+    # Omni-Compiler
+    code, data = post("/omni/compile", {
+        "intent": "I need a live Python web server health check like AWS load balancer",
+        "mcp": False,
+    })
+    print(f"Omni: {code} {str(data)[:100]}")
+
     print("=== Verification complete ===")
 
 

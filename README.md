@@ -1,8 +1,8 @@
-# 🌌 UtahMosphere OS (v32.0 Lazarus Self-Healing)
+# 🌌 UtahMosphere OS (v33.0 Omni-Mind)
 
 **The Sovereign, Decentralized, Zero-Maintenance Autonomous Cloud Platform.**
 
-v32.0 delivers the **Autonomous Cloud OS**: **multi-region quorum witnesses**, **Lazarus kernel auto-restore**, and **entangled state-diff sync** — immune to regional outages, self-healing after PCR drift, and scalable to millions of nodes.
+v33.0 delivers the **Agentic Cloud OS**: **Omni-Compiler** intent-to-reality compilation, **MCP context bridge**, and **Utah-Omni-Mind** sovereign inference — no hardcoded GCP features, no mandatory OpenAI dependency.
 
 **Architecture guide:** [Omega-Build Golden Master](docs/OMEGA_BUILD.md)
 
@@ -106,6 +106,9 @@ docker-compose up -d
 | `UTAH_RA_TLS_GUARD_ENFORCE` | `1` | UtahX ingress CA pinning + registry check |
 | `UTAH_DHT_FEDERATION_ENFORCE` | `1` | DHT golden measurement ledger |
 | `UTAH_QUORUM_ENFORCE` | `1` | 51%+ majority quorum on peer quotes |
+| `UTAH_OMNI_ENFORCE` | `1` | Agentic Omni-Compiler |
+| `UTAH_OMNI_PROVIDER` | `sovereign` | `sovereign` or `openai` |
+| `UTAH_OMNI_MCP_ENFORCE` | `1` | MCP context before compile |
 | `UTAH_WITNESS_ENFORCE` | `1` | Multi-region witness tie-breakers |
 | `UTAH_LAZARUS_AUTO_RESTORE` | `1` | Clean-room restore after quarantine |
 | `UTAH_LAZARUS_KEXEC_ENFORCE` | `1` | kexec load/execute during Lazarus restore |
@@ -117,12 +120,12 @@ docker-compose up -d
 
 ---
 
-## 🛠 Features (v32.0 Lazarus Self-Healing)
+## 🛠 Features (v33.0 Omni-Mind)
 
-- **Quorum Witnesses:** US/EU/Oceania/Asia regional tie-breakers (`quorum_witness.py`)
-- **Lazarus Auto-Restore:** Golden Master + kexec atomic restoration (`lazarus_restore.py`)
-- **State-Diff Engine:** Entangled <1KB mesh deltas (`state_diff_engine.py`)
-- **Full v31 stack:** Federated quorum, PCR kexec rollback, RA-TLS, quote registry, Genesis ISO
+- **Omni-Compiler:** Speak intent → live apps (`omni_compiler.py`)
+- **MCP Bridge:** Context-aware codegen (`mcp_omni_bridge.py`)
+- **Utah-Omni-Mind:** Sovereign UtahVidia inference (`utah_omni_mind.py`)
+- **Full v32 stack:** Witnesses, Lazarus kexec restore, state-diff sync, RA-TLS, Genesis ISO
 
 ---
 
